@@ -1,0 +1,7 @@
+{
+  "tool": "Built-in image_gen",
+  "purpose": "Original PC Games collection tile and fallback artwork",
+  "prompt": "Create one finished raster platform collection tile for a controller-first retro game launcher. Aspect ratio 10:7 landscape, edge-to-edge artwork, no border or UI chrome. Match the visual style of the Saturn collection tile shown in the conversation: very dark, high-contrast photographic close-up of gaming hardware, diagonal composition, black shadows, restrained electric indigo and violet rim lighting, a little cool blue light, subtle fine grain. Subject: an elegant unbranded black desktop gaming PC tower with a visible circular cooling fan and a portion of a black mechanical keyboard, photographed at a dramatic oblique angle; recognizable as PC hardware, not a console. Hardware fills the frame and remains mostly in shadow. This should look like a premium 1990s console library category tile, not a busy modern RGB gaming advertisement. Text: exactly \"PC GAMES\" in one line, centered horizontally around the middle of the image, large clean white uppercase geometric sans-serif lettering, slightly spaced letters, restrained violet glow, clearly readable when reduced to a 320px-wide tile. No other words, no logos or brand names, no neon rainbow colors, no people, no game cover artwork, no watermark. Keep the text within the central 65 percent of the width so the tile can be cropped slightly without losing it.",
+  "asset": "pc-games.png",
+  "source": "AI-generated original image; no vendor image pixels incorporated"
+}

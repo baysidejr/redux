@@ -1,0 +1,97 @@
+PCSX-Redux frontend control bridge
+=================================
+
+This is an original adapter to the emulator's documented Lua API, not a
+patched emulator or keyboard automation. No web server, script permission,
+firewall setting, debugger toggle, firmware or licensing behavior is changed.
+
+Integration
+-----------
+Construct one PcsxReduxBridge(library_root, game_id,
+game_key=game['bundle_hash']) before launching the frontend-owned PCSX process.
+Append its launch_arguments tuple property ('-dofile', absolute_script_path)
+to the normal PCSX arguments. wait_ready(timeout=5) returns True only when that
+specific launch's Lua script has written a valid acknowledgment. Do not show
+the controls as available before it returns True.
+
+All RPC operations block up to the configured timeout and belong on a worker
+thread. save(slot=0) and load(slot=0) return StateSlot; capture() returns the
+absolute PNG Path. slot(number) inspects one slot independently; slots() returns
+ten StateSlot records with slot, exists,
+path, size, saved_at, sha256. pause()/resume() pause/resume emulation using the
+PCSX API while its host event loop continues servicing commands. Do not
+OS-suspend the process while issuing bridge commands. close() stops only the
+mailbox; resume emulation first if leaving its backend process running.
+
+The bridge is explicitly PCSX-Redux only. Other emulator profiles retain their
+separate capabilities. Mesen 2.1.1 exposes Lua savestate and screenshot APIs,
+but its Lua IO/OS permission defaults to disabled and is disabled in this
+installation. This adapter does not enable it or claim Mesen RPC support.
+
+Protocol and durability
+-----------------------
+A per-launch UUID mailbox lives under library/game_data/<id>/.backend-rpc/.
+Its trusted generated Lua script contains only escaped fixed root/session
+constants. The command grammar accepts one of save/load/capture/pause/resume,
+32-hex request nonces, the launch nonce and slots 0 through 9. There is no
+command source evaluation, arbitrary path argument, shell command or network
+listener. PCSX.nextTick dispatches operations on the emulator main loop.
+The script retains its event handles and closes its timer on Quitting.
+
+Replies and staged payloads are published by rename after synchronous IO close.
+A load acknowledgment requires the real ExecutionFlow::SaveStateLoaded event;
+merely calling a void-returning load function is not treated as success.
+Requests have bounded state/frame/response sizes and timeouts. A timeout or
+invalid acknowledgment disables this launch's bridge, preventing uncertain
+commands from being retried under a newer request. Relaunch to reconnect.
+
+States are raw PCSX-Redux protobuf serialization, not ordinary memory-card
+saves and not portable to other backends. Complete state blobs are addressed by
+SHA-256; an atomic slot manifest promotes one to a visible slot. Failed saves
+leave the previous manifest untouched. Loads verify the recorded size and hash.
+Passing the library bundle_hash namespaces states for database IDs that might
+be reused after removal/reimport. Unreferenced immutable blobs are retained;
+this adapter does not silently delete saved state history or user media.
+
+Screenshot capture takes the actual PCSX GPU frame, validates the dimensions
+and payload length, converts documented RGB555/RGB888 pixels and writes a PNG
+atomically under game_data/<id>/screenshots. No desktop/window capture is used.
+Acknowledged intermediate payloads are removed from the owned mailbox.
+
+LuaJIT's Windows standard IO uses the active ANSI code page. The adapter uses
+that encoding or an existing Windows short-path representation. If neither can
+represent the selected library path, creation fails clearly without changing
+the backend or system code page.
+
+Validation
+----------
+python -m unittest discover -s tests -p test_backend_rpc.py -v
+
+13 tests cover per-launch isolation, actual command/reply exchange, ten slots,
+content-addressed durability, hash and path validation, preserved earlier slots
+on failures, PSX RGB channel order/PNG CRCs, timeouts, and closure without media
+deletion. One optional test executes the entire generated script in the local
+LuaJIT lua51.dll interpreter with explicitly mocked PCSX APIs. It does not
+launch an emulator or establish game compatibility. The parent UI runtime
+validation is separate and must prove behavior in a real owned PCSX process.
+
+Primary API references
+----------------------
+https://pcsx-redux.consoledev.net/cli_flags/
+https://pcsx-redux.consoledev.net/Lua/redux-basics/
+https://pcsx-redux.consoledev.net/Lua/file-api/
+https://pcsx-redux.consoledev.net/Lua/events/
+https://pcsx-redux.consoledev.net/Lua/libraries/
+https://pcsx-redux.consoledev.net/web_server/
+
+Source checked at PCSX-Redux commit:
+78a1978fcb6e0f51be9b327ea5952e42d957989e
+src/core/pcsxffi.lua (create/load state, screenshot, nextTick bindings)
+src/core/pcsxlua.cc (serialized state and screenshot bridge)
+src/core/sstate.cc (load success event and safe load scheduling)
+src/core/screenshot.cc (RGB555/RGB888 channel masks)
+
+Mesen source checked at tag 2.1.1:
+https://github.com/SourMesen/Mesen2/blob/2.1.1/UI/Utilities/CommandLineHelper.cs
+https://github.com/SourMesen/Mesen2/blob/2.1.1/UI/Config/Debugger/ScriptWindowConfig.cs
+https://github.com/SourMesen/Mesen2/blob/2.1.1/UI/Debugger/Documentation/LuaDocumentation.json

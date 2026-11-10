@@ -1,0 +1,56 @@
+{
+  "family": "Roboto Condensed",
+  "source_repository": "https://github.com/google/fonts",
+  "repository_directory": "https://api.github.com/repos/google/fonts/contents/ofl/robotocondensed",
+  "license": "SIL Open Font License 1.1; see OFL.txt",
+  "downloaded_utc": "2026-11-08T18:29:28.565322+00:00",
+  "modified": false,
+  "scope": "Independent optional bundled frontend typeface; not recovered vendor font",
+  "files": [
+    {
+      "name": "METADATA.pb",
+      "source_url": "https://raw.githubusercontent.com/google/fonts/main/ofl/robotocondensed/METADATA.pb",
+      "github_blob_sha": "7fb46dae82951197ce5c46081bd0211ed03e8ccd",
+      "sha256": "2661545ea47047600f634d2b2485b9794758c1088b2dac15024ebc6c20fc1f47",
+      "bytes": 1387
+    },
+    {
+      "name": "OFL.txt",
+      "source_url": "https://raw.githubusercontent.com/google/fonts/main/ofl/robotocondensed/OFL.txt",
+      "github_blob_sha": "2096249e0b96e28b439f4653bf9cd7809d467bcc",
+      "sha256": "0e4cc6ece88573545be2ed25835363662a6182ba4a4c1b5c8feda52add30e8a6",
+      "bytes": 4393
+    },
+    {
+      "name": "RobotoCondensed-Italic[wght].ttf",
+      "source_url": "https://raw.githubusercontent.com/google/fonts/main/ofl/robotocondensed/RobotoCondensed-Italic%5Bwght%5D.ttf",
+      "github_blob_sha": "5fc354723ea141a7af72f7f7ddb2a53c3ad462ad",
+      "sha256": "78f643b1923008b00dfc9b371a2ecd4d80a017722925f1a3fac9940be56d1b7d",
+      "bytes": 388124
+    },
+    {
+      "name": "RobotoCondensed[wght].ttf",
+      "source_url": "https://raw.githubusercontent.com/google/fonts/main/ofl/robotocondensed/RobotoCondensed%5Bwght%5D.ttf",
+      "github_blob_sha": "221055572bc92e324d26337dee7b43b435e39fc8",
+      "sha256": "dace262afcee68a5276f200d8026c57221735c0118ab5fda8c2c0d3dc409a8d0",
+      "bytes": 371616
+    }
+  ],
+  "validation": {
+    "platform": "Windows x64",
+    "registration_api": "AddFontResourceExW",
+    "flags": "FR_PRIVATE (0x10); no global installation or registry changes",
+    "registered_faces": 18,
+    "gdi_GetTextFaceW_family": "Roboto Condensed",
+    "Pillow_name_regular": [
+      "Roboto Condensed",
+      "Regular"
+    ],
+    "Pillow_name_italic": [
+      "Roboto Condensed",
+      "Italic"
+    ],
+    "repeated_registration_idempotent": true,
+    "ui_runtime_visual_comparison": "Parent owns final application validation"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "project": "SDL3",
+  "version": "3.4.20",
+  "release": "https://github.com/libsdl-org/SDL/releases/tag/release-3.4.20",
+  "archive_url": "https://github.com/libsdl-org/SDL/releases/download/release-3.4.20/SDL3-3.4.20-win32-x64.zip",
+  "archive_sha256": "368bed8b24e44ad9ea372990814f2343fcfb9e468abb7f8f4a3bc146c7304752",
+  "published_archive_sha256": "368bed8b24e44ad9ea372990814f2343fcfb9e468abb7f8f4a3bc146c7304752",
+  "digest_source": "GitHub release API assets[].digest",
+  "dll_sha256": "66844f10251cc1c10619ed5d8e4e3224f564900ee6d69ba87d63de782addae40",
+  "dll_bytes": 2848768,
+  "license_url": "https://raw.githubusercontent.com/libsdl-org/SDL/release-3.4.20/LICENSE.txt",
+  "license_sha256": "1c040b8271b37e5076359f8fd54240e371114112924d2df81ef87c7d6a1dfdfd",
+  "redistribution": "zlib license; unmodified official Windows x64 binary",
+  "purpose": "Gamepad input only; no driver installation or OS setting changes"
+}

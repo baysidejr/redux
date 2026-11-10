@@ -1,0 +1,84 @@
+LIBRARY BACKEND — schema version 2
+
+Existing version-1 libraries migrate atomically and idempotently. Game IDs,
+media records, original import times, launcher settings, and media bytes are
+preserved. An unrelated/incompatible database is rejected. Migration tests use
+temporary legacy-format databases; development did not alter the user's library.
+
+Library(root)
+  games(query='', system=None, view='all', collection_id=None, sort='title')
+    Returns enriched dictionaries. Views: all, favorites, wishlist, completed,
+    continue, recent, available, offline, collection. continue_playing and
+    recently_played are accepted aliases. continue excludes completed entries.
+    Sorts: title, recent, added, playtime, year. Queries search title, publisher,
+    developer, and genre with literal LIKE wildcards. Collection filters combine
+    with system/query/view filters. Offline includes partial missing bundles.
+
+  game(id)
+    Existing fields plus favorite/wishlist/completed booleans, play_seconds,
+    playtime_seconds alias, launch_count, last_played, description, year,
+    publisher, developer, region, genre, artwork_path. Availability fields:
+    entry_available, available, health (available/partial/offline), file_count,
+    available_file_count. available checks all recorded files, not just the CUE.
+
+  update_metadata(id, **fields)
+    Whitelisted title/system/description/year/publisher/developer/region/genre/
+    artwork_path. Returns updated game. Unknown fields, unsupported systems,
+    invalid years, and relative artwork paths leaving the library are rejected.
+  set_flags(id, favorite=None, wishlist=None, completed=None)
+  toggle_favorite(id)
+    Return updated game. None preserves a flag; booleans/0/1 are accepted.
+
+  collections(), collection(id), create_collection(name), rename_collection(id,name)
+  delete_collection(id), add_to_collection(collection_id,game_id)
+  remove_from_collection(collection_id,game_id), game_collections(game_id)
+    Collection names are Unicode-casefold unique. create/rename/add/remove
+    return collection dictionaries with game_count. Membership is idempotent.
+    Deleting a collection deletes its memberships, never game/media files.
+
+  start_session(game_id, started_at=None) -> session_id
+  finish_session(session_id, duration_seconds=None, ended_at=None, exit_code=None)
+  record_session(game_id, seconds, played_at=None) -> completed session dictionary
+  sessions(game_id=None) -> newest-first session dictionaries
+    Timestamps accept timezone-aware datetime or ISO-8601 text, normalized UTC.
+    Starting increments launch_count; finishing adds duration once. Repeated
+    finish calls are idempotent. Explicit duration supports a launch manager's
+    monotonic elapsed time. Older imported sessions cannot rewind last_played.
+    Running sessions have no guessed duration until the process manager finishes.
+
+  media_health(game_id, verify_hashes=False)
+    Returns all-file availability, entry availability, per-file results and
+    healthy/partial/offline/changed status. Hash checking is opt-in.
+
+  set_artwork(game_id, source_path), artwork_for(game)
+    Copies a user-selected image into hash-addressed library/artwork storage.
+    The stored path is relative and survives moving the library. Source artwork
+    is preserved. Existing metadata artwork paths can also reference explicit
+    external files, whose portability depends on the caller's path choice.
+
+  remove_game(id)
+    Removes the database entry, memberships and session history; retains every
+    source and managed media file. Reimport verifies retained bytes/references
+    before reusing them. Modified retained media is never silently overwritten.
+
+OPTIONAL REFERENCE METADATA
+
+Catalogue(path, asset_root=None) in redux.metadata reads only explicit
+caller-selected inputs. There is no default path, server request, corpus bundle,
+or mandatory vendor resource. stats() and statistics expose parsing counts.
+match(title,system_slug) returns one unambiguous exact-normalized record or None.
+Recognized trailing country/language filename tags may narrow a region. Arbitrary
+edition, revision, disc-number qualifiers remain part of the exact title; fuzzy
+matching and ambiguous record guessing are deliberately absent. search(query,
+system=None,limit=64) provides bounded candidates for explicit user selection.
+
+Results contain title/system/description/year/publisher/developer/genre/region,
+existing artwork_path/box_art_path/tile_path/hero_path, screenshot_paths, and
+catalogue_system_id/catalogue_region_id/catalogue_index. Before applying a record
+to a library, select only the update_metadata whitelist and preserve existing user
+edits unless the user explicitly chooses replacement. Empty or absent corpus
+fields are not evidence that existing user metadata should be cleared.
+
+The parser validates counted maps, duplicate identities/fields, UTF-8/NUL string
+bounds, complete input consumption, and a 128-MiB file limit. Asset resolution is
+contained to asset_root. Missing images remain absent rather than invented.

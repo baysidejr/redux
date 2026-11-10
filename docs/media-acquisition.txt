@@ -1,0 +1,88 @@
+INDEPENDENT MEDIA IDENTIFICATION AND ACQUISITION
+Implemented 2026-11-08; original Python code, no vendor data dependency.
+
+Media identity
+  identify_media(path) -> MediaIdentity
+Fields: title (name alias), system or None, game_id or None, format,
+confidence (header/filesystem/unknown), notes tuple, details dictionary.
+Confidence identifies the kind of evidence, not a numerical authenticity score.
+
+Bounded observations implemented:
+- iNES payload bounds and NES 2.0 header recognition, N64 byte-order signatures
+  with swapped-image alignment, standard Mega Drive/Genesis console headers,
+  and SEGA 8-bit TMR SEGA headers with documented platform/region nibble.
+- Cooked 2048-byte ISO9660, raw MODE1/2352 and MODE2/2352, and CUE-described
+  MODE1/2048, MODE1/2352, MODE2/2352 and MODE2/2336 data tracks.
+- CUE INDEX 01 offsets and a following same-file track boundary. Source files are
+  opened read-only; a selected image descriptor cannot follow a path outside its
+  own bundle. Audio tracks are not interpreted as filesystem sectors.
+- Raw sync/mode and Mode 2 duplicated Form 1 subheader checks before reading ISO
+  metadata. This does not check EDC/ECC or establish archival image correctness.
+- Primary volume descriptor, dual-byte-order fields, root directory and extent
+  bounds. At most 64 descriptor sectors, 4 MiB root directory and 64 KiB selected
+  SYSTEM.CNF are read. Extended/interleaved/multi-extent records are rejected.
+- A PLAYSTATION volume marker identifies PSX. SYSTEM.CNF BOOT identifies the
+  executable; a standard ABCD_123.45 filename becomes game ID ABCD-12345. No ID is
+  guessed from the host filename. Root-only SYSTEM.CNF is supported.
+- Sega Saturn and Sega CD start-of-data header markers. Saturn product number
+  and title follow its published system-ID structure.
+- M3U reports identity from its first entry and labels that scope explicitly.
+CHD decoding and unsupported platform formats require a decoder or user metadata.
+Header recognition does not establish playback, firmware or ownership.
+
+Acquisition planning
+  acquisition_plan(drive) / plan_acquisition(drive) -> AcquisitionPlan
+Fields: drive, mode, source_image (Path or None), volume, warnings.
+Mode source_image always wins when the current mounted original is discoverable.
+Import that original through Library.import_game so CUE/BIN tracks stay intact.
+Known audio/mixed-mode or unsupported track/session layouts are not offered as a
+plain ISO. A logical_volume plan covers only the readable ISO9660 data extent.
+
+  capture_logical_volume(drive, destination, cancelled=None, progress=None)
+Explicitly exports only cooked 2048-byte ISO9660 logical data. It never claims a
+faithful raw/complete disc image. progress(done,total,phase) uses total=3*bytes;
+phases are write, verify_output and verify_source. The volume is read twice; the
+fsynced output is read back and checked before atomic no-overwrite publication.
+Changes, short reads, errors and cancellation reject publication and remove only
+the new private temporary output. No padding is substituted. Existing output is
+never replaced. Windows handles request GENERIC_READ and OPEN_EXISTING only.
+The implementation issues no mount, eject, lock, write, driver-install or extended
+DASD commands. An ordinary driver denying boundary reads causes a visible failure.
+
+SourceImageAvailable carries .source_image instead of converting a mounted
+original. CaptureCancelled has reason cancelled. CaptureResult contains output_path,
+bytes_written, sha256, source_sha256, verified_source_passes, verified_output,
+image_kind and warnings. capture_full_disc explicitly refuses unvalidated raw
+audio/subchannel acquisition; it does not relabel a cooked image as full capture.
+
+Verification
+20 tests cover documented markers, CUE modes/offsets, SYSTEM.CNF serials, malformed
+extents/endian copies, traversal, Mode 2 Form 2 rejection, source preference,
+mixed-mode refusal, cancellation, repeated-read changes, short reads, no-overwrite
+races, aligned read-only Windows calls and output/source hash verification.
+Live mounted Diablo CUE/BIN was identified as PSX SLUS-00619 using its actual
+SYSTEM.CNF. Planning preferred the original CUE and prevented ISO conversion.
+No physical raw-sector acquisition or full physical-volume export was tested.
+
+Primary references
+ISO9660 volume/directory format:
+https://ecma-international.org/wp-content/uploads/ECMA-119_6th_edition_december_2025.pdf
+PlayStation SYSTEM.CNF handling (implementation reference only):
+https://github.com/stenzek/duckstation/blob/master/src/core/system.cpp
+Saturn system-ID structure and marker:
+https://github.com/SaturnSDK/Saturn-SDK-Tool-IPMaker/blob/master/Source/Common/Headers/SystemID.h
+https://github.com/SaturnSDK/Saturn-SDK-Tool-IPMaker/blob/master/Source/Common/Source/SystemID.c
+Sega CD marker/raw-sector input (implementation reference only):
+https://github.com/libretro/Genesis-Plus-GX/blob/master/core/cd_hw/cdd.c
+Genesis / SEGA 8-bit ROM header fields:
+https://github.com/libretro/Genesis-Plus-GX/blob/master/core/loadrom.c
+N64 signature and alignment handling:
+https://github.com/mupen64plus/mupen64plus-core/blob/master/src/main/rom.c
+iNES header specification and Mesen loader:
+https://www.nesdev.org/wiki/INES
+https://github.com/SourMesen/Mesen2/blob/master/Core/NES/Loaders/iNesLoader.cpp
+Read-only Windows device operations:
+https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilew
+https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-readfile
+https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-setfilepointerex
+https://learn.microsoft.com/en-us/windows/win32/api/winioctl/ni-winioctl-ioctl_disk_get_length_info

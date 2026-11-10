@@ -1,0 +1,117 @@
+WINDOWS OPTICAL ADAPTER
+
+The original module redux/optical.py uses only Python's standard library.
+It does not depend on reference application software, hardware IDs, assets, protocols, drivers,
+or a network service. It queries Windows' ordinary optical-drive interface.
+
+Public calls
+
+  list_drives() -> list[OpticalDrive]
+    OpticalDrive fields: letter (e.g. D:), root_path, device_path.
+    Returns assigned drive letters Windows reports as DRIVE_CDROM. Empty drives
+    remain discoverable. Both USB and internal drives can appear. Transport,
+    manufacturer, drive capabilities, and disc presence are not guessed.
+
+  inspect_disc(letter) -> DiscInfo
+    Accepts D, D:, or D:\ only (case-insensitive; slash roots also accepted).
+    Rechecks that the letter refers to an optical drive, opens it GENERIC_READ
+    with read/write sharing, and sends IOCTL_CDROM_READ_TOC_EX. The request is
+    format 0 with Msf=0, SessionTrack=0, and reserved fields zeroed; therefore
+    returned addresses are explicitly requested in logical block form.
+    The handle is always closed. There is no elevated fallback or driver install.
+    Run this call in a worker thread; optical-media queries may take time.
+
+    DiscInfo fields: drive, first_track, last_track, tracks, lead_out_lba,
+    has_audio, has_data, disc_type, notes, volume, inspection_kind.
+    disc_type is one of audio, data, mixed_mode based solely on TOC control bits.
+    DiscTrack fields: number, control, adr, start_lba, end_lba; properties
+    kind, is_data, is_audio, sector_count. end_lba is exclusive.
+
+  parse_toc(data, msf=False) -> TableOfContents
+    Pure portable parser for format-0 CDROM_TOC. Validates declared lengths,
+    full track ranges, order, address monotonicity, address type, and lead-out.
+    Driver-buffer padding is ignored beyond the declared TOC length.
+    A separate msf=True option accepts binary MSF addresses and converts them
+    with the standard 150-frame offset. The live adapter uses LBA mode only.
+
+Mounted-image compatibility (0.1.1)
+
+Strict parse_toc validation remains unchanged. An invalid or unsupported TOC can
+fall back to read-only ISO9660 logical-volume inspection. This scans standard
+volume descriptors, checks the primary descriptor's signature/version and both
+byte-order copies of its size/block size, and requires 2048-byte logical blocks.
+Reported device length and filesystem volume extent are kept separate. Invalid
+descriptors or a declared volume exceeding known device length are rejected.
+
+This result has inspection_kind=iso9660_volume, disc_type=logical_data_volume,
+empty tracks, first_track/last_track/lead_out_lba=None and has_audio=None. These
+None values mean the track/audio layout is unknown; no track is synthesized.
+volume contains system_id, volume_id, logical_block_size, volume_blocks,
+volume_bytes and optional device_bytes. No disc-console playback is inferred.
+
+redux.mounted_images.mounted_image_source(letter) can identify a local
+WinCDEmu image. It first checks the standard storage product descriptor for an
+exact WinCDEmu match, then uses that driver's read-only image-path query. UTF-16
+lengths, terminators, local-path boundaries and existing supported files are
+validated. Other drivers return None. There is no helper executable, elevation,
+mount, eject, write, or arbitrary directory scan. GUI Import mounted image uses
+the original ISO/CUE/etc. with the existing lossless bundle importer. When the
+volume has a PLAYSTATION system marker, that import is assigned PlayStation;
+this is system identification, not verification of emulator/firmware support.
+
+Live test: WinCDEmu F: backed by a single-track MODE2/2352 CUE/BIN. Its header
+advertises last track 2 while returning only track 1 and lead-out. Device capacity
+also differs from the validated ISO9660 extent. The source was preserved as
+CUE/BIN; no cooked ISO conversion or raw-disc capture was performed. Source-backed
+driver behavior and API references are in analysis/mounted_iso_research/findings.txt.
+
+Errors
+
+OpticalError exposes reason, winerror, and drive for UI handling. NoMediaError
+distinguishes Windows ERROR_NOT_READY/ERROR_NO_MEDIA_IN_DRIVE from malformed TOC
+data (TocParseError). Other reasons include unsupported_platform, not_optical,
+access_denied, unsupported_toc, and io_error. Discovery/inspection errors are
+reported instead of silently pretending the drive or media does not exist.
+
+Current limits
+
+This implementation is read-only inventory/TOC inspection. It does not eject,
+load, lock, change speed, image, decrypt, or play a disc. There is no ISO capture
+API. TOC data flags do not establish Mode 1 versus Mode 2, sector size, subchannel
+requirements, session gaps, filesystem, console identity, or copy-protection
+requirements. DVD/BD drivers may expose compatibility TOCs. Mixed-mode and audio
+discs must not be labelled or imported as plain ISO based on this information.
+For unusual, partial, unfinalized, or unsupported TOCs the parser fails explicitly.
+
+Verification
+
+python -m unittest discover -s tests -p test_optical.py -v
+
+Tests cover LBA and binary-MSF layouts, mixed data/audio, non-one first tracks,
+truncation, duplicate/missing tracks, bad lead-outs, invalid addresses, drive/path
+validation, no-media handling, and handle cleanup/read-only access on API errors.
+Tests use realistic synthetic format-0 TOC bytes and a mocked Windows boundary.
+Actual disc reading still needs validation with attached drives and media.
+
+Official API references consulted 2026-11-08
+
+GetLogicalDrives:
+https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getlogicaldrives
+GetDriveTypeW:
+https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getdrivetypew
+CreateFileW:
+https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilew
+DeviceIoControl:
+https://learn.microsoft.com/en-us/windows/win32/api/ioapiset/nf-ioapiset-deviceiocontrol
+IOCTL_CDROM_READ_TOC_EX:
+https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddcdrm/ni-ntddcdrm-ioctl_cdrom_read_toc_ex
+CDROM_READ_TOC_EX (including Msf=0 for LBA):
+https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddcdrm/ns-ntddcdrm-_cdrom_read_toc_ex
+CDROM_TOC:
+https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddcdrm/ns-ntddcdrm-_cdrom_toc
+TRACK_DATA:
+https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddcdrm/ns-ntddcdrm-_track_data
+
+IOCTL numeric/structure definitions and AUDIO_DATA_TRACK=0x4 also checked in the
+installed Windows SDK shared/ntddcdrm.h (10.0.26100.0). This is a standard API
+adapter built from documented interfaces, with no proprietary binary code reused.

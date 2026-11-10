@@ -1,0 +1,53 @@
+Optical media observation
+=========================
+
+redux.media_watch.MediaWatcher is a read-only background worker. Start
+it once, consume poll_events() on the UI thread, and call close() on shutdown.
+All drive enumeration, storage queries and identification run on its worker.
+poll_events() never waits for device IO. snapshot() copies the active event map
+under a short lock. close() requests synchronous-IO cancellation on its own
+worker and joins for at most the requested timeout (default 0.25 seconds). If a
+driver/custom identifier does not cancel, the daemon may finish later; stopped
+workers cannot publish events and never invoke GUI code.
+
+Default scan interval is 1.5 seconds. WindowsMediaProbe opens a device with
+FILE_READ_ATTRIBUTES for IOCTL_STORAGE_CHECK_VERIFY2. If that request is
+unsupported or succeeds without the optional media counter, it tries the
+ordinary IOCTL_STORAGE_CHECK_VERIFY with a read-only handle. A counter-bearing
+ordinary-query choice is cached. Drivers without a counter use a 15-second
+bounded identity fallback. Standard storage product metadata is cached for 30
+seconds and cleared when the drive disappears. No write, lock, eject, speed,
+capture, private mount, AutoPlay or game-launch operation is performed here.
+
+MediaEvent fields: kind (inserted/changed/removed/error), drive, identity,
+fingerprint, is_virtual (True/False/unknown None), observed_at (UTC ISO string),
+monotonic_at, startup, error and reason. physical is True only when is_virtual
+is False; source_image delegates to identity. observed_at is measured when an
+event is published, not a claim of the exact mechanical insertion instant.
+Unchanged observations do not invent new events or timestamps. Startup virtual
+events precede physical events, so a simple consumer finishes on physical media.
+Each drive has independent state; removal of a virtual mount does not remove a
+different drive's physical-disc identity.
+
+An explicit Windows ERROR_NO_MEDIA_IN_DRIVE (1112) or detached device clears an
+active identity immediately. ERROR_NOT_READY (21) is ambiguous during spin-up
+and with empty trays: temporary failures retain the prior identity. Six seconds
+of continuous not-ready observations clear it with reason not_ready_timeout,
+which means sustained unavailability, not proven tray ejection. Busy/access/
+read errors are separate diagnostics and do not claim ejection. A ready drive
+with a new counter or a media-change hint is identified again even if the same
+disc was reinserted. Identification spin-up retries back off to 30 seconds;
+unchanged errors are deduplicated. Enumeration failure retains prior media.
+
+Native observation on 2026-11-08: G: BD-MLT UJ272 identified the inserted Saturn
+World Series BASEBALL 2, MK-81113, region U. VERIFY2 returned success without a
+counter, while ordinary read-only VERIFY returned media-change count 2. The
+watcher published inserted and no event on the immediately repeated unchanged
+scan. Evidence: analysis/disc_insertion/media-watch-observation.json. No physical
+eject/reinsert was requested during this verification; those transitions and
+USB arrival/removal are covered with injected device tests.
+
+Microsoft primary API references:
+https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddstor/ni-ntddstor-ioctl_storage_check_verify
+https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddstor/ni-ntddstor-ioctl_storage_check_verify2
+https://learn.microsoft.com/en-us/windows/win32/api/ioapiset/nf-ioapiset-cancelsynchronousio
