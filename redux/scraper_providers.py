@@ -85,6 +85,7 @@ _IG = {"nes":18,"snes":19,"n64":4,"genesis":29,"32x":30,"sega_cd":78,
        "supergrafx":128,"atari2600":59,"atari7800":60,"gb":33,"gbc":22,
        "gba":24,"sms":64,"game_gear":35,"arcade":52,"neo_geo":79}
 _LR = {"nes":"Nintendo_-_Nintendo_Entertainment_System", "snes":"Nintendo_-_Super_Nintendo_Entertainment_System",
+       'jaguar':'Atari_-_Jaguar','jaguar_cd':'Atari_-_Jaguar_CD',
        "3do":"The_3DO_Company_-_3DO",
        "n64":"Nintendo_-_Nintendo_64", "genesis":"Sega_-_Mega_Drive_-_Genesis",
        "32x":"Sega_-_32X", "sega_cd":"Sega_-_Mega-CD_-_Sega_CD", "saturn":"Sega_-_Saturn",

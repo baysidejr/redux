@@ -4,6 +4,7 @@ from pathlib import Path
 ROOT_FILES = frozenset({'Redux.exe', 'README.md', 'RELEASE_VERSION.txt', 'THIRD_PARTY_NOTICES.txt'})
 FORBIDDEN_PARTS = frozenset({'library', 'bios', 'analysis', 'windows-home', 'emulators', '.git', '.venv'})
 FORBIDDEN_SUFFIXES = frozenset({'.dpapi', '.sqlite3', '.iso', '.bin', '.cue', '.chd', '.rom', '.nes',
+                                '.j64','.jag','.bigpimg','.cdi','.cof','.abs',
                                 '.sfc', '.smc', '.mdf', '.nrg', '.pfx', '.p12', '.pem', '.key'})
 
 

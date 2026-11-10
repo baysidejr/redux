@@ -14,8 +14,8 @@ class ConsoleCores:
         folder=project_root()/'tools/cores'
         if any((folder/(name+'_libretro.dll')).is_file() for name in recommended_names()):return
         self.menu('Set up supported systems',[
-            ('Download recommended emulators',lambda:self.download_cores(recommended_names())),
-            ('Set up later',self._defer_core_setup)],message='Redux can download and configure its recommended emulator cores. Internet is needed for setup. Games and BIOS files are not downloaded. PC games can run without emulator setup.')
+            ('Download recommended emulators',lambda:self.download_cores(recommended_names()+('bigpemu',))),
+            ('Set up later',self._defer_core_setup)],message='Redux can download its recommended emulators, including BigPEmu for non-commercial use under its author terms. Internet is needed for setup. Games and BIOS files are not downloaded. PC games can run without emulator setup.')
 
     def _defer_core_setup(self):
         self.preferences['core_setup_seen']=True
@@ -25,12 +25,15 @@ class ConsoleCores:
         names=recommended_names()
         folder=project_root()/'tools/cores'
         missing=[n for n in names if not (folder/(n+'_libretro.dll')).is_file()]
-        items=[('Set up recommended systems'+(f' Â· {len(missing)} missing' if missing else ' Â· installed'),lambda:self.download_cores(names))]
+        from .bigpemu import executable
+        if not executable(project_root()).is_file():missing.append('bigpemu')
+        items=[('Set up recommended systems'+(f' · {len(missing)} missing' if missing else ' · installed'),lambda:self.download_cores(names+('bigpemu',)))]
+        items.append(('BigPEmu - Jaguar / Jaguar CD',self.bigpemu_setup_menu))
         for name in names+('mupen64plus_next','mame'):
             systems=[s for s,p in PROFILES.items() if p.filename==name+'_libretro.dll']
             family=PROFILES[systems[0]].family
             exists=(folder/(name+'_libretro.dll')).is_file()
-            items.append((family+(' Â· installed' if exists else ' Â· not installed'),lambda n=name:self.core_options(n)))
+            items.append((family+(' · installed' if exists else ' · not installed'),lambda n=name:self.core_options(n)))
         self.menu('Emulator setup',items+[('Back',lambda:None)],message='Choose a core to install, repair or update. Recommended systems use the built-in controller and display defaults. N64 and MAME are optional compatibility-testing backends.')
 
     def core_options(self,name):
@@ -40,6 +43,11 @@ class ConsoleCores:
         self.menu(name.replace('_',' ').title(),[
             ('Repair / update' if installed else 'Install',lambda:self.download_cores((name,),repair=installed)),
             ('Back',self.core_setup_menu)],message='Downloads an official Windows x64 core with its upstream license and metadata. Updating may make older save states incompatible. Games, battery saves and BIOS files are kept.'+firmware_notes.get(name,''))
+
+    def bigpemu_setup_menu(self,retry=None):
+        self.menu('BigPEmu - Atari Jaguar / Jaguar CD',[
+            ('Install / check installation',lambda:self.download_cores(('bigpemu',),retry=retry)),
+            ('Back',lambda:None)],message='Downloads BigPEmu 1.221 directly from Rich Whitehouse, verified against the published release. The complete distribution and ReadMe are retained. BigPEmu prohibits private financial gain. Its own menus provide save states and filters. User data stays in its portable UserData folder.')
 
     def offer_core_download(self,system,retry):
         profile=PROFILES.get(system)
@@ -63,8 +71,11 @@ class ConsoleCores:
             from .core_install import install
             results=[]
             for index,name in enumerate(names):
-                self.events.put(('status',f'Setting up emulators Â· {index+1}/{len(names)} Â· {name}'))
-                results.append(install(name,folder,cancelled=self.cancelled,replace=repair))
+                self.events.put(('status',f'Setting up emulators · {index+1}/{len(names)} · {name}'))
+                if name=='bigpemu':
+                    from .bigpemu import install as install_bigpemu
+                    results.append(install_bigpemu(project_root(),cancelled=self.cancelled))
+                else:results.append(install(name,folder,cancelled=self.cancelled,replace=repair))
             return results
         def done(results):
             self.preferences['core_setup_seen']=True
@@ -73,5 +84,5 @@ class ConsoleCores:
             self._configure_detected_backends()
             if retry:retry()
             else:self.menu('Emulators ready',[('Done',lambda:None),('Emulator setup',self.core_setup_menu),
-                ('BIOS folder',self.choose_firmware)],message='The selected emulator cores are installed. Redux applies built-in controller and playback settings. Systems requiring BIOS files still need your firmware in the BIOS folder.')
-        self.task(work,done,'Downloading emulator coresâ€¦',cancellable=True)
+                ('BIOS folder',self.choose_firmware)],message='The selected emulators are installed. Redux applies built-in controller and playback settings. Systems requiring BIOS files still need your firmware in the BIOS folder. BigPEmu uses its own save-state and filter menus.')
+        self.task(work,done,'Downloading emulator cores…',cancellable=True)

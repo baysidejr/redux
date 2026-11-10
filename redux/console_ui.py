@@ -934,6 +934,22 @@ class ConsoleApp(ConsoleCores,ConsolePCGames,ConsoleScraper,ConsoleWindows,Conso
         if self.embedded or self.playback.active():
             self.game_menu();return
         if game["system"]=="pc":self._play_pc_game(game);return
+        if game['system'] in {'jaguar','jaguar_cd'}:
+            from .bigpemu import executable,EXTENSIONS
+            if not executable(project_root()).is_file():
+                self.bigpemu_setup_menu(retry=self.play);return
+            if self.library.path_for(game).suffix.casefold() not in EXTENSIONS:
+                self.notice('Unsupported BigPEmu image','Use a supported Jaguar cartridge, CUE/CDI or BigPImage. BigPEmu does not accept CHD files.');return
+            try:
+                configured=self.library.launcher(game['system'])
+                if Path(configured['executable']).name.casefold()=='bigpemu.exe' and not Path(configured['executable']).is_file():
+                    from .playback import profile_arguments
+                    exe=executable(project_root())
+                    self.library.configure_launcher(game['system'],str(exe),profile_arguments('bigpemu',exe))
+            except ValueError:
+                from .playback import profile_arguments
+                exe=executable(project_root())
+                self.library.configure_launcher(game['system'],str(exe),profile_arguments('bigpemu',exe))
         from .embedded import find_core,VALIDATED_DEFAULTS,HOSTED_DEFAULTS
         core=find_core(project_root(),game["system"])
         if not core and self.preferences.get('integrated',{}).get(game['system'],game['system'] in HOSTED_DEFAULTS):
@@ -1065,7 +1081,8 @@ class ConsoleApp(ConsoleCores,ConsolePCGames,ConsoleScraper,ConsoleWindows,Conso
         items=[("Resume game",lambda:self._resume(sid))]
         if bridge and bridge.ready:
             items.extend([("Save state",lambda:self.state_menu("save",sid)),("Load state",lambda:self.state_menu("load",sid)),("Take screenshot",lambda:self.state_operation("capture",sid=sid))])
-        items.extend([("Back up current save files",lambda:self._backup_current(sid)),("Stop game and return to library",lambda:self._stop(sid))])
+        if getattr(session,'profile_id',None)!='bigpemu':items.append(("Back up current save files",lambda:self._backup_current(sid)))
+        items.append(("Stop game and return to library",lambda:self._stop(sid)))
         self.menu("Game menu",items,message="Paused" if paused else "Running in the backend window. Game-menu controls are connecting." if bridge else "Running in the backend window.")
         self.overlay["resume_id"]=sid
 
@@ -1109,7 +1126,7 @@ class ConsoleApp(ConsoleCores,ConsolePCGames,ConsoleScraper,ConsoleWindows,Conso
             self.task(bridge.resume,lambda _:self._resumed(sid),"Resuming game…",cancellable=False)
         else:
             self.playback.resume(sid);self.overlay=None;self.status.set("Game resumed");self.root.iconify()
-            if snapshot and getattr(snapshot,"profile_id",None)=="pc_game":self.playback.foreground(sid)
+            if snapshot and getattr(snapshot,"profile_id",None) in {"pc_game","bigpemu"}:self.playback.foreground(sid)
 
     def _resumed(self,sid):
         self.playback.set_backend_paused(sid,False);self.overlay=None;self.status.set("Game resumed");self.root.iconify();self.schedule_draw()

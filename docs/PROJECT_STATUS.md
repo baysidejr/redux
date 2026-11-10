@@ -1,4 +1,6 @@
-# Project status — 0.10.7, 2026-11-09
+# Project status — 0.10.8, 2026-11-09
+
+Release 0.10.8 adds BigPEmu 1.221 as a recommended standalone backend for Atari Jaguar and Jaguar CD. Direct author download is pinned by SHA-256 and cross-checked against the author-published size/FNV hash; full archive layout and licensing notices are retained. Setup, missing-backend Play, portable data arguments, backend discovery and external-process lifecycle/menu support are wired. Native menu boot, owned pause/resume and graceful close passed; no retail gameplay or physical-disc acceptance is claimed. BigPEmu save states and filters remain in its own UI. The recommended set is ten integrated cores plus BigPEmu.
 
 Release 0.10.7 makes Neo Geo CD (NeoCD) and 3DO (Opera) recommended integrated defaults. The two official downloads and metadata/native init/deinit were verified in isolated probes without retail content. Recommended downloads now contain ten unique cores. 3DO DiscLabel headers and Neo Geo CD IPL metadata are recognized in image and bounded optical inspection paths. Libretro thumbnail lookup includes 3DO. Retail-game and physical-drive acceptance remain unverified for these systems.
 

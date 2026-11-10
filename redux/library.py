@@ -23,6 +23,7 @@ from urllib.parse import urlsplit, urlunsplit
 SYSTEMS = {
     "pc": "PC Games",
     "3do": "3DO",
+    "jaguar": "Atari Jaguar", "jaguar_cd": "Atari Jaguar CD",
     "unknown": "Unassigned", "nes": "NES", "snes": "SNES", "n64": "Nintendo 64",
     "genesis": "Mega Drive / Genesis", "32x": "32X", "sega_cd": "Sega CD",
     "saturn": "Saturn", "psx": "PlayStation", "neo_geo_cd": "Neo Geo CD",
@@ -32,12 +33,13 @@ SYSTEMS = {
     "sms": "Master System", "game_gear": "Game Gear",
 }
 EXTENSION_SYSTEM = {
+    '.j64':'jaguar', '.jag':'jaguar', '.bigpimg':'jaguar_cd',
     ".nes": "nes", ".sfc": "snes", ".smc": "snes", ".z64": "n64", ".n64": "n64",
     ".v64": "n64", ".md": "genesis", ".gen": "genesis", ".smd": "genesis",
     ".32x": "32x", ".pce": "pce", ".a26": "atari2600", ".a78": "atari7800",
     ".gb": "gb", ".gbc": "gbc", ".gba": "gba", ".sms": "sms", ".gg": "game_gear",
 }
-MEDIA_EXTENSIONS = set(EXTENSION_SYSTEM) | {".cue", ".m3u", ".iso", ".chd", ".ccd", ".bin"}
+MEDIA_EXTENSIONS = set(EXTENSION_SYSTEM) | {".cue", ".m3u", ".iso", ".chd", ".ccd", ".bin",'.cdi','.cof','.abs','.rom'}
 _CUE_FILE = re.compile(r'^\s*FILE\s+(?:"([^"\r\n]+)"|(\S+))\s+\S+\s*$', re.I)
 ARTWORK_FIELDS = {"cover": "artwork_path", "tile": "tile_path", "hero": "hero_path",
                   "screenshot": "screenshot_path", "logo": "logo_path"}

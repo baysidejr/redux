@@ -46,6 +46,11 @@ class BackendProfile:
 
 
 _PROFILES = (
+    BackendProfile('bigpemu','BigPEmu',('jaguar','jaguar_cd'),
+        ('{game}','-localdata','-setcfgpropcat','DisplayMode','0','Video',
+         '-setcfgpropcat','AutoAssign','1','Input'),('BigPEmu.exe',),
+        'Standalone Jaguar/Jaguar CD backend. Saves and filters use its own menus.',
+        capabilities=BackendCapabilities(external_save_files=False)),
     BackendProfile("mesen", "Mesen", ("nes","snes","gb","gbc","pce","sms","game_gear"),
         ("--fullscreen","{game}"), ("Mesen.exe","MesenCE.exe"),
         "Basic cartridge playback; special chips or CD systems can need additional files."),
@@ -124,6 +129,7 @@ def discover_backends(project_root: str | Path, configured: Mapping | None = Non
     """Inspect explicit configuration and known tool directories, never user trees."""
     root = Path(project_root).expanduser().resolve()
     folders = {"mesen":("Mesen","MesenCE"), "pcsx_redux":("PCSXRedux",),
+               'bigpemu':('BigPEmu',),
                "duckstation":("DuckStation",), "mednafen":("Mednafen",),
                "mupen64plus":("Mupen64Plus",)}
     result = []
@@ -551,3 +557,15 @@ class _WindowsProcessController:
         if self.handle is None:return
         self.resume()
         self.close_handle(self.handle);self.handle=None
+
+    def focus(self):
+        if not self._alive():return
+        self.u.ShowWindow.argtypes=[self.w.HWND,self.c.c_int]
+        self.u.SetForegroundWindow.argtypes=[self.w.HWND]
+        @self.enum_callback
+        def callback(window,param):
+            pid=self.w.DWORD();self.window_pid(window,self.c.byref(pid))
+            if pid.value==self.process.pid and self.visible(window) and not self.window_owner(window,4):
+                self.u.ShowWindow(window,9);self.u.SetForegroundWindow(window);return False
+            return True
+        self.enum(callback,0)

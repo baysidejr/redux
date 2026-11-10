@@ -6,7 +6,7 @@ A controller-first Windows game library for the living room. Browse games, inser
 
 ## Install
 
-Download **ReduxSetup-0.10.7-win-x64.exe** from [Releases](https://github.com/baysidejr/redux/releases/latest), run it, and open Redux from the Start menu. Requires Windows 10 version 2004 or newer, x64. The default installation is per user under `%LOCALAPPDATA%\Programs\Redux`; administrator access is not required for ordinary installation or use.
+Download **ReduxSetup-0.10.8-win-x64.exe** from [Releases](https://github.com/baysidejr/redux/releases/latest), run it, and open Redux from the Start menu. Requires Windows 10 version 2004 or newer, x64. The default installation is per user under `%LOCALAPPDATA%\Programs\Redux`; administrator access is not required for ordinary installation or use.
 
 A portable ZIP is also available. Extract the complete `Redux` folder and run `Redux.exe`; keep `_internal` beside it. Python is included in both distributions.
 
@@ -60,3 +60,11 @@ The recommended setup includes **NeoCD** for Neo Geo CD and **Opera** for 3DO. B
 Current NeoCD can fall back to its built-in HLE BIOS; original firmware improves compatibility and belongs in `bios/neocd` (the `neocd` subfolder of your selected BIOS directory). Current Opera includes Opera Boot; optional original BIOS such as `panafz1.bin` or `panafz10.bin` goes directly in the selected BIOS directory. Some games still need original firmware. Switching NeoCD between HLE and original BIOS can invalidate save-state compatibility. No retail firmware is downloaded.
 
 3DO disc headers and Neo Geo CD ISO9660 IPL files can identify supported images and inserted discs. CHD containers still require explicit system metadata. Native initialization of both core DLLs was verified; retail game, physical disc, audio and save-state acceptance for these two systems still needs real-game testing. See the [NeoCD upstream instructions](https://github.com/libretro/neocd_libretro) and [Opera core documentation](https://docs.libretro.com/library/opera/).
+
+## Atari Jaguar and Jaguar CD
+
+Recommended setup also downloads **BigPEmu 1.221** directly from [Rich Whitehouse](https://www.richwhitehouse.com/jaguar/index.php?content=download). It is a standalone emulator, alongside the ten integrated cores. The pinned archive is checked against its verified SHA-256; its original complete distribution, ReadMe and third-party notices are retained. BigPEmu prohibits use for private financial gain. Its executable is not modified or included in Redux release downloads.
+
+Use **System → Emulators & firmware → Emulator setup → BigPEmu** to install/check it. Jaguar/Jaguar CD Play also offers setup when it is missing. `.j64`/`.jag` imports default to Jaguar and `.bigpimg` to Jaguar CD. CUE/CDI images may need their system selected in game information. BigPEmu does not accept CHD. Portable `-localdata` keeps its data beside the emulator under `tools/emulators/BigPEmu/UserData`.
+
+Redux tracks its process and returns to the launcher when it exits. Guide or Start+Select uses Redux's external-emulator pause/resume/quit menu. **Save states, filters and Jaguar keypad bindings currently use BigPEmu's own interface**, not the libretro host menu. Native BigPEmu menu boot, owned-process pause/resume and graceful exit were verified; Jaguar/Jaguar CD retail gameplay and physical-disc compatibility still need testing. See the [BigPEmu manual](https://www.richwhitehouse.com/jaguar/index.php?content=userman).
