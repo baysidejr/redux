@@ -25,19 +25,21 @@ class ConsoleCores:
         names=recommended_names()
         folder=project_root()/'tools/cores'
         missing=[n for n in names if not (folder/(n+'_libretro.dll')).is_file()]
-        items=[('Set up recommended systems'+(f' · {len(missing)} missing' if missing else ' · installed'),lambda:self.download_cores(names))]
+        items=[('Set up recommended systems'+(f' Â· {len(missing)} missing' if missing else ' Â· installed'),lambda:self.download_cores(names))]
         for name in names+('mupen64plus_next','mame'):
             systems=[s for s,p in PROFILES.items() if p.filename==name+'_libretro.dll']
             family=PROFILES[systems[0]].family
             exists=(folder/(name+'_libretro.dll')).is_file()
-            items.append((family+(' · installed' if exists else ' · not installed'),lambda n=name:self.core_options(n)))
+            items.append((family+(' Â· installed' if exists else ' Â· not installed'),lambda n=name:self.core_options(n)))
         self.menu('Emulator setup',items+[('Back',lambda:None)],message='Choose a core to install, repair or update. Recommended systems use the built-in controller and display defaults. N64 and MAME are optional compatibility-testing backends.')
 
     def core_options(self,name):
         installed=(project_root()/'tools/cores'/(name+'_libretro.dll')).is_file()
+        firmware_notes={'neocd':' NeoCD uses its built-in HLE when no original BIOS is available; compatibility varies. For original firmware, put your BIOS in the neocd subfolder of the selected BIOS folder (normally bios/neocd). States made with HLE and original BIOS are not interchangeable.',
+                        'opera':' Current Opera includes Opera Boot. Original BIOS such as panafz1.bin or panafz10.bin goes directly in the selected BIOS folder; some games need original firmware.'}
         self.menu(name.replace('_',' ').title(),[
             ('Repair / update' if installed else 'Install',lambda:self.download_cores((name,),repair=installed)),
-            ('Back',self.core_setup_menu)],message='Downloads an official Windows x64 core with its upstream license and metadata. Updating may make older save states incompatible. Games, battery saves and BIOS files are kept.')
+            ('Back',self.core_setup_menu)],message='Downloads an official Windows x64 core with its upstream license and metadata. Updating may make older save states incompatible. Games, battery saves and BIOS files are kept.'+firmware_notes.get(name,''))
 
     def offer_core_download(self,system,retry):
         profile=PROFILES.get(system)
@@ -61,7 +63,7 @@ class ConsoleCores:
             from .core_install import install
             results=[]
             for index,name in enumerate(names):
-                self.events.put(('status',f'Setting up emulators · {index+1}/{len(names)} · {name}'))
+                self.events.put(('status',f'Setting up emulators Â· {index+1}/{len(names)} Â· {name}'))
                 results.append(install(name,folder,cancelled=self.cancelled,replace=repair))
             return results
         def done(results):
@@ -72,4 +74,4 @@ class ConsoleCores:
             if retry:retry()
             else:self.menu('Emulators ready',[('Done',lambda:None),('Emulator setup',self.core_setup_menu),
                 ('BIOS folder',self.choose_firmware)],message='The selected emulator cores are installed. Redux applies built-in controller and playback settings. Systems requiring BIOS files still need your firmware in the BIOS folder.')
-        self.task(work,done,'Downloading emulator cores…',cancellable=True)
+        self.task(work,done,'Downloading emulator coresâ€¦',cancellable=True)

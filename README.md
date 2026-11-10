@@ -6,7 +6,7 @@ A controller-first Windows game library for the living room. Browse games, inser
 
 ## Install
 
-Download **ReduxSetup-0.10.6-win-x64.exe** from [Releases](https://github.com/baysidejr/redux/releases/latest), run it, and open Redux from the Start menu. Requires Windows 10 version 2004 or newer, x64. The default installation is per user under `%LOCALAPPDATA%\Programs\Redux`; administrator access is not required for ordinary installation or use.
+Download **ReduxSetup-0.10.7-win-x64.exe** from [Releases](https://github.com/baysidejr/redux/releases/latest), run it, and open Redux from the Start menu. Requires Windows 10 version 2004 or newer, x64. The default installation is per user under `%LOCALAPPDATA%\Programs\Redux`; administrator access is not required for ordinary installation or use.
 
 A portable ZIP is also available. Extract the complete `Redux` folder and run `Redux.exe`; keep `_internal` beside it. Python is included in both distributions.
 
@@ -52,3 +52,11 @@ Outputs appear in `dist`. The release guard rejects games, BIOS files, account s
 See [SECURITY.md](SECURITY.md) and the [release security review](docs/SECURITY_REVIEW.md). Bundled SDL3 and Roboto Condensed dependencies retain their licenses and provenance under `redux/assets`. Generated distributions include Python, Pillow, PyInstaller and input/font notices in `licenses` and `THIRD_PARTY_NOTICES.txt`. Optional emulator cores have their own upstream terms.
 
 The application and installer are currently unsigned. Publishing source does not grant a license to third-party game artwork, BIOS, games or trademarks.
+
+## Neo Geo CD and 3DO
+
+The recommended setup includes **NeoCD** for Neo Geo CD and **Opera** for 3DO. Both are enabled for integrated playback by default. MAME remains optional for other systems. The recommended set now contains ten distinct cores.
+
+Current NeoCD can fall back to its built-in HLE BIOS; original firmware improves compatibility and belongs in `bios/neocd` (the `neocd` subfolder of your selected BIOS directory). Current Opera includes Opera Boot; optional original BIOS such as `panafz1.bin` or `panafz10.bin` goes directly in the selected BIOS directory. Some games still need original firmware. Switching NeoCD between HLE and original BIOS can invalidate save-state compatibility. No retail firmware is downloaded.
+
+3DO disc headers and Neo Geo CD ISO9660 IPL files can identify supported images and inserted discs. CHD containers still require explicit system metadata. Native initialization of both core DLLs was verified; retail game, physical disc, audio and save-state acceptance for these two systems still needs real-game testing. See the [NeoCD upstream instructions](https://github.com/libretro/neocd_libretro) and [Opera core documentation](https://docs.libretro.com/library/opera/).

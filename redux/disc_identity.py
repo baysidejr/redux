@@ -160,7 +160,20 @@ def _fingerprint(toc,header,identity,source):
     return digest.hexdigest()
 
 
+def parse_3do_header(data):
+    """Read the public Opera DiscLabel structure; no game title is invented."""
+    if len(data)<84 or data[:7]!=b'\x01ZZZZZ\x01':return None
+    block_size=int.from_bytes(data[76:80],'big')
+    blocks=int.from_bytes(data[80:84],'big')
+    if block_size!=2048 or blocks<1:return None
+    name=_text(data[40:72])
+    return MediaIdentity(name or '3DO disc','3do',None,'3DO CD','header',(),
+        {'volume_id':name,'volume_blocks':blocks,'logical_sector_bytes':block_size})
+
+
 def _logical_identity(sectors,first):
+    opera=parse_3do_header(first)
+    if opera:return opera
     saturn=parse_saturn_header(first)
     if saturn:return saturn
     sega_cd=parse_sega_cd_header(first)
@@ -195,6 +208,13 @@ def _logical_identity(sectors,first):
         if not serial:notes.append("No PlayStation game serial was established in the bounded metadata probe.")
         return MediaIdentity(volume.volume_id.strip() or "PlayStation disc","psx",serial,
             "PlayStation CD","filesystem",tuple(notes),details)
+    try:
+        root=_record(pvd[156:156+pvd[156]],volume.volume_blocks)
+        ipl=_root_file(sectors,None,volume.volume_blocks,root,'IPL.TXT')
+        if ipl and re.search(rb'(?im)^[^\r\n,]+\.PRG\s*,',ipl):
+            return MediaIdentity(volume.volume_id.strip() or 'Neo Geo CD disc','neo_geo_cd',None,'Neo Geo CD','filesystem',(),details)
+    except (MediaFormatError,OpticalError,ValueError) as error:
+        notes.append(str(error))
     return MediaIdentity(volume.volume_id.strip() or "Data disc",None,None,"ISO9660 data disc",
         "filesystem",tuple(notes),details)
 

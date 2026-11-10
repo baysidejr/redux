@@ -58,7 +58,8 @@ class CoreInstallerTests(unittest.TestCase):
 
     def test_recommended_set_is_unique_and_excludes_optional_backends(self):
         names=recommended_names()
-        self.assertEqual(len(names),8)
+        self.assertEqual(len(names),10)
+        self.assertIn('neocd',names);self.assertIn('opera',names)
         self.assertNotIn('mame',names);self.assertNotIn('mupen64plus_next',names)
         self.assertTrue(set(names)<=cores.CORES.keys())
 

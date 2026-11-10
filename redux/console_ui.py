@@ -1247,7 +1247,8 @@ class ConsoleApp(ConsoleCores,ConsolePCGames,ConsoleScraper,ConsoleWindows,Conso
         for device in pads:
             items.append((f"PLAYER {device['slot']+1}   ·   {device['name']}",lambda pad=device:self._move_game_player(pad)))
         items.append(("Back to game menu",self.game_menu))
-        self.menu("Controls",items,message="A/B · Console A/B   |   X/Y · Console Y/X\nD-pad / left stick · Directions\nHome or Select + Start held 1s · Menu\nHold Right for 2 seconds on a pad to move it to the next player.")
+        layout=('X → A · B → B · A → C · LB/RB → L/R\nBack → Stop · Start → Play/Pause' if system=='3do' else 'A/B · Console A/B   |   X/Y · Console Y/X')
+        self.menu("Controls",items,message=layout+"\nD-pad / left stick · Directions\nHome or Select + Start held 1s · Menu\nHold Right for 2 seconds on a pad to move it to the next player.")
         self.overlay.update(kind="controls_panel",pads=pads)
 
     def _toggle_game_ab(self):

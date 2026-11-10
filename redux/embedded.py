@@ -18,7 +18,7 @@ CORE_FILES={system:profile.filename for system,profile in PROFILES.items()}
 VALIDATED_DEFAULTS=frozenset({"nes","psx"})
 # Software cores use the common host without individual emulator setup. These
 # choices are separate from the systems with recorded game acceptance above.
-HOSTED_DEFAULTS=frozenset({"nes","psx","snes","genesis","sms","game_gear","sega_cd","saturn","pce","pce_cd","supergrafx","gb","gbc","32x"})
+HOSTED_DEFAULTS=frozenset({"nes","psx","snes","genesis","sms","game_gear","sega_cd","saturn","pce","pce_cd","supergrafx","gb","gbc","32x","neo_geo_cd","3do"})
 _MAX_STATE_FILE=512*1024*1024+16384+13
 
 

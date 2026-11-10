@@ -1,4 +1,6 @@
-# Project status — 0.10.6, 2026-11-09
+# Project status — 0.10.7, 2026-11-09
+
+Release 0.10.7 makes Neo Geo CD (NeoCD) and 3DO (Opera) recommended integrated defaults. The two official downloads and metadata/native init/deinit were verified in isolated probes without retail content. Recommended downloads now contain ten unique cores. 3DO DiscLabel headers and Neo Geo CD IPL metadata are recognized in image and bounded optical inspection paths. Libretro thumbnail lookup includes 3DO. Retail-game and physical-drive acceptance remain unverified for these systems.
 
 Release 0.10.6 adds controller-operated first-launch core setup, System core installation/repair/update, and missing-core download-and-continue for library and physical-disc Play. All eight recommended core downloads, licenses and metadata were live-validated in isolated storage, and the first-launch GUI completed a real recommended-set download. The 859-test suite passes with four environment skips. Downloads are bounded, cancellation-aware and source-restricted; existing DLLs survive download/validation failures. No games or BIOS files are fetched.
 

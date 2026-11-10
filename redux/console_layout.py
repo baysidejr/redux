@@ -20,6 +20,7 @@ from .brand import fuji_shapes
 LANE=1280*520/1920
 LANE_SCREENS=frozenset({"home","systems","collections","settings","saves","media"})
 BADGES={"psx":("PS","#8e24aa"),"nes":("NES","#ec407a"),"snes":("SNES","#7e57c2"),
+    "3do":("3DO","#bb653e"),
     "pc":("PC","#2779b0"),
     "genesis":("GEN","#1976d2"),"saturn":("SAT","#00a6af"),"neo_geo_cd":("NGCD","#65a641"),
     "pce":("PCE","#dc9d38"),"n64":("N64","#4f9a58")}

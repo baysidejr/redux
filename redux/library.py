@@ -22,6 +22,7 @@ from urllib.parse import urlsplit, urlunsplit
 
 SYSTEMS = {
     "pc": "PC Games",
+    "3do": "3DO",
     "unknown": "Unassigned", "nes": "NES", "snes": "SNES", "n64": "Nintendo 64",
     "genesis": "Mega Drive / Genesis", "32x": "32X", "sega_cd": "Sega CD",
     "saturn": "Saturn", "psx": "PlayStation", "neo_geo_cd": "Neo Geo CD",

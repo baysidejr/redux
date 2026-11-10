@@ -234,6 +234,12 @@ def _identify_disc(entry: Path, source: _SectorSource, label: str):
                "payload_offset":source.payload_offset,"track_start_sector":source.start_sector}
     with source.path.open("rb") as stream:
         first = source.read_sector(stream,0)
+        from .disc_identity import parse_3do_header
+        opera=parse_3do_header(first)
+        if opera:
+            if opera.details['volume_blocks']>source.blocks:
+                raise MediaFormatError('3DO volume exceeds the selected image track')
+            return MediaIdentity(opera.title,'3do',None,label,'header',opera.notes,{**details,**opera.details})
         if first[:16] == b"SEGA SEGASATURN ":
             # Share the physical-disc header parser so captured images retain
             # the same region, product and normalized title as the inserted CD.
@@ -258,6 +264,9 @@ def _identify_disc(entry: Path, source: _SectorSource, label: str):
             details["boot_executable"] = executable
             notes = () if serial else ("PlayStation volume marker is present; a standard game serial was not found in SYSTEM.CNF.",)
             return MediaIdentity(entry.stem,"psx",serial,label,"filesystem",notes,details)
+        ipl=_root_file(source,stream,blocks,root,'IPL.TXT')
+        if ipl and re.search(rb'(?im)^[^\r\n,]+\.PRG\s*,',ipl):
+            return MediaIdentity(entry.stem,'neo_geo_cd',None,label,'filesystem',(),details)
         return MediaIdentity(entry.stem,None,None,label,"filesystem",
             ("ISO9660 volume found; no supported platform marker was established.",),details)
 
