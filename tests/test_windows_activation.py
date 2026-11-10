@@ -152,7 +152,37 @@ class WindowsSingleInstanceTests(unittest.TestCase):
                 self.assertTrue(security.ConvertSecurityDescriptorToStringSecurityDescriptorW(
                     descriptor, 1, 4, ctypes.byref(text), None))
                 try:
-                    self.assertIn(_user_sid(), text.value)
+                    # SDDL may abbreviate the built-in Administrator SID as
+                    # LA. Inspect binary ACE SIDs rather than textual aliases.
+                    present, defaulted = wintypes.BOOL(), wintypes.BOOL()
+                    acl = ctypes.c_void_p()
+                    security.GetSecurityDescriptorDacl.argtypes = [ctypes.c_void_p,
+                        ctypes.POINTER(wintypes.BOOL), ctypes.POINTER(ctypes.c_void_p),
+                        ctypes.POINTER(wintypes.BOOL)]
+                    security.GetSecurityDescriptorDacl.restype = wintypes.BOOL
+                    self.assertTrue(security.GetSecurityDescriptorDacl(descriptor,
+                        ctypes.byref(present), ctypes.byref(acl), ctypes.byref(defaulted)))
+                    self.assertTrue(present.value and acl.value)
+                    ace_count = ctypes.c_ushort.from_address(acl.value + 4).value
+                    security.GetAce.argtypes = [ctypes.c_void_p, wintypes.DWORD,
+                                                ctypes.POINTER(ctypes.c_void_p)]
+                    security.GetAce.restype = wintypes.BOOL
+                    security.ConvertSidToStringSidW.argtypes = [ctypes.c_void_p,
+                                                               ctypes.POINTER(wintypes.LPWSTR)]
+                    security.ConvertSidToStringSidW.restype = wintypes.BOOL
+                    kernel.LocalFree.argtypes = [ctypes.c_void_p]
+                    sids = []
+                    for index in range(ace_count):
+                        ace, sid_text = ctypes.c_void_p(), wintypes.LPWSTR()
+                        self.assertTrue(security.GetAce(acl, index, ctypes.byref(ace)))
+                        self.assertEqual(ctypes.c_ubyte.from_address(ace.value).value, 0)
+                        self.assertTrue(security.ConvertSidToStringSidW(ace.value + 8,
+                                                                      ctypes.byref(sid_text)))
+                        try:
+                            sids.append(sid_text.value)
+                        finally:
+                            kernel.LocalFree(ctypes.cast(sid_text, ctypes.c_void_p))
+                    self.assertIn(_user_sid(), sids)
                     self.assertIn(";;;SY)", text.value)
                     self.assertIn(";;;BA)", text.value)
                     self.assertNotIn(";;;WD)", text.value)
