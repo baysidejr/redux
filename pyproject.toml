@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "redux-media-library"
-version = "0.10.8"
+version = "0.10.9"
 description = "Independent local media library for standard PC drives and removable storage"
 requires-python = ">=3.11"
 dependencies = ["Pillow==13.0.0"]

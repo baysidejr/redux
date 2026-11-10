@@ -30,8 +30,16 @@ credentials. Enter those again on a different Windows account or PC.
 **Find game artwork** can search for the selected game, fill the current view or
 fill the whole library. A single-game search shows matches for you to choose;
 **Change search title** changes only that lookup, not your library title. Bulk
-scraping applies only a unique matching system/title and compatible known region
-and year. Ambiguous matches remain unchanged and are counted in the summary.
+scraping applies only a matching system/title and compatible known region
+and year. An exact regional release wins over worldwide or regionless entries;
+multiple entries at the best region still require confirmation. TheGamesDB's
+country/region identifiers distinguish regional releases, including US and
+Brazilian NTSC entries. Known trailing disc/revision, region and language dump
+tags are ignored for artwork lookup only; editions, subtitles and library/media
+identity are retained. A title's region tag is used before the preferred-region
+setting when no region metadata is present. Ambiguous matches remain unchanged
+and the completion menu offers **Review unmatched games** for controller-based
+match selection.
 B cancels after the current bounded read, retaining earlier completed games.
 
 **Download options** controls preferred region/language, image types, generated
@@ -84,7 +92,8 @@ names/media and the selected synopsis/genre language when supplied. With an
 explicit region, artwork falls back only to worldwide or regionless images;
 foreign-region-only artwork is left missing rather than mislabeled. The
 candidate's region describes this requested projection, not verification of a
-particular physical release. HFSDB chooses
+particular physical release. TheGamesDB supplies regional identifiers for its
+individual release records; Redux uses those for automatic matching. HFSDB chooses
 localized title/description fields and a matching regional release date when
 available. Both fall back to English/French. TheGamesDB, IGDB and ArcadeDB do not
 currently provide translated descriptions through these adapters. Libretro uses
@@ -117,8 +126,7 @@ The fixture suite exercises all six adapters, role mapping, wrong-platform
 filtering, special-character credentials, cancellation, API response limits,
 redirect isolation, and sanitized authentication/quota errors. Live account
 services remain dependent on actual configured credentials. ScreenScraper,
-TheGamesDB, HFSDB and IGDB were tested with fixtures; no live authenticated scrape
-is claimed for those four services on this machine. The full 0.9.0 suite passed
+TheGamesDB, HFSDB and IGDB were initially tested with fixtures. The full 0.9.0 suite passed
 808 tests with no failures, errors or skips; its versioned record is
 `analysis/test_results_0.9.0.json`.
 
@@ -127,6 +135,14 @@ World Series Baseball 2 title to World Series Baseball II (USA), with box art
 and a screenshot. A real ArcadeDB lookup matched `mslug` and returned cover,
 screenshot and logo roles. Evidence:
 `analysis/scraper_reference/live-provider-acceptance.json`.
+
+On 2026-11-10, the 0.10.9 TheGamesDB bulk regression was live-tested with the
+configured account in an isolated copy of the installed library. Five games
+received cover, screenshot and mixed tile artwork, one kept existing artwork,
+and two non-exact titles remained available for manual review. Reopening the
+database and decoding the saved files verified persistence. ScreenScraper,
+HFSDB and IGDB still require authenticated live acceptance. Evidence:
+`analysis/artwork-batch-0.10.9/result.json`.
 
 ## Primary references
 

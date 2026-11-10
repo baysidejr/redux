@@ -1,4 +1,6 @@
-# Project status — 0.10.8, 2026-11-09
+# Project status — 0.10.9, 2026-11-10
+
+Release 0.10.9 fixes bulk artwork matching. TheGamesDB regional release identifiers are retained, exact-region matches take priority over regionless entries, and trailing disc/revision/region/language labels are removed only for artwork lookup. Editions and game/media identity stay intact. The completion menu offers controller-operated review of unresolved matches. The full suite passed 874 tests with four Windows privilege skips. A live authenticated eight-game TheGamesDB batch in an isolated library updated five games, retained existing art for one and left two non-exact titles for review, with no errors. Cover, screenshot and mixed tile files were decoded and verified after reopening the database; the installed library was unchanged during acceptance.
 
 Release 0.10.8 adds BigPEmu 1.221 as a recommended standalone backend for Atari Jaguar and Jaguar CD. Direct author download is pinned by SHA-256 and cross-checked against the author-published size/FNV hash; full archive layout and licensing notices are retained. Setup, missing-backend Play, portable data arguments, backend discovery and external-process lifecycle/menu support are wired. Native menu boot, owned pause/resume and graceful close passed; no retail gameplay or physical-disc acceptance is claimed. BigPEmu save states and filters remain in its own UI. The recommended set is ten integrated cores plus BigPEmu.
 

@@ -282,13 +282,26 @@ def _media_add(media,role,url,base=""):
     if value and role not in media:media[role]=value
 
 
-def _title(game):
-    value=str(game.get("title","") or "").strip()
-    # Strip dump region/language tags, retaining arbitrary edition/disc names.
-    known={"usa","us","europe","eu","japan","jp","world","en","fr","de","es","it","sv","nl","pt","ja","ko","zh"}
+def artwork_title(value):
+    """Strip trailing dump labels for artwork lookup, never editions or subtitles.
+
+    Disc/revision labels identify media, but share the game's artwork. This does
+    not rename the library entry or change its playback/disc identity.
+    """
+    value=str(value or "").strip()
+    known={"usa","us","u","europe","eur","eu","e","japan","jp","j","world","wor",
+           "en","fr","de","es","it","sv","nl","pt","ja","ko","zh"}
     while match:=re.search(r"\s*[\[(]([^()\[\]]+)[\])]\s*$",value):
-        if not all(part.strip().casefold() in known for part in match[1].split(",")):break
+        tag=match[1].strip().casefold()
+        if not (all(part.strip() in known for part in tag.split(",")) or
+                re.fullmatch(r"(?:disc|disk)\s+\d+(?:\s+of\s+\d+)?|rev(?:ision)?\s+\d+(?:\.\d+)*",tag)):
+            break
         value=value[:match.start()].strip()
+    return value
+
+
+def _title(game):
+    value=artwork_title(game.get("title",""))
     if not value or len(value)>240 or any(ord(c)<32 for c in value):raise ScraperError("Choose a game with a valid title before scraping.")
     return value
 
@@ -306,7 +319,12 @@ def _region(value):
 
 def _game_region(game):
     """An identified release region wins; the scraper setting is its fallback."""
-    return _region(game.get("region")) or _region(game.get("scrape_region"))
+    explicit=_region(game.get("region"))
+    if explicit:return explicit
+    tags=re.findall(r"[\[(]([^()\[\]]+)[\])]",str(game.get("title") or ""))
+    regions={_region(tag) for tag in tags} - {""}
+    if len(regions)==1:return regions.pop()
+    return _region(game.get("scrape_region"))
 
 
 def _languages(game):
@@ -397,6 +415,19 @@ def _tg_media(data,game_id):
     return media
 
 
+def _tg_region(item):
+    # TGDB's live responses include country_id/region_id even though the older
+    # public Swagger schema omits them. NTSC (1) alone is not a USA release:
+    # for example Virtua Fighter 2 has separate US (50) and Brazil (7) entries.
+    country=str(item.get("country_id") or "0")
+    region=str(item.get("region_id") or "0")
+    if country in {"50","28"}:return {"50":"us","28":"jp"}[country]
+    if region=="1":return "country:"+country if country!="0" else "ntsc"
+    if region in {"2","4","6"}:return {"2":"us","4":"jp","6":"eu"}[region]
+    if region!="0":return "tg-region:"+region
+    return "country:"+country if country!="0" else ""
+
+
 def _thegamesdb(game,credentials,transport,cancelled):
     system,platform=_system(game,_TG);key,=_required(credentials,"api_key")
     data=_request(transport,"https://api.thegamesdb.net/v1/Games/ByGameName",params={"apikey":key,"name":_title(game),"filter[platform]":platform,"fields":"overview,publishers,genres","include":"boxart"},cancelled=cancelled)
@@ -409,7 +440,7 @@ def _thegamesdb(game,credentials,transport,cancelled):
         if not isinstance(item,dict) or not item.get("id") or not item.get("game_title"):continue
         if item.get("platform") is not None and str(item['platform'])!=str(platform):continue
         result.append(ScrapeCandidate("thegamesdb",str(item["id"]),_text(item["game_title"]),system,
-            year=_year(item.get("release_date")),description=_text(item.get("overview")),media=_tg_media(boxart,item['id'])))
+            region=_tg_region(item),year=_year(item.get("release_date")),description=_text(item.get("overview")),media=_tg_media(boxart,item['id'])))
     return result
 
 

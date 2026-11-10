@@ -345,5 +345,20 @@ class ConsoleScraperTests(unittest.TestCase):
             self.assertIs(app.scraper_settings(),current)
         self.assertEqual(old.load()["provider"],"igdb")
 
+    def test_bulk_summary_offers_controller_review_for_unmatched_games(self):
+        app=self.app
+        app.scraper_service=lambda:Mock()
+        app.library.game=lambda identity:{'id':identity,'title':f'Game {identity}'}
+        app.open_game=Mock();app.scrape_selected_game=Mock()
+        app.scrape_game_ids([7,9])
+        _work,done,_description,_kwargs=app.task_calls[-1]
+        done(ScrapeBatchResult(updated=[7],unmatched=[9]))
+        self.assertIn('1 updated',app.overlay['message'])
+        self.choose('Review unmatched games')
+        self.assertEqual(app.overlay['title'],'Choose artwork for a game')
+        self.choose('Game 9')
+        app.open_game.assert_called_once_with(9)
+        app.scrape_selected_game.assert_called_once_with()
+
 
 if __name__=="__main__":unittest.main()

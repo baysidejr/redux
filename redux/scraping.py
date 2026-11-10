@@ -170,9 +170,9 @@ def compose_tile(destination, title, sources, *, style="mixed"):
 
 
 def normalized_title(value):
-    value = unicodedata.normalize("NFKC", str(value)).casefold().strip()
-    value = re.sub(r"\s*[\[(](?:usa|us|europe|eur|japan|jp|world|en(?:,[a-z]{2})*)[\])]\s*", " ", value)
-    value = re.sub(r"\bii\b$", "2", value)
+    value = unicodedata.normalize("NFKC", providers.artwork_title(value)).casefold().strip()
+    romans={"i":"1","ii":"2","iii":"3","iv":"4","v":"5","vi":"6","vii":"7","viii":"8","ix":"9","x":"10"}
+    value = re.sub(r"\b(i|ii|iii|iv|v|vi|vii|viii|ix|x)$", lambda match:romans[match[0]], value)
     return re.sub(r"[^a-z0-9]", "", value)
 
 
@@ -184,15 +184,21 @@ def _region(value):
 
 def exact_candidate(game, candidates, preferred_region="us"):
     matches = {}
-    wanted_region = _region(game.get("region") or preferred_region)
+    wanted_region = _region(providers._game_region(dict(game,scrape_region=preferred_region)))
+    best_rank = 3
     for candidate in candidates:
         if candidate.system != game["system"] or normalized_title(candidate.title) != normalized_title(game["title"]):
             continue
-        if candidate.region and _region(candidate.region) not in {wanted_region, "world", "wor"}:
+        region = _region(candidate.region)
+        if region and region not in {wanted_region, "world", "wor"}:
             continue
         if game.get("year") and candidate.year and int(game["year"]) != int(candidate.year):
             continue
-        matches[(candidate.provider, candidate.id)] = candidate
+        rank = 0 if region and region == wanted_region else 1 if region in {"world", "wor"} else 2
+        if rank < best_rank:
+            matches.clear(); best_rank = rank
+        if rank == best_rank:
+            matches[(candidate.provider, candidate.id)] = candidate
     return next(iter(matches.values())) if len(matches) == 1 else None
 
 

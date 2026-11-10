@@ -219,6 +219,30 @@ class ScrapingServiceTests(unittest.TestCase):
         self.assertIsNone(exact_candidate(game,[replace(candidate,year=1997)]))
         self.assertIs(exact_candidate(game,[candidate,candidate]),candidate)
 
+    def test_batch_prefers_identified_region_over_regionless_and_foreign_duplicates(self):
+        self.library.update_metadata(self.game['id'],title='Game (USA) (Disc 1) (Rev 1)',region='')
+        self.searcher.return_value=[self.candidate(id='legacy',region=''),self.candidate(id='jp',region='jp'),
+                                   self.candidate(id='eu',region='eu'),self.candidate(id='br',region='country:7'),
+                                   self.candidate(id='us',region='us')]
+        result=self.service().batch([self.game['id']])
+        self.assertEqual(result.updated,[self.game['id']])
+        self.assertFalse(result.unmatched or result.errors)
+        self.assertEqual(self.detailer.call_args.args[0].id,'us')
+        game=self.library.game(self.game['id'])
+        self.assertEqual(game['title'],'Game (USA) (Disc 1) (Rev 1)')
+        self.assertTrue(all(self.library.artwork_for(game,role).is_file() for role in ARTWORK_FIELDS))
+        # Reopening the library must retain every applied role, not just downloads.
+        reopened=Library(self.library.root)
+        self.assertTrue(all(reopened.artwork_for(reopened.game(game['id']),role).is_file() for role in ARTWORK_FIELDS))
+
+    def test_batch_keeps_truly_ambiguous_releases_and_respects_title_region(self):
+        game=dict(self.game,title='Game (Japan) (Disc 1)',region='')
+        us=self.candidate(id='us',region='us');jp=self.candidate(id='jp',region='jp')
+        self.assertIs(exact_candidate(game,[us,jp],preferred_region='us'),jp)
+        self.assertIsNone(exact_candidate(game,[jp,replace(jp,id='jp-other')]))
+        self.assertIsNone(exact_candidate(game,[replace(jp,title='Game (Special Edition)')]))
+        self.assertEqual(exact_candidate(dict(game,title='Game III (Japan)'),[replace(jp,title='Game 3')]).title,'Game 3')
+
     def test_changed_detail_identity_is_rejected_before_any_download(self):
         original=self.candidate()
         for changed in (replace(original,system="psx"),replace(original,id="other"),replace(original,provider="igdb")):

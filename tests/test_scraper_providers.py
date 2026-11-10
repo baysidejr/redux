@@ -79,7 +79,7 @@ class ProviderTests(unittest.TestCase):
                'synopsis':[{'langue':'en','text':'English'},{'langue':'de','text':'Deutsch'}],
                'genres':[{'noms':{'nom_en':'Sports','nom_de':'Sport'}}],
                'medias':[{'type':'box-2D','region':'us','url':'https://media.invalid/us.png'},{'type':'box-2D','region':'eu','url':'https://media.invalid/eu.png'}]}
-        game={**self.game,'region':'','scrape_region':'eu','scrape_language':'de'}
+        game={**self.game,'title':'World Series Baseball II','region':'','scrape_region':'eu','scrape_language':'de'}
         c=providers.search('screenscraper',game,self.ss,transport=Replies({'response':{'jeux':[entry]}}))[0]
         self.assertEqual((c.title,c.region,c.description,c.genre),('EU name','eu','Deutsch','Sport'))
         self.assertEqual(c.media['cover'],'https://media.invalid/eu.png')
@@ -104,7 +104,7 @@ class ProviderTests(unittest.TestCase):
         c=providers.search('screenscraper',self.game,self.ss,transport=request())[0]
         self.assertEqual(c.region,'us')
         self.assertEqual(set(c.media),{'hero','screenshot'})
-        unknown={**self.game,'region':'','scrape_region':''}
+        unknown={**self.game,'title':'World Series Baseball II','region':'','scrape_region':''}
         c=providers.search('screenscraper',unknown,self.ss,transport=request())[0]
         self.assertIn('cover',c.media)
 
@@ -145,6 +145,29 @@ class ProviderTests(unittest.TestCase):
         self.assertEqual(query['name'],[title])
         self.assertIn('pc',next(info for info in providers.provider_info() if info['id']=='thegamesdb')['systems'])
 
+    def test_thegamesdb_preserves_regional_release_identity_for_bulk_matching(self):
+        # Reproduces the live Virtua Fighter 2 result set (IDs are fixture-only).
+        releases=[(1,1,50,'us'),(2,4,28,'jp'),(3,6,18,'eu'),(4,1,7,'country:7'),
+                  (5,2,0,'us'),(6,0,0,''),(7,99,0,'tg-region:99')]
+        request=Replies({'data':{'games':[dict(id=i,game_title='Virtua Fighter 2',platform=17,
+            region_id=region,country_id=country) for i,region,country,_ in releases]}})
+        result=providers.search('thegamesdb',dict(title='Virtua Fighter 2 (USA)',system='saturn'),
+                                {'api_key':'fixture-key'},transport=request)
+        self.assertEqual([c.region for c in result],[r[3] for r in releases])
+
+    def test_artwork_search_removes_media_labels_but_keeps_edition_and_subtitle(self):
+        for title,expected in [('Driver 2 (USA) (Disc 1) (Rev 1)','Driver 2'),
+                               ('Eternal Champions (U)','Eternal Champions'),
+                               ('Game (Japan) (En,Ja) (Disk 2 of 3) (Revision 1.2)','Game'),
+                               ('Game (Special Edition) (USA) (Disc 1)','Game (Special Edition)'),
+                               ('Game (Remastered)','Game (Remastered)')]:
+            with self.subTest(title=title):
+                request=Replies({'data':{'games':[]}})
+                providers.search('thegamesdb',dict(title=title,system='psx'),{'api_key':'fixture-key'},transport=request)
+                self.assertEqual(parse_qs(urlsplit(request.calls[0][0]).query)['name'],[expected])
+        self.assertEqual(providers._game_region(dict(title='Game (Japan) (Disc 1)',scrape_region='us')),'jp')
+        self.assertEqual(providers._game_region(dict(title='Game (USA)',region='Europe',scrape_region='jp')),'eu')
+
     def test_thegamesdb_live_images_response_shape_supplies_screenshot_and_logo(self):
         candidate=providers.ScrapeCandidate('thegamesdb','131231','Clair Obscur: Expedition 33','pc',
             media={'cover':'https://cdn.thegamesdb.net/images/original/boxart/front/131231.jpg'})
@@ -176,7 +199,7 @@ class ProviderTests(unittest.TestCase):
         item={'id':12,'system':{'id':82924},'name_en':'Baseball','name_fr':'Baseball FR','description_en':'English','description_fr':'Francais',
               'released_at_US':'1996-01-01T00:00:00','released_at_PAL':'1997-01-01T00:00:00','medias':[]}
         creds={'username':'api','password':'password'}
-        game={**self.game,'region':'','scrape_region':'eu','scrape_language':'fr'}
+        game={**self.game,'title':'World Series Baseball II','region':'','scrape_region':'eu','scrape_language':'fr'}
         c=providers.search('hfsdb',game,creds,transport=Replies({'token':'token'},{'results':[item]}))[0]
         self.assertEqual((c.title,c.description,c.year),('Baseball FR','Francais',1997))
         game['scrape_language']='de'
@@ -235,7 +258,7 @@ class ProviderTests(unittest.TestCase):
 
     def test_libretro_uses_scraper_region_when_original_region_is_unknown(self):
         tree={'tree':[{'path':'Named_Boxarts/World Series Baseball II (USA).png'},{'path':'Named_Boxarts/World Series Baseball II (Europe).png'}]}
-        result=providers.search('libretro',{**self.game,'region':'','scrape_region':'eu'},transport=Replies(tree))
+        result=providers.search('libretro',{**self.game,'title':'World Series Baseball II','region':'','scrape_region':'eu'},transport=Replies(tree))
         self.assertEqual([c.region for c in result],['Europe'])
 
     def test_cancelled_lookup_never_sends_credentials(self):

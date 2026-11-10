@@ -160,7 +160,7 @@ class ConsoleScraper:
             ("Tile style  ·  " + {"mixed":"Screenshot + box", "screenshot":"Screenshot", "cover":"Full box cover"}[options["tile_style"]], self.scraper_tile_style_menu),
             ("Replace existing art  ·  " + ("ON" if options["overwrite"] else "OFF"), self.toggle_scraper_overwrite),
             ("Back", self.open_scraper_settings)],
-            message="Default: keep existing artwork and fill missing images. Bulk downloads accept only a unique matching title and system; uncertain matches stay unchanged.")
+            message="Default: keep existing artwork and fill missing images. Bulk downloads prefer the matching release region; uncertain matches can be reviewed afterward.")
 
     def _set_scraper_option(self, name, value, back):
         self.scraper_settings().save({name:value}); back()
@@ -236,7 +236,7 @@ class ConsoleScraper:
             if candidates is None:
                 self.status.set("Artwork lookup cancelled"); return
             items = [(candidate.title + (f"  ·  {candidate.year}" if candidate.year else "") +
-                       ("  ·  " + candidate.region if candidate.region else ""),
+                       ("  ·  " + self._scrape_region_label(candidate.region) if candidate.region else ""),
                        lambda match=candidate:self.apply_scrape_match(identity, match)) for candidate in candidates]
             items.extend([("Change search title", lambda:self.edit_scraper_query(identity, query or game["title"])),
                           ("Artwork service settings", self.open_scraper_settings), ("Back", lambda:None)])
@@ -255,6 +255,13 @@ class ConsoleScraper:
                 self.selected_id = pending[0]; self.scrape_selected_game(pending[1])
         self.text_input("Find game artwork", "Search title", save, query, credential=True,
                         hint="Use the game's title. This changes the search only, not your library title.", return_callback=returned)
+
+    @staticmethod
+    def _scrape_region_label(region):
+        if region.startswith("country:"):
+            return "Brazil" if region=="country:7" else "Other country"
+        if region.startswith("tg-region:"):return "Other release region"
+        return {"us":"North America", "eu":"Europe / PAL", "jp":"Japan", "ntsc":"NTSC (country unspecified)"}.get(region,region)
 
     def apply_scrape_match(self, identity, candidate):
         service = self.scraper_service()
@@ -282,8 +289,25 @@ class ConsoleScraper:
             if result.cancelled: summary = "Cancelled · " + summary
             if result.errors: summary += "\n" + result.errors[0][1]
             if result.unmatched: summary += "\nChoose artwork for individual games to resolve uncertain matches."
-            self.menu("Artwork downloads", [("Back to artwork settings", self.open_scraper_settings)], message=summary)
+            items=[]
+            if result.unmatched:
+                pending=tuple(result.unmatched)
+                items.append(("Review unmatched games", lambda:self.review_scrape_matches(pending)))
+            items.append(("Back to artwork settings", self.open_scraper_settings))
+            self.menu("Artwork downloads", items, message=summary)
         self.task(lambda:service.batch(identities, cancelled=self.cancelled, progress=progress), done, "Preparing artwork downloads…")
+
+    def review_scrape_matches(self, identities):
+        items=[]
+        for identity in identities:
+            try:game=self.library.game(identity)
+            except KeyError:continue
+            def choose(identity=identity):
+                self.open_game(identity)
+                self.scrape_selected_game()
+            items.append((game["title"],choose))
+        self.menu("Choose artwork for a game",items+[("Back to artwork settings",self.open_scraper_settings)],
+                  message="These games need a match. Choose a game, then confirm its title and release region.")
 
     def _credential_keyboard(self):
         prompt = self.text_prompt
