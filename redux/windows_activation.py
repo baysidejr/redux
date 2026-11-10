@@ -235,6 +235,7 @@ class SingleInstance:
         self._closed = threading.Event()
         self._address = None
         self._connection = None
+        self._connection_lock = threading.Lock()
         self._owner = False
 
     def acquire(self, activation: Activation, *, timeout=4.0) -> bool:
@@ -311,9 +312,13 @@ class SingleInstance:
                 _, error = pending.GetOverlappedResult(True)
                 if error:
                     raise OSError(error, "Named pipe connection failed")
-                connection = self._connection = PipeConnection(handle)
-                self._listener = None
-                with connection:
+                connection = PipeConnection(handle)
+                with self._connection_lock:
+                    self._connection = connection
+                    self._listener = None
+                try:
+                    if self._closed.is_set():
+                        return
                     payload = _receive(connection)
                     argv = payload.get("argv")
                     valid = (isinstance(argv, list) and len(argv) <= 64
@@ -323,13 +328,23 @@ class SingleInstance:
                         connection.send_bytes(b'{"accepted":true}')
                     else:
                         connection.send_bytes(b'{"accepted":false}')
+                finally:
+                    self._close_connection(connection)
             except (OSError, EOFError, ValueError, UnicodeError):
                 pass
             finally:
                 if connection is None and handle is not None:
                     _winapi.CloseHandle(handle)
                     if self._listener == handle:self._listener = None
+
+    def _close_connection(self, expected=None):
+        # PipeConnection.close is not safe when two threads close the same
+        # native handle concurrently. Both shutdown paths use this lock.
+        with self._connection_lock:
+            connection = self._connection
+            if connection is not None and (expected is None or connection is expected):
                 self._connection = None
+                connection.close()
 
     def _release_mutex(self):
         if self._mutex is not None:
@@ -341,8 +356,7 @@ class SingleInstance:
 
     def close(self):
         self._closed.set()
-        if self._connection is not None:
-            self._connection.close()
+        self._close_connection()
         if self._thread is not None:
             self._thread.join(timeout=1.5)
             self._thread = None
