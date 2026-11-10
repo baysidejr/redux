@@ -170,7 +170,7 @@ class ConsoleMedia:
         from .ui_assets import project_root
         core=find_core(project_root(),disc.system)
         if not core:
-            self.notice("Playback core unavailable","This disc needs an installed, compatible integrated core.");return
+            self.offer_core_download(disc.system,self.play_inserted_disc);return
         if disc.system=="saturn":
             firmware=self.firmware_directory()
             names=("mpr-17933.bin",) if (disc.identity.details or {}).get("area_symbols") in {"U","E"} else ("sega_101.bin","mpr-17933.bin")

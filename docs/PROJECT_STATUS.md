@@ -1,4 +1,6 @@
-# Project status — 0.10.5, 2026-11-09
+# Project status — 0.10.6, 2026-11-09
+
+Release 0.10.6 adds controller-operated first-launch core setup, System core installation/repair/update, and missing-core download-and-continue for library and physical-disc Play. All eight recommended core downloads, licenses and metadata were live-validated in isolated storage, and the first-launch GUI completed a real recommended-set download. The 859-test suite passes with four environment skips. Downloads are bounded, cancellation-aware and source-restricted; existing DLLs survive download/validation failures. No games or BIOS files are fetched.
 
 Release 0.10.5 adds a per-user Windows installer, portable release guards and a public-source security review. Pillow is updated to 13.0.0; declared dependency auditing reports no known vulnerabilities. The 851-test suite passes with four Windows symlink-privilege skips. Installer install/reinstall/uninstall acceptance preserves user library and BIOS files and the existing startup preference. Activation pipe shutdown is serialized to prevent concurrent native-handle cleanup. See SECURITY_REVIEW.md for scope and remaining limits.
 

@@ -106,7 +106,7 @@ class SecondaryScreens:
             backends=getattr(self,"detected_backends",())
             self._setting_row("settings:detect","Detect local backends","Look in local emulator folders",300,self._configure_detected_backends,icon="search",value=f"{len(backends)} detected")
             self._setting_row("settings:firmware","Firmware directory",str(self.firmware_directory()),382,self.choose_firmware,icon="storage")
-            self.text(618,501,"Playback options follow the selected system backend.",13,MUTED,width=600)
+            self._setting_row('settings:core-setup','Emulator setup','Download, repair or update integrated cores',464,self.core_setup_menu,icon='play')
         elif section=="input":
             connected=getattr(self.controller,"connected_indices",()) if self.controller else ()
             self.panel(618,218,630,76,PANEL,3)

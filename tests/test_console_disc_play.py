@@ -147,8 +147,9 @@ class ConsoleDiscPlayTests(unittest.TestCase):
         self.find_core.assert_not_called()
         self.app.discs.active = self.disc
         self.find_core.return_value = None
-        self.app.play_inserted_disc()
-        self.assertEqual(self.app.notice.call_args.args[0], "Playback core unavailable")
+        with patch.object(self.app,'offer_core_download') as offer:
+            self.app.play_inserted_disc()
+        offer.assert_called_once_with(self.disc.system,self.app.play_inserted_disc)
         self.app.task.assert_not_called()
 
     def test_worker_forwards_selected_fingerprint_metadata_cancellation_and_progress(self):

@@ -178,3 +178,7 @@ For automation help, run `python -m redux --help` or append `--help` to `import`
 ## Validation still required
 
 Physical USB/internal-drive acceptance, unusual mixed-mode layouts, audio offsets/jitter, real SSD/SD hot-removal behavior, and a custom hardware-board interface require supplied hardware and representative media. Full-disc subchannel/protection/pregap imaging remains outside the implemented main-channel scope. Full commercial-game compatibility and an accepted backend for every listed platform remain outside this release's verified scope. See [project status](PROJECT_STATUS.md) for the current evidence and remaining work.
+
+## Emulator setup
+
+A fresh installation offers Download recommended emulators on first launch. Set up later keeps PC games available. System → Emulators & firmware → Emulator setup installs the recommended set or individual cores and offers explicit repair/update. Guide/A/B navigation uses the normal controller menus; progress and cancellation use the standard task screen. Missing integrated cores on library or inserted-disc Play offer Download and continue. Existing external-emulator choices remain unchanged unless integrated playback is explicitly selected. Updates are blocked while a game is running; no automatic background core updates occur. Core changes may make older save states incompatible. User games, battery saves and firmware are retained. Required retail BIOS must be supplied by the user.

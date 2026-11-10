@@ -44,7 +44,9 @@ def display_title(game):
     return title.split(" (USA)")[0].split(" (Europe)")[0].split(" (Japan)")[0] or title
 
 
-class ConsoleApp(ConsolePCGames,ConsoleScraper,ConsoleWindows,ConsoleFileBrowser,ConsoleIngame,ConsoleControllers,ConsoleMedia,ConsoleEditors,OverlayScreens,ReferenceLayout,SecondaryScreens,ToolsApp):
+from .console_cores import ConsoleCores
+
+class ConsoleApp(ConsoleCores,ConsolePCGames,ConsoleScraper,ConsoleWindows,ConsoleFileBrowser,ConsoleIngame,ConsoleControllers,ConsoleMedia,ConsoleEditors,OverlayScreens,ReferenceLayout,SecondaryScreens,ToolsApp):
     def __init__(self,root,library_root=None,*,activation=None):
         from .windows_activation import parse_activation
         from .windows_gaming import WindowsGamingExperience
@@ -157,6 +159,7 @@ class ConsoleApp(ConsolePCGames,ConsoleScraper,ConsoleWindows,ConsoleFileBrowser
         self._start_media_watch()
         if self.all_games:self.focus="hero:play"
         root.after(40,self._tick)
+        root.after(500,self.first_core_setup)
 
     def _build(self):
         self.canvas=tk.Canvas(self.root,bg=BACKGROUND,highlightthickness=0,bd=0,takefocus=True)
@@ -693,6 +696,9 @@ class ConsoleApp(ConsolePCGames,ConsoleScraper,ConsoleWindows,ConsoleFileBrowser
         from .embedded import find_core,VALIDATED_DEFAULTS,HOSTED_DEFAULTS
         if find_core(project_root(),system):
             items.insert(0,("Use integrated core"+(" (compatibility testing)" if system not in VALIDATED_DEFAULTS else ""),lambda:self._integrated_setting(system,True)))
+        else:
+            from .core_profiles import PROFILES
+            if system in PROFILES:items.insert(0,('Download integrated core',lambda:self.offer_core_download(system,lambda:self._backend_menu(system))))
         items.extend([("Advanced executable and arguments",lambda:self._advanced_launcher(system)),("Cancel",lambda:None)])
         self.menu(SYSTEMS[system]+" playback",items,message="Choose an installed backend or configure your own executable.")
 
@@ -930,6 +936,8 @@ class ConsoleApp(ConsolePCGames,ConsoleScraper,ConsoleWindows,ConsoleFileBrowser
         if game["system"]=="pc":self._play_pc_game(game);return
         from .embedded import find_core,VALIDATED_DEFAULTS,HOSTED_DEFAULTS
         core=find_core(project_root(),game["system"])
+        if not core and self.preferences.get('integrated',{}).get(game['system'],game['system'] in HOSTED_DEFAULTS):
+            self.offer_core_download(game['system'],self.play);return
         if core and self.preferences.get("integrated",{}).get(game["system"],game["system"] in HOSTED_DEFAULTS):
             self._start_integrated_game(game,core);return
         from .playback import assess_readiness

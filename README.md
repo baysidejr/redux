@@ -6,11 +6,11 @@ A controller-first Windows game library for the living room. Browse games, inser
 
 ## Install
 
-Download **ReduxSetup-0.10.5-win-x64.exe** from [Releases](https://github.com/baysidejr/redux/releases/latest), run it, and open Redux from the Start menu. Requires Windows 10 version 2004 or newer, x64. The default installation is per user under `%LOCALAPPDATA%\Programs\Redux`; administrator access is not required for ordinary installation or use.
+Download **ReduxSetup-0.10.6-win-x64.exe** from [Releases](https://github.com/baysidejr/redux/releases/latest), run it, and open Redux from the Start menu. Requires Windows 10 version 2004 or newer, x64. The default installation is per user under `%LOCALAPPDATA%\Programs\Redux`; administrator access is not required for ordinary installation or use.
 
 A portable ZIP is also available. Extract the complete `Redux` folder and run `Redux.exe`; keep `_internal` beside it. Python is included in both distributions.
 
-Games, retail BIOS firmware, emulator cores and artwork-provider accounts are not included. Add your own media and firmware. Optional cores are installed separately from official upstream sources; see [core setup](tools/cores/README.txt). Provider accounts are configured under System in the controller-operated interface.
+Games, retail BIOS firmware, emulator cores and artwork-provider accounts are not included. Add your own media and firmware. On first launch, choose **Download recommended emulators**. Redux downloads official cores, licenses and metadata and applies built-in defaults. Use **System → Emulators & firmware → Emulator setup** to install, repair or update them later. Pressing Play on a supported game with a missing core also offers download and continue. No terminal or separate Python installation is needed. Provider accounts are configured under System in the controller-operated interface.
 
 The installer offers optional desktop and Windows startup shortcuts. Upgrades preserve the library. Uninstall removes installed application files and leaves user-created library, games and BIOS files in place. Scraper credentials remain in Windows-protected per-user storage and must be configured separately on another PC.
 

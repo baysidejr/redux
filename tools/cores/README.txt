@@ -1,3 +1,11 @@
+Controller-first setup
+======================
+
+Normal users do not need Python or a terminal. On first launch choose Download recommended emulators, or open System > Emulators & firmware > Emulator setup. Redux downloads official core DLLs, licenses and metadata and applies its integrated defaults. Missing-core Play offers Download and continue. Repair/update is explicit and unavailable while a game runs. Games and BIOS files are never downloaded.
+
+Developer reference
+===================
+
 Optional local Libretro cores
 ============================
 
