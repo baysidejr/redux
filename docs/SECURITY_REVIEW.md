@@ -9,12 +9,13 @@ Reviewed November 9, 2026. Scope: current Python source, Windows integration hel
 - Resolved Windows PowerShell through the OS system-directory API instead of searching PATH or the working directory.
 - Added explicit initial HTTPS/host checks to the fixed-source disc-artwork and optional-core download functions.
 - Marked the legacy firmware-identification MD5 as non-security use; SHA-256 remains the integrity comparison.
+- Serialized activation-pipe cleanup after testing exposed a possible double close between the listener and UI shutdown threads; a concurrent-cleanup regression test covers the shared handle ownership.
 - Added source exclusions for BIOS, registered runtime copies, optional downloaded cores, databases and credential/key files. SDL3 is the only native DLL tracked in the source repository and has upstream provenance and license records.
 
 ## Checks
 
-- Unit suite: 850 tests, no failures, four Windows symlink-privilege skips.
-- Clean source export: 850 tests, no failures, six skips (the same four privilege skips plus the intentionally excluded optional LuaJIT interpreter and local reference catalogue).
+- Unit suite: 851 tests, no failures, four Windows symlink-privilege skips.
+- Clean source export: 851 tests, no failures, six skips (the same four privilege skips plus the intentionally excluded optional LuaJIT interpreter and local reference catalogue).
 - pip-audit 2.10.1 against requirements-build.txt: no known vulnerabilities after the dependency update.
 - Gitleaks 8.30.1 against staged source: no leaks found. Test account strings are synthetic fixtures; real account files remain outside the repository.
 - Bandit 1.9.4: no remaining high-severity findings. Six medium findings were manually reviewed: four dynamic SQL statements use allowlisted column/order fragments with bound values; two urllib call sites have explicit fixed-source HTTPS validation. Low findings principally concern explicit local process launches, platform URI activation, bounded best-effort error handling and assertions in diagnostic tools.

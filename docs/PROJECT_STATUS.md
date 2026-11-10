@@ -1,6 +1,6 @@
 # Project status — 0.10.5, 2026-11-09
 
-Release 0.10.5 adds a per-user Windows installer, portable release guards and a public-source security review. Pillow is updated to 13.0.0; declared dependency auditing reports no known vulnerabilities. The 850-test suite passes with four Windows symlink-privilege skips. Installer install/reinstall/uninstall acceptance preserves user library and BIOS files and the existing startup preference. See SECURITY_REVIEW.md for scope and remaining limits.
+Release 0.10.5 adds a per-user Windows installer, portable release guards and a public-source security review. Pillow is updated to 13.0.0; declared dependency auditing reports no known vulnerabilities. The 851-test suite passes with four Windows symlink-privilege skips. Installer install/reinstall/uninstall acceptance preserves user library and BIOS files and the existing startup preference. Activation pipe shutdown is serialized to prevent concurrent native-handle cleanup. See SECURITY_REVIEW.md for scope and remaining limits.
 
 Release 0.10.5 replaces the diagonal stripes with a Fuji symbol using the same pink, lime and cyan colors. Interface and Windows icon geometry share one source.
 

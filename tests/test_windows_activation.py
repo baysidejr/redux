@@ -8,6 +8,7 @@ from pathlib import Path
 import subprocess
 import sys
 import tempfile
+import threading
 import unittest
 from unittest.mock import patch
 import uuid
@@ -266,6 +267,34 @@ class WindowsSingleInstanceTests(unittest.TestCase):
             self.assertTrue(replacement.acquire(parse_activation([])))
         finally:
             replacement.close()
+
+class ActivationCleanupTests(unittest.TestCase):
+    def test_concurrent_shutdown_closes_one_connection_once(self):
+        from unittest.mock import Mock
+        instance = SingleInstance('Redux.Test.Cleanup')
+        connection = Mock()
+        instance._connection = connection
+        barrier = threading.Barrier(3)
+        failures = []
+
+        def shutdown():
+            try:
+                barrier.wait(timeout=2)
+                instance._close_connection(connection)
+            except BaseException as error:
+                failures.append(error)
+
+        workers = [threading.Thread(target=shutdown) for _ in range(2)]
+        for worker in workers:
+            worker.start()
+        barrier.wait(timeout=2)
+        for worker in workers:
+            worker.join(timeout=2)
+            self.assertFalse(worker.is_alive())
+        self.assertEqual(failures, [])
+        connection.close.assert_called_once_with()
+        self.assertIsNone(instance._connection)
+
 
 if __name__ == "__main__":
     unittest.main()
