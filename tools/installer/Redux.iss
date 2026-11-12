@@ -26,6 +26,9 @@ WizardStyle=modern
 Compression=lzma2
 SolidCompression=yes
 CloseApplications=no
+; The bundled Redux Controller receiver holds this mutex while it runs (elevated tray app);
+; Setup asks the user to exit it from the tray instead of failing on its locked files.
+AppMutex=Local\ReduxControllerReceiver
 RestartApplications=no
 UninstallDisplayName=Redux
 VersionInfoVersion={#AppVersion}.0
