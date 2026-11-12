@@ -15,6 +15,10 @@ The Redux release package and installer ship the receiver under `tools/ReduxRece
 
 All calls to the receiver go to 127.0.0.1 only, use a 0.5 second timeout, and run off the UI thread, so a missing receiver never stalls the console. Tests: `tests/test_redux_controller.py` and `tests/test_release_guard.py`.
 
+## Building the installer
+
+`tools/build_installer.py` compiles `tools/installer/Redux.iss` with Inno Setup 6 into `dist/ReduxSetup-<version>-win-x64.exe`, receiver included. A per-user Inno Setup (`winget install JRSoftware.InnoSetup`) lives at `%LOCALAPPDATA%\Programs\Inno Setup 6\ISCC.exe` and is not on PATH, so pass it with `--compiler`. Setup refuses to run while the bundled receiver is running (its `Local\ReduxControllerReceiver` mutex): exit the receiver from the tray first, and close Redux. Upgrades keep `library`, `bios` and `tools` in place.
+
 ## Status
 
 Verified on the owner's PC on November 11, 2026: the installed Redux 0.10.9 build navigates its menus with the GameSir controls routed through the phone and the receiver's virtual controller. The bundled receiver's one-click set-up and the PIN display on the Controllers page were confirmed on the owner's PC the same evening. Remember that the installed copy under `%LOCALAPPDATA%\Programs\Redux` must be rebuilt (`PyInstaller Redux.spec`, then `tools/package_release.py`) and updated for any change here to reach it.
