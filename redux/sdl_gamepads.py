@@ -119,6 +119,8 @@ class SDLGamepadAPI:
             self._native.SetGamepadEventsEnabled(False)
             self._native.SetJoystickEventsEnabled(False)
             self.load_mappings(native_directory()/"gamecontrollerdb.txt")
+            from .redux_controller import MAPPING as redux_controller_mapping
+            self.add_mapping(redux_controller_mapping)
             if mapping_file:
                 try:self.load_mappings(mapping_file)
                 except (OSError,ValueError,SDLInputError):self.warnings.append("Custom controller mappings could not be loaded; built-in mappings remain active.")

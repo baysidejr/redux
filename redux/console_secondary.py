@@ -119,6 +119,7 @@ class SecondaryScreens:
                 self.text(618,y,control,14,WHITE,"bold");self.text(845,y,action,14,MUTED)
                 if index<len(bindings)-1:self.rect(618,y+30,630,1,LINE)
             self.button_canvas("settings:controller-bind","Configure a controller",618,552,294,43,self.configure_controller)
+            self.button_canvas("settings:phone-controller","Phone controller",930,552,318,43,self.redux_controller_menu)
             self.text(618,614,"Known pads are mapped automatically. USB and Bluetooth use Windows drivers.",12,MUTED,width=620)
         elif section=="saves":
             game=self.selected();detail=_game_title(game) if game else "Choose a game from your library first"

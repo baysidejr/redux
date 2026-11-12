@@ -68,3 +68,7 @@ Recommended setup also downloads **BigPEmu 1.221** directly from [Rich Whitehous
 Use **System → Emulators & firmware → Emulator setup → BigPEmu** to install/check it. Jaguar/Jaguar CD Play also offers setup when it is missing. `.j64`/`.jag` imports default to Jaguar and `.bigpimg` to Jaguar CD. CUE/CDI images may need their system selected in game information. BigPEmu does not accept CHD. Portable `-localdata` keeps its data beside the emulator under `tools/emulators/BigPEmu/UserData`.
 
 Redux tracks its process and returns to the launcher when it exits. Guide or Start+Select uses Redux's external-emulator pause/resume/quit menu. **Save states, filters and Jaguar keypad bindings currently use BigPEmu's own interface**, not the libretro host menu. Native BigPEmu menu boot, owned-process pause/resume and graceful exit were verified; Jaguar/Jaguar CD retail gameplay and physical-disc compatibility still need testing. See the [BigPEmu manual](https://www.richwhitehouse.com/jaguar/index.php?content=userman).
+
+## Phone controller (Redux Controller)
+
+A phone in a GameSir telescopic controller can act as one Windows gamepad with twelve Atari Jaguar keypad keys. Redux maps that controller for its menus, shows the receiver's pairing state under Settings → Controllers → Phone controller, and switches the phone to a game's keypad overlay when a Jaguar game launches. See [docs/REDUX_CONTROLLER.md](docs/REDUX_CONTROLLER.md).

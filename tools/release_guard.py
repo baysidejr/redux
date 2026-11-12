@@ -23,6 +23,7 @@ def distribution_files(root):
         allowed = (len(parts) == 1 and path.name in ROOT_FILES or
                    parts[0] in {'_internal', 'docs', 'licenses'} or
                    parts[:2] == ('tools', 'windows_xbox') or
+                   parts[:2] == ('tools', 'ReduxReceiver') or
                    relative.as_posix() == 'tools/cores/install_official.py')
         if not allowed or path.name.startswith('.env'):
             raise ValueError('Release contains an unexpected file: ' + relative.as_posix())

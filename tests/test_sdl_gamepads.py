@@ -118,7 +118,8 @@ class SDLGamepadTests(unittest.TestCase):
             path=Path(directory)/"pads.txt"
             path.write_text("# test\n"+"0"*32+",Pad,a:b0,platform:Linux,\n"+"1"*32+",Pad,a:b1,platform:Windows,\n",encoding="utf-8")
             self.assertEqual(api.load_mappings(path),1)
-            self.assertEqual(len(native.maps),1)
+            # The Redux Controller receiver's mapping is built in; only the file's line counts here.
+            self.assertEqual(len([m for m in native.maps if b"Redux Jaguar Controller" not in m]),1)
         for bad in ("bad",None,"0"*32+",Pad,a:b0,\n", "0"*32+",Pad,a:b0,\0"):
             with self.subTest(bad=bad),self.assertRaises(ValueError):validate_mapping(bad)
 

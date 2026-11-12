@@ -45,8 +45,9 @@ def display_title(game):
 
 
 from .console_cores import ConsoleCores
+from .console_redux_controller import ConsoleReduxController
 
-class ConsoleApp(ConsoleCores,ConsolePCGames,ConsoleScraper,ConsoleWindows,ConsoleFileBrowser,ConsoleIngame,ConsoleControllers,ConsoleMedia,ConsoleEditors,OverlayScreens,ReferenceLayout,SecondaryScreens,ToolsApp):
+class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsolePCGames,ConsoleScraper,ConsoleWindows,ConsoleFileBrowser,ConsoleIngame,ConsoleControllers,ConsoleMedia,ConsoleEditors,OverlayScreens,ReferenceLayout,SecondaryScreens,ToolsApp):
     def __init__(self,root,library_root=None,*,activation=None):
         from .windows_activation import parse_activation
         from .windows_gaming import WindowsGamingExperience
@@ -150,6 +151,8 @@ class ConsoleApp(ConsoleCores,ConsolePCGames,ConsoleScraper,ConsoleWindows,Conso
             except (OSError,ValueError,RuntimeError):pass
         self.gameplay_input=GameplayInputMapper()
         self.playback=PlaybackManager()
+        try:self._redux_controller_startup()
+        except (OSError,ValueError,RuntimeError):pass
         self.status.trace_add("write",self._status_changed)
         if self.activation.fullscreen or self.preferences.get("fullscreen",True):root.attributes("-fullscreen",True)
         try:self.windows_registration=self.windows_experience.subscribe(lambda state:self.windows_events.put(state))
@@ -977,6 +980,7 @@ class ConsoleApp(ConsoleCores,ConsolePCGames,ConsoleScraper,ConsoleWindows,Conso
         sid=getattr(session,"session_id",getattr(session,"id",None))
         if sid is None:raise RuntimeError("Playback session did not return an identity")
         self.sessions[sid]=self.library.start_session(game["id"])
+        self._redux_controller_send_profile(game)
         if bridge:
             self.bridges[sid]=bridge
             import threading
@@ -1414,6 +1418,7 @@ class ConsoleApp(ConsoleCores,ConsolePCGames,ConsoleScraper,ConsoleWindows,Conso
                 except OSError:pass
             if library_sid is not None:self.library.finish_session(library_sid,duration_seconds=result.duration_seconds,exit_code=result.exit_code)
             self.status.set("Game closed • play history saved")
+            self._redux_controller_send_profile(None)
             self.overlay=None;self.root.deiconify();self.root.lift();self.root.focus_force();self.refresh()
 
     def task(self,work,done,description,*,cancellable=True):

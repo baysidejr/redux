@@ -27,6 +27,12 @@ def main():
     shutil.copy2(ROOT/"tools/cores/install_official.py",installer)
     shutil.copytree(ROOT/"tools/windows_xbox",output/"tools/windows_xbox",dirs_exist_ok=True,
                     ignore=shutil.ignore_patterns("__pycache__","*.pyc"))
+    # The Redux Controller receiver (phone companion) ships inside the package when its
+    # published files sit in tools/ReduxReceiver; extract the receiver ZIP there before packaging.
+    receiver=ROOT/"tools/ReduxReceiver"
+    if (receiver/"ReduxReceiver.exe").is_file():
+        shutil.copytree(receiver,output/"tools/ReduxReceiver",dirs_exist_ok=True)
+    else:print("Note: tools/ReduxReceiver is empty; the package ships without the phone controller receiver.")
     licenses=output/"licenses";licenses.mkdir(exist_ok=True)
     supplied={"Python.txt":Path(sys.base_prefix)/"LICENSE.txt",
         "Pillow.txt":ROOT/".venv/Lib/site-packages/pillow-13.0.0.dist-info/licenses/LICENSE",
@@ -40,7 +46,8 @@ def main():
         "Redux frontend dependencies: Python, Tcl/Tk, Pillow, Roboto Condensed (SIL Open Font License), SDL3 and SDL_GameControllerDB (zlib licenses), and the PyInstaller bootloader.\n"
         "Supplied notices are in licenses/ and the bundled runtime.\n"
         "No reference application runtime/assets/catalogue, emulator executables/core DLLs, retail firmware, or user games are bundled.\n"
-        "Optional cores are obtained separately under their upstream terms; the named installer records provenance and licenses.\n",
+        "Optional cores are obtained separately under their upstream terms; the named installer records provenance and licenses.\n"
+        "tools/ReduxReceiver, when present, is the Redux Controller receiver (LGPL-3.0-or-later) with its own notices: HIDMaestro (MIT) and the .NET runtime (MIT).\n",
         encoding="utf-8")
     (output/"RELEASE_VERSION.txt").write_text(__version__+"\n",encoding="utf-8")
     files=distribution_files(output)

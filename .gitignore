@@ -30,3 +30,6 @@ tools/homebrew/*.nes
 *.log
 .pytest_cache/
 .ruff_cache/
+
+# Redux Controller receiver (phone companion), installed beside the emulators
+tools/ReduxReceiver/
