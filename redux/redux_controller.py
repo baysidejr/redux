@@ -143,15 +143,14 @@ def describe(state, executable=None):
                     "Start with Windows. It then runs as a tray icon and makes the phone and GameSir one Windows controller.")
         return ("The receiver is not running and ReduxReceiver.exe is missing from tools/ReduxReceiver. Reinstall Redux, "
                 "or extract the Redux Controller receiver ZIP there, or locate the executable below.")
-    lines = [f"Receiver {state.get('version', '?')} running"]
-    lines.append("Windows controller ready (32 buttons)" if state.get("outputReady") else f"Windows controller unavailable: {state.get('error') or 'unknown error'}")
+    addresses = ", ".join(str(a) for a in (state.get("addresses") or [])[:2]) or "no network"
+    lines = [f"Pairing PIN {state.get('pin', '------')} · PC {addresses}"]
+    lines.append(f"Receiver {state.get('version', '?')} running · " + ("Windows controller ready (32 buttons)" if state.get("outputReady") else f"Windows controller unavailable: {state.get('error') or 'unknown error'}"))
     if state.get("phonePaired"):
         lines.append(f"{state.get('phoneName') or 'Phone'} connected · {state.get('packets', 0)} frames")
     else:
         paired = int(state.get("pairedPhones") or 0)
         lines.append(f"Phone not connected · {paired} paired phone(s) reconnect on their own" if paired else "No phone paired yet")
-    addresses = ", ".join(str(a) for a in (state.get("addresses") or [])[:2]) or "no network"
-    lines.append(f"PIN {state.get('pin', '------')} · PC {addresses}")
     if state.get("profile"):
         lines.append(f"Phone overlay: {state['profile']}")
     return "\n".join(lines)

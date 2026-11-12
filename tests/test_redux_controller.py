@@ -100,7 +100,7 @@ class ClientTests(unittest.TestCase):
             client.set_profile("not valid!")
         text = describe(state)
         self.assertIn("Pixel 9 connected", text)
-        self.assertIn("PIN 123456", text)
+        self.assertTrue(text.startswith("Pairing PIN 123456"))
 
     def test_missing_receiver_yields_none_without_raising(self):
         probe = HTTPServer(("127.0.0.1", 0), _Receiver)
@@ -138,6 +138,33 @@ class InstallTests(unittest.TestCase):
                 with patch("redux.redux_controller.os.startfile") as startfile:
                     start_receiver(chosen, setup=True)
                     startfile.assert_called_once_with(str(chosen), arguments="--start-with-windows", cwd=str(chosen.parent))
+
+
+class StatusLineTests(unittest.TestCase):
+    def _console(self):
+        from redux.console_redux_controller import ConsoleReduxController
+        class Console(ConsoleReduxController):
+            preferences = {}
+            screen = "settings"
+            settings_section = "input"
+        return Console()
+
+    def test_status_lines_lead_with_the_pin_once_the_receiver_answers(self):
+        console = self._console()
+        first, _ = console.redux_controller_status_lines()
+        self.assertIn("checking", first)
+        ui = console._redux_ui()
+        ui["state"], ui["known"] = None, True
+        with patch("redux.console_redux_controller.receiver_executable", return_value=Path("C:/x/ReduxReceiver.exe")):
+            first, second = console.redux_controller_status_lines()
+        self.assertIn("not running", first)
+        self.assertIn("Set up", second)
+        ui["state"] = {"version": "0.3.1", "pin": "628524", "addresses": ["192.168.4.23"], "outputReady": True,
+                       "phonePaired": True, "phoneName": "Pixel 9", "packets": 9}
+        first, second = console.redux_controller_status_lines()
+        self.assertEqual(first, "Phone controller · PIN 628524 · PC 192.168.4.23")
+        self.assertIn("Pixel 9 connected", second)
+        self.assertIn("controller ready", second)
 
 
 if __name__ == "__main__":

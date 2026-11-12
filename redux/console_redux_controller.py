@@ -2,14 +2,23 @@
 from __future__ import annotations
 
 import threading
+import time
 from pathlib import Path
 
 from .redux_controller import ReceiverClient, describe, profile_for_title, receiver_executable, start_receiver
 from .ui_assets import project_root
 
+_REFRESH_SECONDS = 2.0
+_PIN_WAIT_SECONDS = 45.0
+
 
 class ConsoleReduxController:
-    """Mixin for ConsoleApp: Phone controller menu, receiver set-up and overlay hand-off."""
+    """Mixin for ConsoleApp: Phone controller menu, receiver set-up, live PIN and overlay hand-off.
+
+    The receiver is only ever queried off the UI thread. Results land in a small cache that the
+    console tick reads on the UI thread, which redraws the Controllers page and pops the PIN up
+    once a freshly set-up receiver answers.
+    """
 
     def _redux_controller(self):
         client = getattr(self, "_redux_controller_client", None)
@@ -17,14 +26,83 @@ class ConsoleReduxController:
             client = self._redux_controller_client = ReceiverClient()
         return client
 
+    def _redux_ui(self):
+        cache = getattr(self, "_redux_ui_cache", None)
+        if cache is None:
+            cache = self._redux_ui_cache = {"state": None, "known": False, "result": None, "seen": None,
+                                            "asked": 0.0, "refreshing": False, "pin_until": 0.0}
+        return cache
+
     def _redux_controller_preferences(self):
         return self.preferences.setdefault("redux_controller", {})
+
+    # Live status -------------------------------------------------------------------
+
+    def _redux_controller_tick(self):
+        """From the console tick (UI thread): refresh while the Controllers page or a PIN wait needs it."""
+        ui = self._redux_ui()
+        now = time.monotonic()
+        wanted = (self.screen == "settings" and getattr(self, "settings_section", None) == "input") or ui["pin_until"] > now
+        if wanted and not ui["refreshing"] and now - ui["asked"] >= _REFRESH_SECONDS:
+            ui["refreshing"] = True
+            ui["asked"] = now
+            client = self._redux_controller()
+            def work():
+                state = client.state()
+                ui["result"] = (state, time.monotonic())
+                ui["refreshing"] = False
+            threading.Thread(target=work, name="redux-controller-status", daemon=True).start()
+        result = ui["result"]
+        if result is None or result is ui["seen"]:
+            return
+        ui["seen"] = result
+        state = result[0]
+        changed = state != ui["state"] or not ui["known"]
+        ui["state"], ui["known"] = state, True
+        if changed and self.screen == "settings":
+            self.schedule_draw()
+        if state is not None and ui["pin_until"] > now:
+            ui["pin_until"] = 0.0
+            self._redux_controller_show_pin(state)
+
+    def _redux_controller_show_pin(self, state):
+        address = ", ".join(str(a) for a in (state.get("addresses") or [])[:2]) or "no network"
+        if state.get("phonePaired"):
+            self.notice("Phone controller ready", f"{state.get('phoneName') or 'The phone'} reconnected on its own. PIN {state.get('pin')} is only needed for a new phone.")
+        else:
+            self.notice(f"Pairing PIN {state.get('pin', '------')}",
+                        f"On the phone: Connections → Find PCs on this network (or type {address}) → enter the PIN → Pair & connect. "
+                        "Paired phones reconnect on their own from then on.")
+
+    def redux_controller_status_lines(self):
+        """Two lines for the Controllers page: the PIN first, then the receiver and phone state."""
+        ui = self._redux_ui()
+        state = ui["state"]
+        if state is None:
+            if not ui["known"]:
+                return ("Phone controller: checking the receiver…", "Redux Controller pairs a phone in a GameSir with this PC as one gamepad.")
+            if receiver_executable(project_root(), self.preferences):
+                return ("Phone controller: receiver installed, not running", "Open Phone controller and choose Set up; the receiver then starts at sign-in and its PIN shows here.")
+            return ("Phone controller: receiver not installed", "Reinstall Redux or locate ReduxReceiver.exe from Phone controller.")
+        address = ", ".join(str(a) for a in (state.get("addresses") or [])[:2]) or "no network"
+        first = f"Phone controller · PIN {state.get('pin', '------')} · PC {address}"
+        if state.get("phonePaired"):
+            phone = f"{state.get('phoneName') or 'Phone'} connected · {state.get('packets', 0)} frames"
+        else:
+            paired = int(state.get("pairedPhones") or 0)
+            phone = "waiting for a paired phone to reconnect" if paired else "no phone paired yet · enter the PIN on the phone"
+        output = "controller ready" if state.get("outputReady") else "Windows controller unavailable"
+        return (first, f"Receiver {state.get('version', '?')} · {phone} · {output}")
+
+    # Menu --------------------------------------------------------------------------
 
     def redux_controller_menu(self):
         if self.busy:
             return
         client = self._redux_controller()
         state = client.state()
+        ui = self._redux_ui()
+        ui["state"], ui["known"] = state, True
         executable = receiver_executable(project_root(), self.preferences)
         preferences = self._redux_controller_preferences()
         items = []
@@ -34,8 +112,10 @@ class ConsoleReduxController:
                 items.append(("Start the receiver now", self.start_redux_receiver))
             else:
                 items.append(("Locate ReduxReceiver.exe…", self.locate_redux_receiver))
-        elif state.get("phonePaired"):
-            items.append(("Disconnect the phone", lambda: self._redux_controller_background(client.disconnect)))
+        else:
+            items.append((f"Show the pairing PIN ({state.get('pin', '------')})", lambda: self._redux_controller_show_pin(state)))
+            if state.get("phonePaired"):
+                items.append(("Disconnect the phone", lambda: self._redux_controller_background(client.disconnect)))
         items.append((f"Start the receiver with Redux: {'ON' if preferences.get('autostart') else 'OFF'}", self.toggle_redux_receiver_autostart))
         items.append((f"Send game overlays to the phone: {'ON' if preferences.get('overlays', True) else 'OFF'}", self.toggle_redux_overlays))
         items.append(("Back", lambda: None))
@@ -58,10 +138,13 @@ class ConsoleReduxController:
         except OSError as error:
             self.notice("Receiver did not start", str(error))
             return
+        ui = self._redux_ui()
+        ui["pin_until"] = time.monotonic() + _PIN_WAIT_SECONDS
+        ui["asked"] = 0.0
         if setup:
-            self.status.set("Setting up the phone controller • accept the Windows permission prompt; the receiver installs its driver, allows itself through the firewall and will start at sign-in")
+            self.status.set("Setting up the phone controller • accept the Windows permission prompt; the PIN appears here as soon as the receiver is up")
         else:
-            self.status.set("Starting the Redux Controller receiver • accept the Windows permission prompt")
+            self.status.set("Starting the Redux Controller receiver • accept the Windows permission prompt; the PIN appears here as soon as it is up")
 
     def locate_redux_receiver(self):
         preferences = self._redux_controller_preferences()
@@ -89,6 +172,8 @@ class ConsoleReduxController:
         preferences["overlays"] = not preferences.get("overlays", True)
         self._save_preferences()
         self.redux_controller_menu()
+
+    # Hooks -------------------------------------------------------------------------
 
     def _redux_controller_startup(self):
         """At console start: launch the installed receiver when the user asked for that."""

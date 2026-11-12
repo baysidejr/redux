@@ -1349,6 +1349,7 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsolePCGames,ConsoleScrap
                 try:self._catalogue_ready(self.catalogue_queue.get_nowait())
                 except queue.Empty:pass
             self._harvest_sessions()
+            self._redux_controller_tick()
             try:
                 sid,ready=self.bridge_events.get_nowait()
                 if sid in self.bridges:self.status.set("Game controls connected • save states and screenshots available" if ready else "Game is running • backend game controls did not connect")

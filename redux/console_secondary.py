@@ -120,7 +120,10 @@ class SecondaryScreens:
                 if index<len(bindings)-1:self.rect(618,y+30,630,1,LINE)
             self.button_canvas("settings:controller-bind","Configure a controller",618,552,294,43,self.configure_controller)
             self.button_canvas("settings:phone-controller","Phone controller",930,552,318,43,self.redux_controller_menu)
-            self.text(618,614,"Known pads are mapped automatically. USB and Bluetooth use Windows drivers.",12,MUTED,width=620)
+            phone_first,phone_second=self.redux_controller_status_lines()
+            self.text(618,610,phone_first,13,WHITE,"bold")
+            self.text(618,634,self.fit_text(phone_second,620,12),12,MUTED)
+            self.text(618,658,"Known pads are mapped automatically. USB and Bluetooth use Windows drivers.",11,MUTED,width=620)
         elif section=="saves":
             game=self.selected();detail=_game_title(game) if game else "Choose a game from your library first"
             self._setting_row("settings:savegame","Game saves & backups",detail,218,lambda:self.navigate("saves"),icon="storage")
