@@ -252,9 +252,75 @@ class ProviderTests(unittest.TestCase):
         self.assertIn('World%20Series%20Baseball%20II%20%28USA%29.png',result[0].media['cover'])
         self.assertIn('Sega_-_Saturn',request.calls[0][0])
 
+    def test_jaguar_and_3do_are_mapped_for_every_console_service(self):
+        for provider in ('screenscraper','thegamesdb','hfsdb','igdb','libretro'):
+            with self.subTest(provider=provider):
+                self.assertTrue({'jaguar','jaguar_cd','3do'}<=set(providers.provider_systems(provider)))
+        self.assertEqual(providers.provider_systems('arcadedb'),('arcade','neo_geo'))
+        jaguar={'title':'Tempest 2000','system':'jaguar'}
+        request=Replies({'data':{'games':[]},'include':{'boxart':{}}})
+        providers.search('thegamesdb',jaguar,{'api_key':'own-key'},transport=request)
+        self.assertEqual(parse_qs(urlsplit(request.calls[0][0]).query)['filter[platform]'],['28'])
+        request=Replies({'response':{'jeux':[]}})
+        providers.search('screenscraper',jaguar,self.ss,transport=request)
+        self.assertEqual(parse_qs(urlsplit(request.calls[0][0]).query)['systemeid'],['27'])
+        request=Replies()
+        with self.assertRaises(providers.UnsupportedSystem):providers.search('arcadedb',jaguar,transport=request)
+        self.assertFalse(request.calls)
+
+    def test_artwork_title_strips_dump_year_bracket_and_format_tags_only(self):
+        for raw,expected in (('Alien vs Predator (1994)','Alien vs Predator'),('Cybermorph (World) (Rev A)','Cybermorph'),
+                             ('Virtua Fighter 2 (USA) [a1]','Virtua Fighter 2'),('BadCode4 by Badcoder (jag) (2000)','BadCode4 by Badcoder'),
+                             ('Alien vs Predator (Alpha)','Alien vs Predator (Alpha)'),('Doom (1994) (PD)','Doom (1994) (PD)'),
+                             ('Tempest 2000','Tempest 2000'),('Game (Special Edition)','Game (Special Edition)'),
+                             ('Iron Soldier v1.04 (1994)','Iron Soldier v1.04'),('Rayman (1995) (UBI Soft)','Rayman'),
+                             ('Flashback (1995) (U.S. Gold)','Flashback'),('Ultra Vortek (Beta) (1995)','Ultra Vortek (Beta)'),
+                             ('Game (Special Edition) (1995)','Game (Special Edition)'),('Asteroid (2000) (PD)','Asteroid (2000) (PD)'),
+                             ('Rayman (1994) (Proto)','Rayman (1994) (Proto)')):
+            with self.subTest(title=raw):self.assertEqual(providers.artwork_title(raw),expected)
+
+    def test_libretro_world_and_multi_region_releases_match_the_preferred_region(self):
+        tree={'tree':[{'path':'Named_Boxarts/Alien vs Predator (World).png'},{'path':'Named_Snaps/Alien vs Predator (World).png'},
+                      {'path':'Named_Boxarts/Alien vs Predator (1994)(Atari).png'},
+                      {'path':'Named_Boxarts/Alien vs Predator (World) (Beta).png'},
+                      {'path':'Named_Boxarts/Iron Soldier 2 (USA, Europe).png'},{'path':'Named_Boxarts/Iron Soldier 2 (Japan).png'},
+                      {'path':'Named_Boxarts/Cybermorph (World) (Rev A).png'},{'path':'Named_Boxarts/Cybermorph (World) (Rev B).png'}]}
+        game={'title':'Alien vs Predator (1994)','system':'jaguar','region':'','scrape_region':'us'}
+        request=Replies(tree)
+        result=providers.search('libretro',game,transport=request)
+        self.assertIn('Atari_-_Jaguar',request.calls[0][0])
+        self.assertEqual([(c.title,c.region,set(c.media)) for c in result],[('Alien vs Predator','World',{'cover','screenshot'})])
+        self.assertEqual([c.region for c in providers.search('libretro',{**game,'title':'Iron Soldier 2'},transport=Replies(tree))],['USA'])
+        self.assertEqual([c.region for c in providers.search('libretro',{**game,'title':'Iron Soldier 2','scrape_region':'jp'},transport=Replies(tree))],['Japan'])
+        self.assertEqual(len(providers.search('libretro',{**game,'title':'Cybermorph'},transport=Replies(tree))),1)
+
     def test_libretro_no_match_and_truncated_index_are_not_fake_success(self):
         self.assertEqual(providers.search('libretro',self.game,transport=Replies({'tree':[]})),[])
-        with self.assertRaises(providers.ProviderUnavailable):providers.search('libretro',self.game,transport=Replies({'truncated':True,'tree':[]}))
+        root={'tree':[{'type':'tree','path':'Named_Boxarts','sha':'a'*40}]}
+        with self.assertRaises(providers.ProviderUnavailable):
+            providers.search('libretro',self.game,transport=Replies({'truncated':True,'tree':[]},root,{'truncated':True,'tree':[]}))
+
+    def test_libretro_reads_oversized_indexes_one_folder_at_a_time(self):
+        root={'tree':[{'type':'tree','path':'Named_Boxarts','sha':'a'*40},{'type':'tree','path':'Named_Snaps','sha':'b'*40},
+                      {'type':'blob','path':'README.md','sha':'c'*40},{'type':'tree','path':'Named_Titles','sha':'not-a-sha'}]}
+        boxarts={'tree':[{'path':'World Series Baseball II (USA).png'}]};snaps={'tree':[{'path':'World Series Baseball II (USA).png'}]}
+        request=Replies(HTTPError('https://api.github.com/x',500,'Internal Server Error',{},None),root,boxarts,snaps)
+        def transport(url,**kwargs):
+            value=request(url,**kwargs)
+            if isinstance(value,Exception):raise value
+            return value
+        def wrapped(url,**kwargs):
+            try:return transport(url,**kwargs)
+            except HTTPError as error:raise providers.ProviderUnavailable("failed",status=error.code) from None
+        result=providers.search('libretro',self.game,transport=wrapped)
+        self.assertEqual(len(request.calls),4)
+        self.assertTrue(request.calls[1][0].endswith('/git/trees/master'));self.assertIn('a'*40,request.calls[2][0]);self.assertIn('b'*40,request.calls[3][0])
+        self.assertEqual(set(result[0].media),{'cover','screenshot'})
+        self.assertIn('Named_Boxarts/World%20Series%20Baseball%20II%20%28USA%29.png',result[0].media['cover'])
+        # A client-side failure is not retried folder by folder.
+        request=Replies(providers.ProviderUnavailable("failed",status=404))
+        with self.assertRaises(providers.ProviderUnavailable):providers.search('libretro',self.game,transport=request)
+        self.assertEqual(len(request.calls),1)
 
     def test_libretro_uses_scraper_region_when_original_region_is_unknown(self):
         tree={'tree':[{'path':'Named_Boxarts/World Series Baseball II (USA).png'},{'path':'Named_Boxarts/World Series Baseball II (Europe).png'}]}

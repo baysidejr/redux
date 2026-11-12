@@ -51,6 +51,11 @@ class ScrapeCancelled(ScraperError):
     code = "cancelled"
 
 
+class UnsupportedSystem(ScraperError):
+    """The chosen service has no entries for this library system; nothing was sent."""
+    code = "unsupported_system"
+
+
 @dataclass(frozen=True)
 class ScrapeCandidate:
     provider: str
@@ -70,20 +75,24 @@ class ScrapeCandidate:
 _SS = {"nes":3,"snes":4,"n64":14,"genesis":1,"32x":19,"sega_cd":20,
        "saturn":22,"psx":57,"neo_geo_cd":70,"pce":31,"pce_cd":114,
        "supergrafx":105,"atari2600":26,"atari7800":41,"gb":9,"gbc":10,
-       "gba":12,"sms":2,"game_gear":21,"arcade":75,"neo_geo":142}
+       "gba":12,"sms":2,"game_gear":21,"arcade":75,"neo_geo":142,
+       "jaguar":27,"jaguar_cd":171,"3do":29}
 _TG = {"pc":1,"nes":7,"snes":6,"n64":3,"genesis":18,"32x":33,"sega_cd":21,
        "saturn":17,"psx":10,"neo_geo_cd":4956,"pce":34,"pce_cd":4955,
        "supergrafx":34,"atari2600":22,"atari7800":27,"gb":4,"gbc":41,
-       "gba":5,"sms":35,"game_gear":20,"arcade":23,"neo_geo":24}
+       "gba":5,"sms":35,"game_gear":20,"arcade":23,"neo_geo":24,
+       "jaguar":28,"jaguar_cd":29,"3do":25}
 _HF = {"nes":36012,"snes":82351,"n64":32765,"genesis":33149,"32x":33731,
        "sega_cd":83493,"saturn":82924,"psx":82937,"neo_geo_cd":237944,
        "pce":30273,"pce_cd":138489,"supergrafx":30443,"atari2600":84224,
        "atari7800":84225,"gb":36022,"gbc":89235,"gba":89234,"sms":82166,
-       "game_gear":33807,"arcade":29794,"neo_geo":29794}
+       "game_gear":33807,"arcade":29794,"neo_geo":29794,
+       "jaguar":84220,"jaguar_cd":84220,"3do":82826}
 _IG = {"nes":18,"snes":19,"n64":4,"genesis":29,"32x":30,"sega_cd":78,
        "saturn":32,"psx":7,"neo_geo_cd":136,"pce":86,"pce_cd":150,
        "supergrafx":128,"atari2600":59,"atari7800":60,"gb":33,"gbc":22,
-       "gba":24,"sms":64,"game_gear":35,"arcade":52,"neo_geo":79}
+       "gba":24,"sms":64,"game_gear":35,"arcade":52,"neo_geo":79,
+       "jaguar":62,"jaguar_cd":410,"3do":50}
 _LR = {"nes":"Nintendo_-_Nintendo_Entertainment_System", "snes":"Nintendo_-_Super_Nintendo_Entertainment_System",
        'jaguar':'Atari_-_Jaguar','jaguar_cd':'Atari_-_Jaguar_CD',
        "3do":"The_3DO_Company_-_3DO",
@@ -94,6 +103,17 @@ _LR = {"nes":"Nintendo_-_Nintendo_Entertainment_System", "snes":"Nintendo_-_Supe
        "atari2600":"Atari_-_2600", "atari7800":"Atari_-_7800", "gb":"Nintendo_-_Game_Boy",
        "gbc":"Nintendo_-_Game_Boy_Color", "gba":"Nintendo_-_Game_Boy_Advance",
        "sms":"Sega_-_Master_System_-_Mark_III", "game_gear":"Sega_-_Game_Gear"}
+# Platform identifiers follow the public tables each service documents; Batocera's
+# scraper sources list the same Jaguar (ScreenScraper 27/171, TheGamesDB 28/29,
+# HFSDB 84220, IGDB 62/410) and 3DO (29, 25, 82826, 50) values.
+_SYSTEMS = {"screenscraper":tuple(_SS), "thegamesdb":tuple(_TG), "hfsdb":tuple(_HF),
+            "igdb":tuple(_IG), "arcadedb":("arcade","neo_geo"), "libretro":tuple(_LR)}
+
+
+def provider_systems(provider):
+    """Library systems a service can look up. Other games are reported, never sent."""
+    if provider not in _SYSTEMS:raise ScraperError("Choose an available artwork provider.")
+    return _SYSTEMS[provider]
 
 
 def _credential(key, label, secret=False, required=True):
@@ -103,22 +123,22 @@ def _credential(key, label, secret=False, required=True):
 def provider_info():
     """Return fresh UI-safe service descriptions, with no account values."""
     return [
-        dict(id="screenscraper",name="ScreenScraper",systems=tuple(_SS),
+        dict(id="screenscraper",name="ScreenScraper",systems=_SYSTEMS["screenscraper"],
              description="Box covers, screenshots, logos and mixed tiles. Requires a ScreenScraper account and this application's developer API credentials.",
              credentials=[_credential("username","Username"),_credential("password","Password",True),
                           _credential("developer_id","Developer API ID"),_credential("developer_password","Developer API password",True)]),
-        dict(id="thegamesdb",name="TheGamesDB",systems=tuple(_TG),
+        dict(id="thegamesdb",name="TheGamesDB",systems=_SYSTEMS["thegamesdb"],
              description="Game information, box covers, screenshots and fan art. Requires your own TheGamesDB API key.",
              credentials=[_credential("api_key","API key",True)]),
-        dict(id="hfsdb",name="HFSDB",systems=tuple(_HF),
+        dict(id="hfsdb",name="HFSDB",systems=_SYSTEMS["hfsdb"],
              description="Game information, covers and media. Requires an HFS API-enabled login; ordinary website account access is not guaranteed.",
              credentials=[_credential("username","HFS API username"),_credential("password","HFS API password",True)]),
-        dict(id="igdb",name="IGDB",systems=tuple(_IG),
+        dict(id="igdb",name="IGDB",systems=_SYSTEMS["igdb"],
              description="Covers, screenshots and artwork through the IGDB/Twitch API. Requires your own Twitch developer client ID and secret.",
              credentials=[_credential("client_id","Client ID"),_credential("client_secret","Client secret",True)]),
-        dict(id="arcadedb",name="ArcadeDB",systems=("arcade","neo_geo"),
+        dict(id="arcadedb",name="ArcadeDB",systems=_SYSTEMS["arcadedb"],
              description="Arcade Database by motoschifo. Arcade ROM-set names only; no account required.",credentials=[]),
-        dict(id="libretro",name="Libretro thumbnails",systems=tuple(_LR),
+        dict(id="libretro",name="Libretro thumbnails",systems=_SYSTEMS["libretro"],
              description="Community box covers and screenshots matched by system, title and region. No account required.",credentials=[]),
     ]
 
@@ -285,16 +305,27 @@ def _media_add(media,role,url,base=""):
 def artwork_title(value):
     """Strip trailing dump labels for artwork lookup, never editions or subtitles.
 
-    Disc/revision labels identify media, but share the game's artwork. This does
-    not rename the library entry or change its playback/disc identity.
+    Disc/revision labels identify media, but share the game's artwork. A release
+    year, ROM-collection bracket codes such as ``[a1]``, Jaguar file-format
+    labels such as ``(jag)`` and the publisher label that GoodTools/TOSEC names
+    place directly after the year describe the dump, not the game. A tag that
+    does not follow a year, such as ``(Special Edition)``, and release-status tags
+    such as ``(Beta)``, ``(Proto)``, ``(Demo)`` or ``(PD)`` are always kept.
+    This does not rename the library entry or change its playback/disc identity.
     """
     value=str(value or "").strip()
     known={"usa","us","u","europe","eur","eu","e","japan","jp","j","world","wor",
            "en","fr","de","es","it","sv","nl","pt","ja","ko","zh"}
+    formats={"bin","cof","jag","rom","abs","j64"}
+    status={"pd","beta","alpha","proto","prototype","demo","sample","hack","unl","unlicensed","pirate","homebrew"}
+    year=r"(?:19|20)\d{2}(?:-\d{2}){0,2}"
     while match:=re.search(r"\s*[\[(]([^()\[\]]+)[\])]\s*$",value):
         tag=match[1].strip().casefold()
-        if not (all(part.strip() in known for part in tag.split(",")) or
-                re.fullmatch(r"(?:disc|disk)\s+\d+(?:\s+of\s+\d+)?|rev(?:ision)?\s+\d+(?:\.\d+)*",tag)):
+        publisher=(match[0].lstrip().startswith("(") and tag.split()[0] not in status
+                   and re.search(r"\("+year+r"\)\s*$",value[:match.start()]) is not None)
+        if not (match[0].lstrip().startswith("[") or tag in formats or publisher or
+                all(part.strip() in known for part in tag.split(",")) or
+                re.fullmatch(r"(?:disc|disk)\s+\d+(?:\s+of\s+\d+)?|rev(?:ision)?\s+[a-z0-9.]+|v\d+(?:\.\d+)+|"+year,tag)):
             break
         value=value[:match.start()].strip()
     return value
@@ -308,13 +339,19 @@ def _title(game):
 
 def _system(game,mapping):
     system=str(game.get("system", ""))
-    if system not in mapping:raise ScraperError("This artwork provider does not support the selected game system.")
+    if system not in mapping:raise UnsupportedSystem("This artwork provider does not support the selected game system.")
     return system,mapping[system]
 
 
 def _region(value):
     raw=str(value or "").strip().casefold()
     return {"usa":"us","u":"us","us":"us","north america":"us","europe":"eu","e":"eu","eu":"eu","japan":"jp","j":"jp","jp":"jp","world":"wor"}.get(raw,raw if raw in {"us","eu","jp","wor"} else "")
+
+
+def _regions(value):
+    """Region codes for a release tag such as ``USA, Europe``; empty when any part is not a region."""
+    parts=[_region(part) for part in str(value or "").split(",")]
+    return parts if parts and all(parts) else []
 
 
 def _game_region(game):
@@ -539,31 +576,61 @@ def _title_key(value):
     return re.sub(r"[^\w]","",value)
 
 
+_LR_FOLDERS=("Named_Boxarts","Named_Snaps","Named_Titles")
+
+
+def _libretro_index(repo,transport,cancelled):
+    """Complete thumbnail paths for one system; never a partial listing."""
+    base=f"https://api.github.com/repos/libretro-thumbnails/{repo}/git/trees/"
+    try:
+        data=_request(transport,base+"master",params={"recursive":1},cancelled=cancelled)
+        if not data.get("truncated") and isinstance(data.get("tree"),list):return data["tree"]
+    except ProviderUnavailable as error:
+        # GitHub answers 500 for indexes beyond its recursive listing (PlayStation).
+        if error.status is not None and error.status<500:raise
+    # Read the three thumbnail folders one at a time; each stays within the API limit.
+    root=_request(transport,base+"master",cancelled=cancelled)
+    folders=root.get("tree") if isinstance(root.get("tree"),list) else []
+    paths=[]
+    for folder in folders:
+        if not (isinstance(folder,dict) and folder.get("type")=="tree" and folder.get("path") in _LR_FOLDERS
+                and re.fullmatch(r"[0-9a-f]{40}",str(folder.get("sha","")))):continue
+        listing=_request(transport,base+folder["sha"],cancelled=cancelled)
+        if listing.get("truncated") or not isinstance(listing.get("tree"),list):
+            raise ProviderUnavailable("This artwork index is too large for a complete lookup. Choose another provider.")
+        paths.extend({"path":folder["path"]+"/"+str(item.get("path",""))} for item in listing["tree"] if isinstance(item,dict))
+    if not paths:raise ProviderUnavailable("The community artwork index is unavailable.")
+    return paths
+
+
 def _libretro(game,credentials,transport,cancelled):
     system,repo=_system(game,_LR);title=_title(game);wanted=_title_key(title)
     with _TREE_LOCK:cached=_TREE_CACHE.get(repo)
-    if transport is _transport and cached and cached[0]>time.monotonic()-1800:data=cached[1]
+    if transport is _transport and cached and cached[0]>time.monotonic()-1800:tree=cached[1]
     else:
-        data=_request(transport,f"https://api.github.com/repos/libretro-thumbnails/{repo}/git/trees/master",params={"recursive":1},cancelled=cancelled)
-        if data.get("truncated"):raise ProviderUnavailable("This artwork index is too large for a complete lookup. Choose another provider.")
-        if not isinstance(data.get("tree"),list):raise ProviderUnavailable("The community artwork index is unavailable.")
+        tree=_libretro_index(repo,transport,cancelled)
         if transport is _transport:
-            with _TREE_LOCK:_TREE_CACHE[repo]=(time.monotonic(),data)
-    entries={};expected=_game_region(game)
-    for item in data['tree']:
+            with _TREE_LOCK:_TREE_CACHE[repo]=(time.monotonic(),tree)
+    entries={};expected=_game_region(game);labels={"us":"USA","eu":"Europe","jp":"Japan","wor":"World"}
+    for item in tree:
         _cancel(cancelled)
         path=item.get("path","") if isinstance(item,dict) else ""
         match=re.fullmatch(r"(Named_Boxarts|Named_Snaps|Named_Titles)/([^/]+)\.png",path)
         if not match:continue
         stem=match[2];name=re.sub(r"\s*\([^)]*\)\s*"," ",stem).strip()
-        # Preserve meaningful edition/revision tags instead of matching another release.
+        # Preserve meaningful edition tags instead of matching another release.
+        # Revisions share a release's artwork and collapse into one choice.
         tags=re.findall(r"\(([^)]*)\)",stem)
-        country=next((tag for tag in tags if _region(tag)),"")
-        remaining=[tag for tag in tags if tag!=country and not all(p.casefold().strip() in {"en","fr","de","es","it","sv","nl","pt","ja","ko","zh"} for p in tag.split(','))]
+        country=next((tag for tag in tags if _regions(tag)),"")
+        remaining=[tag for tag in tags if tag!=country and not all(p.casefold().strip() in {"en","fr","de","es","it","sv","nl","pt","ja","ko","zh"} for p in tag.split(','))
+                   and not re.fullmatch(r"rev(?:ision)?\s+[a-z0-9.]+",tag.strip(),re.I)]
         if remaining or _title_key(name)!=wanted:continue
-        region=_region(country)
-        if expected and region and region!=expected:continue
-        key=(stem,region);entry=entries.setdefault(key,{"name":stem,"region":country,"media":{}})
+        regions=_regions(country)
+        # Worldwide and multi-region releases serve any preferred region; a
+        # foreign-only release is never relabeled as the requested one.
+        if expected and regions and expected not in regions and "wor" not in regions:continue
+        region=expected if expected in regions else (regions[0] if regions else "")
+        key=(name,region);entry=entries.setdefault(key,{"name":stem,"region":labels.get(region,country),"media":{}})
         role="cover" if match[1]=="Named_Boxarts" else "screenshot"
         _media_add(entry['media'],role,f"https://raw.githubusercontent.com/libretro-thumbnails/{repo}/master/"+quote(path,safe='/'))
     return [ScrapeCandidate('libretro',entry['name'],title,system,entry['region'],media=entry['media']) for entry in list(entries.values())[:MAX_CANDIDATES]]

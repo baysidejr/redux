@@ -345,6 +345,30 @@ class ConsoleScraperTests(unittest.TestCase):
             self.assertIs(app.scraper_settings(),current)
         self.assertEqual(old.load()["provider"],"igdb")
 
+    def test_uncovered_system_offers_a_service_change_instead_of_a_failed_search(self):
+        app=self.app
+        app.scraper_settings().save({"provider":"arcadedb"})
+        app.scraper_service=lambda:Mock()
+        app.scrape_selected_game()
+        self.assertFalse(app.task_calls)
+        self.assertEqual(app.overlay["title"],"Change the artwork service")
+        self.assertIn("ArcadeDB has no PlayStation entries",app.overlay["message"])
+        self.choose("Choose artwork service")
+        self.assertEqual(app.overlay["title"],"Artwork service")
+
+    def test_bulk_summary_counts_uncovered_systems_and_offers_a_service_change(self):
+        app=self.app
+        app.scraper_settings().save({"provider":"arcadedb"})
+        app.scraper_service=lambda:Mock()
+        app.library.game=lambda identity:{'id':identity,'title':f'Game {identity}','system':'jaguar' if identity==9 else 'psx'}
+        app.scrape_game_ids([7,9])
+        _work,done,_description,_kwargs=app.task_calls[-1]
+        done(ScrapeBatchResult(unsupported=[7,9]))
+        self.assertIn('2 not covered by ArcadeDB',app.overlay['message'])
+        self.assertIn('ArcadeDB has no PlayStation, Atari Jaguar entries',app.overlay['message'])
+        self.choose('Change artwork service')
+        self.assertEqual(app.overlay['title'],'Artwork service')
+
     def test_bulk_summary_offers_controller_review_for_unmatched_games(self):
         app=self.app
         app.scraper_service=lambda:Mock()

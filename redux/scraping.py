@@ -207,6 +207,7 @@ class ScrapeBatchResult:
     updated: list[int] = field(default_factory=list)
     skipped: list[int] = field(default_factory=list)
     unmatched: list[int] = field(default_factory=list)
+    unsupported: list[int] = field(default_factory=list)
     errors: list[tuple[int, str]] = field(default_factory=list)
     cancelled: bool = False
 
@@ -222,6 +223,11 @@ class ScraperService:
     def _existing(self, game, role):
         path = self.library.artwork_for(game, role)
         return path if path and path.is_file() else None
+
+    def supports(self, game, provider=None):
+        """Whether the chosen service has entries for this game's system."""
+        provider = provider or self.settings.load()["provider"]
+        return game.get("system") in providers.provider_systems(provider)
 
     def search(self, game_id, *, query=None, cancelled=None):
         options = self.settings.load()
@@ -309,6 +315,7 @@ class ScraperService:
     def batch(self, game_ids, *, cancelled=None, progress=None):
         result = ScrapeBatchResult()
         options = self.settings.load()
+        supported = set(providers.provider_systems(options["provider"]))
         identities = list(dict.fromkeys(game_ids))
         for index, game_id in enumerate(identities):
             try:
@@ -318,6 +325,8 @@ class ScraperService:
                     progress(index + 1, len(identities), game["title"])
                 if not options["overwrite"] and all(self._existing(game, role) for role in options["roles"]):
                     result.skipped.append(game_id); continue
+                if game["system"] not in supported:
+                    result.unsupported.append(game_id); continue
                 candidates = self.search(game_id, cancelled=cancelled)
                 match = exact_candidate(game, candidates, options["region"])
                 if match is None:
@@ -330,6 +339,8 @@ class ScraperService:
                 result.errors.append((game_id, "Account or application credentials need attention.")); break
             except providers.QuotaError:
                 result.errors.append((game_id, "The service download limit was reached. Try again later.")); break
-            except (providers.ScraperError, OSError, ValueError, KeyError):
-                result.errors.append((game_id, "Artwork lookup or download did not complete."))
+            except (providers.ScraperError, OSError, ValueError, KeyError) as error:
+                # Provider errors are already written for display without URLs or credentials.
+                message = str(error) if isinstance(error, providers.ScraperError) and str(error) else ""
+                result.errors.append((game_id, message or "Artwork lookup or download did not complete."))
         return result

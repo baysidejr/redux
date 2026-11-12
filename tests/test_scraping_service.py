@@ -14,7 +14,7 @@ from urllib.request import Request,HTTPRedirectHandler
 from PIL import Image,ImageDraw
 
 from redux.library import ARTWORK_FIELDS,ImportCancelled,Library
-from redux.scraper_providers import AuthError,QuotaError,ScrapeCandidate,ScrapeCancelled
+from redux.scraper_providers import AuthError,ProviderUnavailable,QuotaError,ScrapeCandidate,ScrapeCancelled
 from redux.scraping import ScraperService,download_image,exact_candidate,_ImageRedirect
 
 
@@ -197,6 +197,25 @@ class ScrapingServiceTests(unittest.TestCase):
         result=self.service().batch([self.game["id"]])
         self.assertEqual(result.skipped,[self.game["id"]])
         self.assertEqual(self.library.game(self.game["id"])["artwork_path"],str(external))
+
+    def test_batch_reports_uncovered_systems_without_any_lookup(self):
+        self.settings.values["provider"]="arcadedb"
+        result=self.service().batch([self.game["id"]])
+        self.assertEqual(result.unsupported,[self.game["id"]])
+        self.assertFalse(result.errors or result.updated or result.unmatched or result.skipped)
+        self.searcher.assert_not_called()
+        self.assertFalse(self.service().supports(self.game))
+        self.assertTrue(self.service().supports(self.game,"libretro"))
+        self.assertTrue(self.service().supports(dict(self.game,system="jaguar"),"thegamesdb"))
+
+    def test_batch_reports_the_typed_service_message_for_lookup_failures(self):
+        message="The artwork service could not be reached. Check the connection and try again."
+        self.searcher.side_effect=ProviderUnavailable(message)
+        result=self.service().batch([self.game["id"]])
+        self.assertEqual(result.errors,[(self.game["id"],message)])
+        self.searcher.side_effect=KeyError("https://service.invalid/?password=secret")
+        result=self.service().batch([self.game["id"]])
+        self.assertEqual(result.errors,[(self.game["id"],"Artwork lookup or download did not complete.")])
 
     def test_wrong_system_or_ambiguous_or_wrong_region_never_auto_applies(self):
         self.settings.values["roles"]=["cover"]

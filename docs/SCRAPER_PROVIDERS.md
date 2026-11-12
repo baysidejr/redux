@@ -42,6 +42,21 @@ and the completion menu offers **Review unmatched games** for controller-based
 match selection.
 B cancels after the current bounded read, retaining earlier completed games.
 
+Since 0.10.10 every account service and Libretro cover Atari Jaguar, Jaguar CD and
+3DO. A service with no entries for a game's system, such as ArcadeDB for console
+games, is reported as *not covered* with a **Change artwork service** choice
+instead of a failed lookup, for a single game and in bulk; those games are never
+sent to the service. Bulk errors show the service's own display message. For
+lookup only, a trailing release year, ROM-collection bracket codes such as
+`[a1]`, Jaguar file-format labels such as `(jag)` and the publisher label that
+GoodTools/TOSEC names place directly after the year are ignored alongside the
+disc/revision/region/language tags; release-status tags such as `(Beta)`,
+`(Proto)`, `(Demo)` and `(PD)` and any edition text are kept, so a prototype or
+public-domain demo never receives the retail release's artwork. Libretro accepts
+a `(World)` or multi-region release for any preferred region, collapses `(Rev A)`
+and `(Rev B)` files into one choice, and reads the three thumbnail folders one at
+a time when a system's index (PlayStation) exceeds GitHub's recursive listing.
+
 **Download options** controls preferred region/language, image types, generated
 tile style and replacement of existing artwork. Replacement is OFF by default.
 Missing files in Redux's own managed artwork folder can be repaired; external
@@ -143,6 +158,17 @@ and two non-exact titles remained available for manual review. Reopening the
 database and decoding the saved files verified persistence. ScreenScraper,
 HFSDB and IGDB still require authenticated live acceptance. Evidence:
 `analysis/artwork-batch-0.10.9/result.json`.
+
+On 2026-11-12, 0.10.10 was live-tested on isolated copies of the installed
+154-game library (139 Atari Jaguar entries). A no-account Libretro pass over the
+whole library updated 41 games, kept 6 with complete artwork, reported the 6
+unassigned-system entries as not covered and left 100 homebrew, demo and
+unlisted titles for review, with no lookup errors after the PlayStation
+folder-by-folder index fallback. With the configured TheGamesDB key, a
+single-game search for Alien vs Predator returned one Jaguar match and applied
+cover, hero, screenshot, logo and a composed tile; an eight-game Jaguar batch
+updated six, kept one and left Doom - Evil Unleashed for review. Files were
+decoded after reopening each copy. Evidence: `analysis/artwork-batch-0.10.10/`.
 
 ## Primary references
 

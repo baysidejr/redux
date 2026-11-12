@@ -226,11 +226,26 @@ class ConsoleScraper:
         self.open_file_browser("Choose " + LABELS[role].lower(), mode="files", on_select=selected,
             extensions={".png", ".jpg", ".jpeg", ".webp", ".gif"}, multiple=False)
 
+    def _system_names(self, games):
+        from .library import SYSTEMS
+        names = list(dict.fromkeys(SYSTEMS.get(game.get("system"), str(game.get("system") or "Unassigned")) for game in games))
+        return ", ".join(names[:4]) + (" and more" if len(names) > 4 else "")
+
+    def unsupported_scraper_system_menu(self, info, games, back=None):
+        """The chosen service cannot look these systems up; offer the switch instead of an error."""
+        self.menu("Change the artwork service", [("Choose artwork service", self.scraper_provider_menu),
+            ("Accounts & API keys", self.scraper_accounts_menu), ("Back", back or (lambda:None))],
+            message=info["name"] + " has no " + self._system_names(games) + " entries. " + info["description"] +
+                    "\nChoose a service that covers this system, then search again.")
+
     def scrape_selected_game(self, query=None):
         game = self.selected()
         if not game:
             self.notice("Choose a game", "Open a game from Collection first."); return
         identity = game["id"]
+        info = self._scraper_info()
+        if game.get("system") not in info["systems"]:
+            self.unsupported_scraper_system_menu(info, [game]); return
         service = self.scraper_service()
         def done(candidates):
             if candidates is None:
@@ -280,19 +295,29 @@ class ConsoleScraper:
         if not identities:
             self.notice("No games", "Add games to your library first."); return
         service = self.scraper_service()
+        info = self._scraper_info()
         def progress(index, total, title):
             self.events.put(("status", f"Artwork {index}/{total}  ·  {title}"))
         def done(result):
             self.art.clear(); self.refresh()
             summary = (f"{len(result.updated)} updated · {len(result.skipped)} kept · "
                        f"{len(result.unmatched)} need a match · {len(result.errors)} errors")
+            unsupported = getattr(result, "unsupported", [])
+            if unsupported: summary += f" · {len(unsupported)} not covered by {info['name']}"
             if result.cancelled: summary = "Cancelled · " + summary
             if result.errors: summary += "\n" + result.errors[0][1]
             if result.unmatched: summary += "\nChoose artwork for individual games to resolve uncertain matches."
+            if unsupported:
+                games = []
+                for identity in unsupported:
+                    try: games.append(self.library.game(identity))
+                    except KeyError: continue
+                summary += "\n" + info["name"] + " has no " + self._system_names(games) + " entries. Choose another artwork service for those games."
             items=[]
             if result.unmatched:
                 pending=tuple(result.unmatched)
                 items.append(("Review unmatched games", lambda:self.review_scrape_matches(pending)))
+            if unsupported: items.append(("Change artwork service", self.scraper_provider_menu))
             items.append(("Back to artwork settings", self.open_scraper_settings))
             self.menu("Artwork downloads", items, message=summary)
         self.task(lambda:service.batch(identities, cancelled=self.cancelled, progress=progress), done, "Preparing artwork downloads…")
