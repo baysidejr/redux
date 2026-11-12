@@ -17,4 +17,4 @@ All calls to the receiver go to 127.0.0.1 only, use a 0.5 second timeout, and ru
 
 ## Status
 
-Verified on the owner's PC on November 11, 2026: the installed Redux 0.10.9 build navigates its menus with the GameSir controls routed through the phone and the receiver's virtual controller. Remember that the installed copy under `%LOCALAPPDATA%\Programs\Redux` must be rebuilt (`PyInstaller Redux.spec`, then `tools/package_release.py`) and updated for any change here to reach it.
+Verified on the owner's PC on November 11, 2026: the installed Redux 0.10.9 build navigates its menus with the GameSir controls routed through the phone and the receiver's virtual controller. The bundled receiver's one-click set-up and the PIN display on the Controllers page were confirmed on the owner's PC the same evening. Remember that the installed copy under `%LOCALAPPDATA%\Programs\Redux` must be rebuilt (`PyInstaller Redux.spec`, then `tools/package_release.py`) and updated for any change here to reach it.
