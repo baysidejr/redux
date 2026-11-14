@@ -107,11 +107,11 @@ class Artwork:
 
     def path(self,system,kind="hero",custom=None):
         if custom and Path(custom).is_file():return Path(custom)
-        if system=="pc":
-            # Original PC category art ships with the frontend, independent of
-            # optional reference assets and the user's game artwork.
-            candidate=self.bundled("platforms","pc-games.png")
-            if candidate:return candidate
+        # Original system tiles ship with the frontend (owner-made pixel art, plus the PC
+        # category tile); they serve as the collection tile and as the hero backdrop,
+        # independent of optional reference assets and the user's game artwork.
+        candidate=self.bundled("platforms","pc-games.png" if system=="pc" else f"{system}.png")
+        if candidate:return candidate
         if not self.reference_root.is_dir():return None
         stem,tile,_=SYSTEM_ART.get(system,(system,"","#536079"))
         candidate=self.reference_root/(f"home/system_hero/{stem}_hero_color.png" if kind=="hero" else f"home/collectiontiles/{tile}")
