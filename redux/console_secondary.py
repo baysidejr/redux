@@ -192,7 +192,7 @@ class SecondaryScreens:
         self.picture(self.art.welcome("box"),372,142,128,124,mode="contain")
         if not self.picture(self.art.welcome("hero"),502,142,744,124,shade=True,radius=3):self.rect(502,142,744,124,"#17121f")
         self.display(524,170,"WELCOME",14,"#c7c1d1","bold")
-        self.display(524,194,"It's dangerous to go alone. Bring your games.",22,WHITE)
+        self.display(524,194,"Every world you own, under one roof.",22,WHITE)
         self.target("collection:welcome",(370,140,1248,268),self._open_collection_view_all,"Welcome")
         # A playlist is an ordered list of installed games, nothing more.
         collections=self.library.collections();self.text(370,288,"YOUR PLAYLISTS",11,MUTED,"bold")

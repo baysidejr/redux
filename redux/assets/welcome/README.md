@@ -1,1 +1,1 @@
-Welcome banner and box art shown before any game is chosen. Original artwork supplied by the project owner for Redux; replace both files to rebrand the first screen.
+Welcome banner and box art shown before any game is chosen. banner.jpg is the owner's 8-bit 'default hero' (a row of pixel-art game-world banners, supplied 2026-11-14); box.jpg is the owner's welcome box art. Original artwork made for Redux; replace both files to rebrand the first screen.
