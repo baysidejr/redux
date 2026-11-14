@@ -2,6 +2,7 @@
  "system": "sega_cd",
  "label": "Sega CD",
  "version": 1,
+ "scope": "North American releases, plus games kept by hand",
  "generated": "2026-11-14",
  "catalog": "Redump via libretro-database (2026.10.07)",
  "art_sources": [
@@ -45,38 +46,6 @@
    "description": "You must help an old samurai to retrieve a dagger he once got as an award for his achievements in martial arts. The dagger was stolen by somebody who envied the old warrior - now he cannot give this prize to the warriors of the next generation. Choose one of the three young ninjas to help the old man!\r\n\r\nThis is a traditional platform game based on the movie 3 Ninjas Kick Back. Each one of the three ninjas has unique weapons and abilities. All three of them can run, duck, crawl, climb, jump, and hang on trees, ropes, etc. You'll encounter many obstacles and enemies, both regular and boss-like, which you'll have to overcome and defeat."
   },
   {
-   "id": "a-rank-thunder-tanjou-hen",
-   "title": "A-Rank Thunder - Tanjou-hen",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "A-Rank Thunder - Tanjou-hen (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-49064"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/a-rank-thunder-tanjou-hen/boxart.jpg",
-    "gameimage": "art/a-rank-thunder-tanjou-hen/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:41470",
-    "boxart": "libretro-thumbnails:A-Rank Thunder - Tanjou-hen (Japan)",
-    "gameimage": "libretro-thumbnails:A-Rank Thunder - Tanjou-hen (Japan)"
-   },
-   "year": 1993,
-   "developer": "Telenet Japan",
-   "publisher": "Riot",
-   "genres": [
-    "Adventure"
-   ],
-   "players": null,
-   "rating": null,
-   "description": "A-Rank Thunder Tanjouhen (Aランクサンダー 誕生編?) is a adventure game released in 1993 on Mega-CD. The game was developed by Riot and released by Telenet. The game's cover art was created by Yasushi Nirasawa, in his position as a model-builder for Hobby Japan magazine."
-  },
-  {
    "id": "a-x-101",
    "title": "A-X-101",
    "system": "sega_cd",
@@ -107,38 +76,6 @@
    "players": 1,
    "rating": "Not Rated",
    "description": "In the future date of 2500, mankind has reached its zenith in space travel and peace. However, after making contact with alien life for the first time, Earth is soon attacked and nearly conquered by a war-driven alien race called the Gurzons. The Earth's Defense Force discover the Gurzon's enemy resides on the distant alien planet Prism, who made contact with Earth as a warning against the oncoming Gurzon invasion. Further investigation leads to the discovery of a computer upgrade system located on Prism called the A/X-101, a weapon program that promises to liberate Earth from the Gurzon's grip. Earth Defense sends four of its best fighter pilots - Bob, Kelly, Chris and their Captain (the player) - to travel to Prism, retrieve the A/X-101 and use it against all of the Gurzon's planetary bases.\r\n\r\nThe game is an on-rails shooter, with gameplay seen from a first-person cockpit perspective. The player's ship moves automatically through pre-rendered space and planetary environments and only the targeting crosshair can be moved freely. Laser Cannons and Fusion Warheads are available to hit the numerous enemies. Lasers have unlimited ammunition but need a few moments time to recharge. The warheads function as smart bombs and clear the screen of enemies, but are available only in limited supply. They are restocked when reaching a certain score. The ship's energy shield functions as a life bar.\r\n\r\nBetween the shooting levels, there are transitional cutscenes, pre-rendered in the same way as the actual gameplay."
-  },
-  {
-   "id": "after-armageddon-gaiden-majuu-toushouden-eclipse",
-   "title": "After Armageddon Gaiden - Majuu Toushouden Eclipse",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "After Armageddon Gaiden - Majuu Toushouden Eclipse (Japan)",
-     "region": "Japan",
-     "serials": [
-      "G-6026"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/after-armageddon-gaiden-majuu-toushouden-eclipse/boxart.jpg",
-    "gameimage": "art/after-armageddon-gaiden-majuu-toushouden-eclipse/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34263",
-    "boxart": "libretro-thumbnails:After Armageddon Gaiden - Majuu Toushouden Eclipse (Japan)",
-    "gameimage": "libretro-thumbnails:After Armageddon Gaiden - Majuu Toushouden Eclipse (Japan)"
-   },
-   "year": 2016,
-   "developer": "Pandora Box, Micro Design",
-   "publisher": "Sega",
-   "genres": [
-    "Role-Playing"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "After Armageddon Gaiden: Majuu Toushouden Eclipse (アフターハルマゲドン外伝 魔獣闘将伝エクリプス) is an RPG for the Sega Mega-CD"
   },
   {
    "id": "after-burner-iii",
@@ -225,70 +162,6 @@
    "description": "AH-3 Thunderstrike is a helicopter sim/shooter. You will pilot the AH-3 over 10 operations all over the world. Each operation is composed of several missions, such as destroying tanks, or destroying bridges, or escorting trucks, and so on.\r\n\r\nThunderstrike's graphics consist of scaled sprites arranged to create a 3D environment. It makes use of the Sega CD's scaling and rotation hardware to create this effect with a smooth frame rate."
   },
   {
-   "id": "aisle-lord",
-   "title": "Aisle Lord",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Aisle Lord (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-32044"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/aisle-lord/boxart.jpg",
-    "gameimage": "art/aisle-lord/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34264",
-    "boxart": "libretro-thumbnails:Aisle Lord (Japan)",
-    "gameimage": "libretro-thumbnails:Aisle Lord (Japan)"
-   },
-   "year": 1992,
-   "developer": "Wolf Team",
-   "publisher": "Telenet Japan Co., Ltd.",
-   "genres": [
-    "Role-Playing"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Aisle Lord (アイルロード) is a Sega Mega-CD dungeon RPG released exclusively in Japan."
-  },
-  {
-   "id": "alshark",
-   "title": "Alshark",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Alshark (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-92014"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/alshark/boxart.jpg",
-    "gameimage": "art/alshark/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34265",
-    "boxart": "libretro-thumbnails:Alshark (Japan)",
-    "gameimage": "libretro-thumbnails:Alshark (Japan)"
-   },
-   "year": 1993,
-   "developer": "Polydor",
-   "publisher": "Sandstorm Productions",
-   "genres": [
-    "Role-Playing"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Alshark (アルシャーク) is an RPG released for Japanese Sega Mega-CDs."
-  },
-  {
    "id": "android-assault-the-revenge-of-bari-arm",
    "title": "Android Assault - The Revenge of Bari-Arm",
    "system": "sega_cd",
@@ -310,224 +183,6 @@
     "information": "thegamesdb:4936",
     "boxart": "libretro-thumbnails:Android Assault - The Revenge of Bari-Arm (USA)",
     "gameimage": "libretro-thumbnails:Android Assault - The Revenge of Bari-Arm (USA)",
-    "hero": "steamgriddb:5267004"
-   },
-   "year": 1994,
-   "developer": "Human Entertainment, Inc.",
-   "publisher": "Human Entertainment, Inc.",
-   "genres": [
-    "Shooter"
-   ],
-   "players": 1,
-   "rating": "E - Everyone",
-   "description": "In Android Assault an alien species called the Xias have targeted human beings for extermination. They have assembled a massive fleet that has crushed any opposing ship that has been sent their way and has started to attacking colonies stationed on nearby planets with a collision course to Earth and it is up to the player to stop them.\r\n\r\nThe gameplay is a side-scrolling shooter, similar to R-Type, where the player takes control of a space fighter that can morph into a cyborg called Bari-Arm and has an arsenal of weaponry to take down enemy ships including the Thundercracker, Burning Wave and the Chase Cannon along with picking up health and power-ups left behind by destroyed enemies."
-  },
-  {
-   "id": "annett-futatabi",
-   "title": "Annett Futatabi",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Annett Futatabi (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-32104"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/annett-futatabi/boxart.jpg",
-    "gameimage": "art/annett-futatabi/gameimage.png"
-   },
-   "sources": {
-    "boxart": "libretro-thumbnails:Annett Futatabi (Japan)",
-    "gameimage": "libretro-thumbnails:Annett Futatabi (Japan)"
-   }
-  },
-  {
-   "id": "aoki-ookami-to-shiroki-mejika-genchou-hishi",
-   "title": "Aoki Ookami to Shiroki Mejika - Genchou Hishi",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Aoki Ookami to Shiroki Mejika - Genchou Hishi (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-76054"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/aoki-ookami-to-shiroki-mejika-genchou-hishi/boxart.jpg",
-    "gameimage": "art/aoki-ookami-to-shiroki-mejika-genchou-hishi/gameimage.png",
-    "hero": "art/aoki-ookami-to-shiroki-mejika-genchou-hishi/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:1916",
-    "boxart": "libretro-thumbnails:Aoki Ookami to Shiroki Mejika - Genchou Hishi (Japan)",
-    "gameimage": "libretro-thumbnails:Aoki Ookami to Shiroki Mejika - Genchou Hishi (Japan)",
-    "hero": "steamgriddb:18090"
-   },
-   "year": 1993,
-   "developer": "Koei",
-   "publisher": "Koei Co., Ltd.",
-   "genres": [
-    "Strategy"
-   ],
-   "players": 2,
-   "rating": "Not Rated",
-   "description": "Unleash Mongol Hordes!\r\n\r\nIn an age of conflict, you have been chosen to rule. Military strength, as well as political artistry must be used to build an empire that spans the continents. Legendary sages and warriors will be your companions - or your bitter foes!\r\n\r\nLead your knights, samurai and elephants across the blazing sands of Arabia, through the Burmese jungle and into the grassy hills of the British Isles. Cross the Silk Road with Marco Polo and debate policy with Thomas Aquinas. Give the order to attack from the safety of your fortress or march to war at the head of your legions. Be careful to groom a successor and your great dynasty will live on. Soon all will bow before your might!\r\n\r\n- Conquer Mongolia or the entire world\r\n- Play Genghis Khan, King John, Philip II or any of 12 other world-class rulers\r\n- Choose from 16 historical military units, including knights, samurai and war elephants"
-  },
-  {
-   "id": "arcus-i-ii-iii",
-   "title": "Arcus I, II, III",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Arcus I, II, III (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-32094"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/arcus-i-ii-iii/boxart.jpg",
-    "gameimage": "art/arcus-i-ii-iii/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34266",
-    "boxart": "libretro-thumbnails:Arcus I, II, III (Japan)",
-    "gameimage": "libretro-thumbnails:Arcus I, II, III (Japan)"
-   },
-   "year": 1993,
-   "developer": "Wolf Team",
-   "publisher": "Wolf Team",
-   "genres": [
-    "Role-Playing"
-   ],
-   "players": 1,
-   "rating": "Not Rated",
-   "description": "Arcus I-II-III (アークス I・II・III) is a first-person dungeon RPG released exclusively for the Sega Mega-CD Japan. It combines the first three games in Wolf Team's Arcus series; Arcus, Arcus II: Silent Symphony and Arcus III, originally released for Japanese computers between 1988 and 1991."
-  },
-  {
-   "id": "arslan-senki",
-   "title": "Arslan Senki",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Arslan Senki (Japan)",
-     "region": "Japan",
-     "serials": [
-      "G-6028"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/arslan-senki/boxart.jpg",
-    "gameimage": "art/arslan-senki/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34368",
-    "boxart": "libretro-thumbnails:Arslan Senki (Japan)",
-    "gameimage": "libretro-thumbnails:Arslan Senki (Japan)"
-   },
-   "year": 1993,
-   "developer": "Sega",
-   "publisher": "Sega",
-   "genres": [
-    "Role-Playing"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Arslan Senki (アルスラーン戦記) is a tactical RPG for the Sega Mega-CD. It is based upon the Arslan Senki novels and anime, and was only released in Japan."
-  },
-  {
-   "id": "ax-101",
-   "title": "AX-101",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "AX-101 (Japan)",
-     "region": "Japan",
-     "serials": [
-      "G-6031"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/ax-101/boxart.jpg",
-    "gameimage": "art/ax-101/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:4937",
-    "boxart": "libretro-thumbnails:AX-101 (USA)",
-    "gameimage": "libretro-thumbnails:AX-101 (USA)"
-   },
-   "year": 1994,
-   "developer": "Micronet Co. Ltd.",
-   "publisher": "Absolute Entertainment",
-   "genres": [
-    "Shooter"
-   ],
-   "players": 1,
-   "rating": "Not Rated",
-   "description": "In the future date of 2500, mankind has reached its zenith in space travel and peace. However, after making contact with alien life for the first time, Earth is soon attacked and nearly conquered by a war-driven alien race called the Gurzons. The Earth's Defense Force discover the Gurzon's enemy resides on the distant alien planet Prism, who made contact with Earth as a warning against the oncoming Gurzon invasion. Further investigation leads to the discovery of a computer upgrade system located on Prism called the A/X-101, a weapon program that promises to liberate Earth from the Gurzon's grip. Earth Defense sends four of its best fighter pilots - Bob, Kelly, Chris and their Captain (the player) - to travel to Prism, retrieve the A/X-101 and use it against all of the Gurzon's planetary bases.\r\n\r\nThe game is an on-rails shooter, with gameplay seen from a first-person cockpit perspective. The player's ship moves automatically through pre-rendered space and planetary environments and only the targeting crosshair can be moved freely. Laser Cannons and Fusion Warheads are available to hit the numerous enemies. Lasers have unlimited ammunition but need a few moments time to recharge. The warheads function as smart bombs and clear the screen of enemies, but are available only in limited supply. They are restocked when reaching a certain score. The ship's energy shield functions as a life bar.\r\n\r\nBetween the shooting levels, there are transitional cutscenes, pre-rendered in the same way as the actual gameplay."
-  },
-  {
-   "id": "bakuden-the-unbalanced-zone",
-   "title": "Bakuden - The Unbalanced Zone",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Bakuden - The Unbalanced Zone (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-145014"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/bakuden-the-unbalanced-zone/boxart.jpg",
-    "gameimage": "art/bakuden-the-unbalanced-zone/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34320",
-    "boxart": "libretro-thumbnails:Bakuden - The Unbalanced Zone (Japan)",
-    "gameimage": "libretro-thumbnails:Baku-den - The Unbalanced Zone (Japan)"
-   },
-   "year": 1994,
-   "developer": "Sony Music Entertainment",
-   "publisher": "Sony Music Entertainment",
-   "genres": [
-    "Adventure"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Bakuden Unbalance Zone (爆伝アンバランスゾーン) is an adventure game for the Sega Mega-CD. It was only released in Japan."
-  },
-  {
-   "id": "bari-arm",
-   "title": "Bari-Arm",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Bari-Arm (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-43024"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/bari-arm/boxart.jpg",
-    "gameimage": "art/bari-arm/gameimage.png",
-    "hero": "art/bari-arm/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:4936",
-    "boxart": "libretro-thumbnails:Bari-Arm (Japan)",
-    "gameimage": "libretro-thumbnails:Bari-Arm (Japan)",
     "hero": "steamgriddb:5267004"
    },
    "year": 1994,
@@ -582,39 +237,6 @@
    "players": 1,
    "rating": "E - Everyone",
    "description": "Batman Returns on the Sega CD is an enhanced version of the Genesis adaptation of the movie. It includes the entirety of the original platform game, but adds all-new driving levels.\r\n\r\nThe game can be played in three ways: either as only the platform game, only the racing game, or a combination of both. Each option features a unique ending sequence.\r\n\r\nFor every of the original version's five platform levels, there is a related driving section in which the player controls either the Batmobile or the Batskiboat. Both in perspective and gameplay, these sections are reminiscent of arcade titles like OutRun. Seen from above and behind, the player's vehicle must reach checkpoints before a timer runs out, receiving bonus points for any surplus seconds. The CD system's hardware is used for sprite scaling and other tricks, achieving a 3D effect.\r\n\r\nThe game being based on an action-filled movie, there's not only driving but also shooting: both the car and the boat are armed with machine guns and heat-seeking missiles (with limited ammunition). Besides the roads being full of enemies in general, each level also ends in a boss fight against a big (and usually heavily armed) vehicle.\r\n\r\nThe game features CD-based audio tracks, replacing those from the original."
-  },
-  {
-   "id": "battle-fantasy",
-   "title": "Battle Fantasy",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Battle Fantasy (Japan) (Rev A)",
-     "region": "Japan",
-     "serials": [
-      "T-22044"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/battle-fantasy/boxart.jpg",
-    "gameimage": "art/battle-fantasy/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:5084",
-    "boxart": "libretro-thumbnails:Battle Fantasy (Japan)",
-    "gameimage": "libretro-thumbnails:Battle Fantasy (Japan)"
-   },
-   "year": 1994,
-   "developer": "Micronet Co. Ltd.",
-   "publisher": "Extreme Entertainment Group",
-   "genres": [
-    "Action",
-    "Role-Playing"
-   ],
-   "players": 2,
-   "rating": null,
-   "description": "Revengers of Vengeance is a combination of RPG, vertical shooter, and fighting game with a fantasy/anime style. There are ten available characters, each with their own animated backstory and fighting techniques. You must choose a hero and guide their stats to create a formidable fighter capable of taking down the Devil King and freeing the land."
   },
   {
    "id": "battle-frenzy",
@@ -764,40 +386,6 @@
    "description": "Millionaire playboy caveman Millstone Rockerfella arranges a wild 'n' wacky BC bike race, the winner of which receives the ULTIMATE BOULDERDASH BIKE. \r\n\r\nCool 'n' crazy Cliff Ace has had his sunglasses set on a boulderdash bike since he was knee-high to a baby diplodocus, so he signs up for the race - taking his cave-babe Roxy along for the ride! Join them as they speed n' smash their way on a dino-powered dirtbike through 32 howlin' heats in a madcap, 3D cartoon race against a hardrock host of rocky racers!"
   },
   {
-   "id": "beast-ii",
-   "title": "Beast II",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Beast II (Europe)",
-     "region": "Europe",
-     "serials": [
-      "T-113045-50"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/beast-ii/boxart.jpg",
-    "gameimage": "art/beast-ii/gameimage.png",
-    "hero": "art/beast-ii/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:965",
-    "boxart": "libretro-thumbnails:Beast II (Europe)",
-    "gameimage": "libretro-thumbnails:Beast II (Europe)",
-    "hero": "steamgriddb:37260"
-   },
-   "year": 1994,
-   "developer": "Reflections Interactive",
-   "publisher": "Psygnosis Limited",
-   "genres": [
-    "Action"
-   ],
-   "players": 1,
-   "rating": "M - Mature 17+",
-   "description": "Combining non-stop battle action with perplexing puzzle solving, Shadow of the Beast II thrusts you into a dark and mysterious world where wits and combat-hardened game playing skills are your only defense. Take the action to the limit as you fight a relentless onslaught of monsters and ogres. Bashing them into submission, you make your way through a labyrinth of adventure and enter final confrontation with the Beast Mage!"
-  },
-  {
    "id": "bill-walsh-college-football",
    "title": "Bill Walsh College Football",
    "system": "sega_cd",
@@ -881,37 +469,6 @@
    "players": 2,
    "rating": "E - Everyone",
    "description": "According to Blackhole Assault, the 22nd century sees earth technology advance to the point where exploration of the immediate solar system is not only possible, but necessary due to resource constraints. Humans are attempting to harvest the resources of the entire solar system but have met with trouble from alien invaders. It is up to a small force of humans who recognize and understand the threat to confront the aliens head on.\r\n\r\nThe weapon of choice in this game is the Cybernetic Anthropomorphized Machine, or C.A.M. The C.A.M. is a large robot that fights 1-on-1 against alien robots. All of the gameplay in Blackhole Assault revolves around single-round, 1-on-1 robot fighting action. There are 10 backdrops against which to beat up robots, including various planets and moons around the solar system.\r\n\r\nThe game has 4 different modes. The main story mode is Operation BHA. The exhibition mode allows players to customize matches down to the robots each player will use and the backdrop to play on. The exhibition mode can be configured to allow one or even both fighters to be controlled by the computer. Further, the game has tournament and league modes."
-  },
-  {
-   "id": "bloodshot",
-   "title": "Bloodshot",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Bloodshot (Europe) (En,Fr,De,Es)",
-     "region": "Europe",
-     "serials": [
-      "T-88045-18",
-      "T-88045-50"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/bloodshot/boxart.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:31873",
-    "boxart": "libretro-thumbnails:Bloodshot (Europe)"
-   },
-   "year": 1994,
-   "developer": "Acclaim",
-   "publisher": "Sega",
-   "genres": [
-    "Shooter"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Bloodshot, known as Battle Frenzy in Germany, is a Sega Mega Drive and Sega Mega-CD game developed by Domark. It is notable for being a 3D first person shooter - one of the few available for the Sega Mega Drive and the only game of this genre for the Sega Mega-CD.\r\n\r\nThe game takes up most of the screen, with much smaller borders than similar games such as Zero Tolerance, a very impressive technical achievement. A two player splitscreen mode is also available. However, the game also suffers from slowdown and some of the texture data of the Mega Drive version looks corrupted but this was fixed with the Mega-CD version."
   },
   {
    "id": "bouncers",
@@ -1060,38 +617,6 @@
    "description": "Bug Blasters: The Exterminators is an Action game, developed by Stargate and published by Good Deal Games, which was released in Europe in 2000."
   },
   {
-   "id": "burai-yatsudama-no-yuushi-densetsu",
-   "title": "Burai - Yatsudama no Yuushi Densetsu",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Burai - Yatsudama no Yuushi Densetsu (Japan)",
-     "region": "Japan",
-     "serials": [
-      "G-6004"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/burai-yatsudama-no-yuushi-densetsu/boxart.jpg",
-    "gameimage": "art/burai-yatsudama-no-yuushi-densetsu/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34271",
-    "boxart": "libretro-thumbnails:Burai - Yatsudama no Yuushi Densetsu (Japan)",
-    "gameimage": "libretro-thumbnails:Burai - Yatsudama no Yuushi Densetsu (Japan)"
-   },
-   "year": 1992,
-   "developer": "Pandora Box, Riverhillsoft",
-   "publisher": "Sega",
-   "genres": [
-    "Role-Playing"
-   ],
-   "players": 1,
-   "rating": "Not Rated",
-   "description": "Burai: Hachigyoku no Yuushi Densetsu (ブライ八玉の勇士伝説) is an RPG for the Sega Mega-CD. It was only released in Japan."
-  },
-  {
    "id": "burning-fists-force-striker",
    "title": "Burning Fists - Force Striker",
    "system": "sega_cd",
@@ -1154,41 +679,6 @@
    "players": 2,
    "rating": "T - Teen",
    "description": "A third-person driving and shooting game, based on the comic series Xenozoic Tales by Mark Shultz. The game is a rail-shooter, similar to Rocket Science's earliest game Loadstar.\r\n\r\nYou find yourself in the so-called Xenozoic Age - after a cataclysm in 2020 A.D., mankind was forced to hide beneath the surface. Once it could come out again, it found the world terribly changed, with dinosaurs roaming freely once again. A mysterious mutant-like race, called the Grith, believe the cataclysm was caused by the upsetting of the natural balance. Now, the leader of the restored City in the Sea, Scharnhorst, is using old technology and disrupting the balance again. The Girth chose you, Jack Tenrec, and your partner Hannah Dundee, to rid the world of Scharnhorst. And you get to do it in a red '53 Cadillac with mounted machine guns.\r\n\r\nWhile you're at the task, you must battle hungry, mean dinosaurs, but also be careful not to upset the balance of nature. Also, try not to upset your volcanic-energy fueled caddy by hitting too much obstacles along the way.\r\n\r\nGraphics are a mix of 3D objects and environments and comic-like 2D sprites, but captures much of the original comic book's style."
-  },
-  {
-   "id": "captain-tsubasa",
-   "title": "Captain Tsubasa",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Captain Tsubasa (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-36014"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/captain-tsubasa/boxart.jpg",
-    "gameimage": "art/captain-tsubasa/gameimage.png",
-    "hero": "art/captain-tsubasa/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:34281",
-    "boxart": "libretro-thumbnails:Captain Tsubasa (Japan)",
-    "gameimage": "libretro-thumbnails:Captain Tsubasa (Japan)",
-    "hero": "steamgriddb:5451046"
-   },
-   "year": 1994,
-   "developer": "Tecmo",
-   "publisher": "Tecmo",
-   "genres": [
-    "Role-Playing",
-    "Sports"
-   ],
-   "players": 2,
-   "rating": null,
-   "description": "Captain Tsubasa (キャプテン翼) is a football game for the Sega Mega-CD based on the Captain Tsubasa manga and anime series."
   },
   {
    "id": "championship-soccer-94",
@@ -1538,38 +1028,6 @@
    "description": "Corpse Killer is a full-motion-video (FMV) shoot-'em up. It seems the evil genius Dr. Hellman has found a way to raise the dead and created an island of zombies. The player is an elite special forces soldier who has been parachuted onto the island; it is up to them to shoot their way through the undead hordes and stop Dr. Hellman.\r\n\r\nThe game is played from a first-person perspective. Various zombies pop up in front of a video background and the player must shoot them down either by moving a mouse cursor on screen or by using a light gun."
   },
   {
-   "id": "cosmic-fantasy-stories",
-   "title": "Cosmic Fantasy Stories",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Cosmic Fantasy Stories (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-49014"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/cosmic-fantasy-stories/boxart.jpg",
-    "gameimage": "art/cosmic-fantasy-stories/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34382",
-    "boxart": "libretro-thumbnails:Cosmic Fantasy Stories (Japan)",
-    "gameimage": "libretro-thumbnails:Cosmic Fantasy Stories (Japan)"
-   },
-   "year": 1992,
-   "developer": "Riot",
-   "publisher": "Telenet Japan Co., Ltd.",
-   "genres": [
-    "Role-Playing"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Cosmic Fantasy Stories (コズミックファンタジーストーリーズ) is a Sega Mega-CD RPG released exclusively in Japan"
-  },
-  {
    "id": "crime-patrol",
    "title": "Crime Patrol",
    "system": "sega_cd",
@@ -1600,70 +1058,6 @@
    "players": 2,
    "rating": "M - Mature 17+",
    "description": "Crime Patrol puts the player in the shoes of a police officer, who starts as a Rookie and has to work his way up to become a member of SWAT and eventually the Delta Force team. To do that, he has to complete missions, which involve taking down criminals in a variety of locations. Beginning with smaller-scale criminals (such as shoplifters), the hero will later have to face gangsters, drug lords, and eventually terrorists. For each set of missions, the player characters is being teamed up with another police officer. The gameplay is quite similar to any other of the large live-action laser-gun games found in the arcades - all the player has to do is take the gun (or the mouse in the computer version) and show those criminals who's the boss!"
-  },
-  {
-   "id": "cyborg-009",
-   "title": "Cyborg 009",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Cyborg 009 (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-49054"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/cyborg-009/boxart.jpg",
-    "gameimage": "art/cyborg-009/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34371",
-    "boxart": "libretro-thumbnails:Cyborg 009 (Japan)",
-    "gameimage": "libretro-thumbnails:Cyborg 009 (Japan)"
-   },
-   "year": 1993,
-   "developer": "Telenet Japan",
-   "publisher": "Riot",
-   "genres": [
-    "Action"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Cyborg 009 (サイボーグ００９) is a Sega Mega-CD action game released exclusively in Japan."
-  },
-  {
-   "id": "daihoushinden",
-   "title": "Daihoushinden",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Daihoushinden (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-60024"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/daihoushinden/boxart.jpg",
-    "gameimage": "art/daihoushinden/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34282",
-    "boxart": "libretro-thumbnails:Daihoushinden (Japan)",
-    "gameimage": "libretro-thumbnails:Daihoushinden (Japan)"
-   },
-   "year": 1995,
-   "developer": "Flashback",
-   "publisher": "Victor Entertainment",
-   "genres": [
-    "Role-Playing"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Daihoushinden (大封神伝) is a Sega Mega-CD RPG released exclusively in Japan."
   },
   {
    "id": "dark-wizard",
@@ -1701,73 +1095,6 @@
    "description": "These are epic times for the people of Cheshire. The kingdom of Quentin is the last stronghold in all of Cheshire against the forces of darkness. But Quentin's king has been killed in battle. Cheshire desperately needs a successor to come forward and lead the warriors of light against the forces of darkness and, eventually, against the Dark Wizard himself. If you fail, darkness will rule Cheshire - forever!"
   },
   {
-   "id": "dark-wizard-yomigaerishi-yami-no-madoushi",
-   "title": "Dark Wizard - Yomigaerishi Yami no Madoushi",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Dark Wizard - Yomigaerishi Yami no Madoushi (Japan)",
-     "region": "Japan",
-     "serials": [
-      "G-6005"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/dark-wizard-yomigaerishi-yami-no-madoushi/boxart.jpg",
-    "gameimage": "art/dark-wizard-yomigaerishi-yami-no-madoushi/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:119123",
-    "boxart": "libretro-thumbnails:Dark Wizard - Yomigaerishi Yami no Madoushi (Japan)",
-    "gameimage": "libretro-thumbnails:Dark Wizard - Yomigaeri Shiyami no Madoushi (Japan)"
-   },
-   "year": 1993,
-   "developer": "Sega",
-   "publisher": "Sega",
-   "genres": [
-    "Role-Playing",
-    "Strategy"
-   ],
-   "players": 1,
-   "rating": "Not Rated",
-   "description": "These are epic times for the people of Cheshire. The kingdom of Quentin is the last stronghold in all of Cheshire against the forces of darkness. But Quentin's king has been killed in battle. Cheshire desperately needs a successor to come forward and lead the warriors of light against the forces of darkness and, eventually, against the Dark Wizard himself. If you fail, darkness will rule Cheshire - forever! \r\n\r\nThe gameplay takes place on a hex-map, and features turn-based tactical battle scenes. The player controls one of four playable characters, each with their own attributes, abilities, and available units. The aim of the game is to use magic and recruitable armies to take control of the fictional kingdom of Cheshire from the treacherous wizard Velonese."
-  },
-  {
-   "id": "death-bringer",
-   "title": "Death Bringer",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Death Bringer (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-49034"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/death-bringer/boxart.jpg",
-    "gameimage": "art/death-bringer/gameimage.png",
-    "hero": "art/death-bringer/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:34374",
-    "boxart": "libretro-thumbnails:Death Bringer (Japan)",
-    "gameimage": "libretro-thumbnails:Death Bringer (Japan)",
-    "hero": "steamgriddb:5512385"
-   },
-   "year": 1992,
-   "developer": "Opera House, Riot",
-   "publisher": "Telenet Japan Co., Ltd.",
-   "genres": [
-    "Role-Playing"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Death Bringer (デスブリンガー) is an RPG for the Sega Mega-CD. It was only released in Japan."
-  },
-  {
    "id": "demolition-man",
    "title": "Demolition Man",
    "system": "sega_cd",
@@ -1801,107 +1128,6 @@
    "players": 1,
    "rating": "T - Teen",
    "description": "Two men enter the future. bringing with them the values of a brutal past. One cop. One criminal. One mission: destroy the other man first! You're John Spartan, freshly dethawed from the San Angeles Cryo-Prison. Armed with shotguns, magnum handguns and grenades, hunt Simon Phoenix through 10 explosive Levels from the ravaged Wasteland to the Hall of Violence!\r\n\r\nBe WeII.\r\nDEMOLITION MAN...\r\n\r\n-Control DEMOLITION MAN John Spartan in the futuristic action adventure based on the Warner bros/John Silver (Die Hard and Lethal Weapon I and II) hit movie.\r\n\r\n-Multiple player perspectives including side-scrolling and top-down view.\r\n\r\n-10 explosive levels including an infra-red chase through the subterranean Wasteland.\r\n\r\n-Shoot enemies from all angles with a stash of grenades, shotguns and the magnum handgun.\r\n\r\n-Track down Simon Phoenix and his escaped cryo-cons on the hazardous city streets and decidedly dangerous Wastelands of San Angeles."
-  },
-  {
-   "id": "dennin-aleste-nobunaga-and-his-ninja-force",
-   "title": "Dennin Aleste - Nobunaga and His Ninja Force",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Dennin Aleste - Nobunaga and His Ninja Force (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-66014"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/dennin-aleste-nobunaga-and-his-ninja-force/boxart.jpg",
-    "gameimage": "art/dennin-aleste-nobunaga-and-his-ninja-force/gameimage.png",
-    "hero": "art/dennin-aleste-nobunaga-and-his-ninja-force/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:445",
-    "boxart": "libretro-thumbnails:Dennin Aleste - Nobunaga and His Ninja Force (Japan)",
-    "gameimage": "libretro-thumbnails:Dennin Aleste - Nobunaga and his Ninja Force (Japan)",
-    "hero": "steamgriddb:5173854"
-   },
-   "year": 1993,
-   "developer": "Compile",
-   "publisher": "Tengen",
-   "genres": [
-    "Action",
-    "Shooter"
-   ],
-   "players": 1,
-   "rating": "E - Everyone",
-   "description": "Pilot your massive mecha Aleste in the name of the Oda clan and seek revenge against the evil Chugoku Army for their atrocities!  Robo Aleste is another title in the Aleste series by famed shoot-'em-up developer Compile where players must collect power-ups to defeat countless waves of enemies and large bosses."
-  },
-  {
-   "id": "detonator-orgun",
-   "title": "Detonator Orgun",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Detonator Orgun (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-28014"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/detonator-orgun/boxart.jpg",
-    "gameimage": "art/detonator-orgun/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34284",
-    "boxart": "libretro-thumbnails:Detonator Orgun (Japan)",
-    "gameimage": "libretro-thumbnails:Detonator Orgun (Japan)"
-   },
-   "year": 1992,
-   "developer": "Hot-B",
-   "publisher": "Hot-B Co., Ltd.",
-   "genres": [
-    "Adventure"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Fleeing from his own race, Orgun—an alien being with superhuman abilities and unearthly weapons—travels to Earth to find an answer to his origin. There, he bonds with a young man named Tomoru to defend Earth against the Evoluders, who seek nothing but destruction of other civilizations."
-  },
-  {
-   "id": "devastator",
-   "title": "Devastator",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Devastator (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-32074"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/devastator/boxart.jpg",
-    "gameimage": "art/devastator/gameimage.png",
-    "hero": "art/devastator/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:36016",
-    "boxart": "libretro-thumbnails:Devastator (Japan)",
-    "gameimage": "libretro-thumbnails:Devastator (Japan)",
-    "hero": "steamgriddb:5454399"
-   },
-   "year": 1993,
-   "developer": "Wolf Team",
-   "publisher": "Wolf Team",
-   "genres": [
-    "Action"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Ryo begins working for a company called Yaesu as a replacement for his friend Masato. During a test ride with a new machine, however, he is somehow thrown into another dimension. After being rescued there by a group of mecha pilots from vile creatures named Devastators, he learns that nefarious people are working on a connection between that and his own dimension, and sets out to stop them."
   },
   {
    "id": "double-switch",
@@ -2187,73 +1413,6 @@
    "description": "The game fuses real-time battles with puzzle solving and travelling, although the game now auto-maps. Rain and magic usage effects are incorporated into the engine. The first part of the game is spent above ground, visiting villages with shops and temples, and trawling through forests."
   },
   {
-   "id": "dynamic-country-club",
-   "title": "Dynamic Country Club",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Dynamic Country Club (Japan)",
-     "region": "Japan",
-     "serials": [
-      "G-6017"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/dynamic-country-club/boxart.jpg",
-    "gameimage": "art/dynamic-country-club/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34357",
-    "boxart": "libretro-thumbnails:Dynamic Country Club (Japan)",
-    "gameimage": "libretro-thumbnails:Dynamic Country Club (Japan)"
-   },
-   "year": 1993,
-   "developer": "Sega AM3 R&D Division",
-   "publisher": "Sega",
-   "genres": [
-    "Sports"
-   ],
-   "players": 2,
-   "rating": null,
-   "description": "Dynamic Country Club (ダイナミックカントリークラブ) is a 1991 arcade golf game by Sega released on Sega System 24 hardware. Both floppy disk-based and ROM board-based versions of the game exist. The game presents itself in a pseudo-3D setting a la T&E Soft golf games like Pebble Beach Golf Links where the screen slowly redraws itself at certain intervals in your swing.\r\n\r\nA game with the same name for the Sega Mega-CD was produced, but only released in Japan. Whether or not this is the same game is unknown."
-  },
-  {
-   "id": "earnest-evans",
-   "title": "Earnest Evans",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Earnest Evans (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-32014"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/earnest-evans/boxart.jpg",
-    "gameimage": "art/earnest-evans/gameimage.png",
-    "hero": "art/earnest-evans/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:25461",
-    "boxart": "libretro-thumbnails:Earnest Evans (Japan)",
-    "gameimage": "libretro-thumbnails:Earnest Evans (Japan)",
-    "hero": "thegamesdb:25461"
-   },
-   "year": 1991,
-   "developer": "Wolf Team",
-   "publisher": "Wolf Team",
-   "genres": [
-    "Action",
-    "Platform"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "In the 1930's, famed archaeologist Earnest Evans unearthed his greatest challenge: three ancient idols that together could bring an end to life on Earth. The idols were scattered at random throughout the world by the god of the winds, Hastur, before its power was crushed. Yet Evans was injured before he could complete the search.\r\n\r\nFifty years pass and now its up to Dr. Evans' grandson Earnest to save the world."
-  },
-  {
    "id": "earthworm-jim-special-edition",
    "title": "Earthworm Jim - Special Edition",
    "system": "sega_cd",
@@ -2386,106 +1545,6 @@
    "players": 1,
    "rating": "E - Everyone",
    "description": "Travel through time along with Ecco the Dolphin, in the only game that could call itself a \"dolphin simulator\". Indeed, you can do pretty much everything a typical dolphin does, including eating fish, surfacing in order to breathe, using your biological sonar and of course, jumping out of the water to amaze your friends.\r\n\r\nThe storyline is actually deeper that one may think by looking at the box illustration. As Ecco, you are the only dolphin who managed to escape from a giant whirlpool which sucked down your entire pod. The five shining stars on your forehead show that you are the chosen one to save them. But that task will be not be an easy one, as you will have to travel through time and space with the Atlantean time machine, and meet the mystical Asterite in order to defeat the Vortex Queen.\r\n\r\nThe main part of the gameplay in Ecco the Dolphin relies on exploring various aquatic levels. They are usually nonlinear, with submerged caverns and tunnels branching out from the main bodies of water. The navigation is impeded by islands that must be hopped over, volcanoes that spit hot lava, powerful currents, deadly spikes, and dangerous predators such as octopi and giant eels. The sonar ability has multiple functions: you can communicate with friendly animals, map out the nearby area (echolocation), activate glyphs, and eventually defeat enemies. Activating glyphs is necessary because they can unlock unexplored parts of the current level, including the exit that leads to the next area; some of them can even bestow the gift of invincibility on Ecco for a limited time.\r\n\r\nYou must keep an eye on the life and breath meters. Dolphins can't stay underwater for a long period of time and must return to the surface for air. However, the cavern systems may hide the occasional pocket of air as well. Every time you are hit by spikes, lava, or an enemy, Ecco loses health, and once it reaches zero you will have to replay the level from the beginning. The life meter can be replenished by eating fish or by finding healing clams, called the Shelled Ones, and communicating with them. It's possible to avoid most enemies, but Ecco can kill troublesome creatures using the death sonar or by charging them head-on."
-  },
-  {
-   "id": "ecco-the-dolphin-cd-ecco-the-dolphin-ii",
-   "title": "Ecco the Dolphin CD (Ecco the Dolphin II)",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Ecco the Dolphin CD (Japan) (Disc 2) (Ecco the Dolphin II)",
-     "region": "Japan",
-     "serials": [
-      "G-6041",
-      "G-6041-1"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/ecco-the-dolphin-cd-ecco-the-dolphin-ii/boxart.jpg",
-    "gameimage": "art/ecco-the-dolphin-cd-ecco-the-dolphin-ii/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:79250",
-    "boxart": "libretro-thumbnails:Ecco the Dolphin CD (Japan) (Disc 2) (Ecco the Dolphin II)",
-    "gameimage": "libretro-thumbnails:Ecco the Dolphin CD (Japan) (Disc 2) (Ecco the Dolphin II)"
-   },
-   "year": 1995,
-   "developer": "Novotrade International",
-   "publisher": "Sega",
-   "genres": [
-    "Adventure",
-    "Life Simulation"
-   ],
-   "players": 1,
-   "rating": "Not Rated",
-   "description": null
-  },
-  {
-   "id": "ecco-the-dolphin-cd-ecco-the-dolphin",
-   "title": "Ecco the Dolphin CD (Ecco the Dolphin)",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Ecco the Dolphin CD (Japan) (Disc 1) (Ecco the Dolphin)",
-     "region": "Japan",
-     "serials": [
-      "G-6041",
-      "G-6041-0"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/ecco-the-dolphin-cd-ecco-the-dolphin/boxart.jpg",
-    "gameimage": "art/ecco-the-dolphin-cd-ecco-the-dolphin/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:79250",
-    "boxart": "libretro-thumbnails:Ecco the Dolphin CD (Japan) (Disc 1) (Ecco the Dolphin)",
-    "gameimage": "libretro-thumbnails:Ecco the Dolphin CD (Japan) (Disc 1) (Ecco the Dolphin)"
-   },
-   "year": 1995,
-   "developer": "Novotrade International",
-   "publisher": "Sega",
-   "genres": [
-    "Adventure",
-    "Life Simulation"
-   ],
-   "players": 1,
-   "rating": "Not Rated",
-   "description": null
-  },
-  {
-   "id": "egawa-suguru-no-super-league-cd",
-   "title": "Egawa Suguru no Super League CD",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Egawa Suguru no Super League CD (Japan)",
-     "region": "Japan",
-     "serials": [
-      "G-6019"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/egawa-suguru-no-super-league-cd/boxart.jpg",
-    "gameimage": "art/egawa-suguru-no-super-league-cd/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34313",
-    "boxart": "libretro-thumbnails:Egawa Suguru no Super League CD (Japan)",
-    "gameimage": "libretro-thumbnails:Egawa Suguru no Super League CD (Japan)"
-   },
-   "year": 1993,
-   "developer": "Sega",
-   "publisher": "Sega",
-   "genres": [
-    "Sports"
-   ],
-   "players": 2,
-   "rating": null,
-   "description": "Egawa Suguru no Super League CD (江川卓のスーパーリーグＣＤ) is a baseball game released as part of the Super League and a sequel to Pro Yakyuu Super League CD (?)."
   },
   {
    "id": "espn-baseball-tonight",
@@ -2705,86 +1764,6 @@
    "description": "Eye of the Beholder is a dungeon crawler RPG with a first-person perspective based on the 2nd Edition AD&D rules. The starting party consists of four characters and up to two NPCs can join later. Combat and magic happen in real time. Fight over a dozen different monster varieties and cast over 40 spells. A point-and-click interface makes exploring, fighting, spellcasting and handling objects easy."
   },
   {
-   "id": "f1-circus-cd",
-   "title": "F1 Circus CD",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "F1 Circus CD (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-71014"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/f1-circus-cd/boxart.jpg",
-    "gameimage": "art/f1-circus-cd/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34383",
-    "boxart": "libretro-thumbnails:F1 Circus CD (Japan)",
-    "gameimage": "libretro-thumbnails:F1 Circus CD (Japan)"
-   },
-   "year": 1994,
-   "developer": "Nichibutsu",
-   "publisher": "Nihon Bussan Co., Ltd.",
-   "genres": [
-    "Racing"
-   ],
-   "players": 2,
-   "rating": null,
-   "description": "F1 Circus CD (Ｆ１サーカスＣＤ) is a formula one racing game released for the Sega Mega-CD exclusively in Japan. It is the sequel to F1 Circus MD."
-  },
-  {
-   "id": "fahrenheit",
-   "title": "Fahrenheit",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Fahrenheit (Europe)",
-     "region": "Europe",
-     "serials": [
-      "4438-50"
-     ]
-    },
-    {
-     "name": "Fahrenheit (Japan)",
-     "region": "Japan",
-     "serials": [
-      "G-6043"
-     ]
-    },
-    {
-     "name": "Fahrenheit (France)",
-     "region": "France",
-     "serials": [
-      "4438-09"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/fahrenheit/boxart.jpg",
-    "gameimage": "art/fahrenheit/gameimage.png",
-    "hero": "art/fahrenheit/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:5013",
-    "boxart": "libretro-thumbnails:Fahrenheit (Europe)",
-    "gameimage": "libretro-thumbnails:Fahrenheit (USA)",
-    "hero": "steamgriddb:5274216"
-   },
-   "year": 1995,
-   "developer": "Sega",
-   "publisher": "Sega",
-   "genres": [
-    "Action"
-   ],
-   "players": 1,
-   "rating": "T - Teen",
-   "description": "Fahrenheit is an interactive movie that puts players into the flame-resistant suit of a firefighter. You are the new guy in the firehouse. Last week, you saved three lives. But now, you're on a new squad, and have to prove yourself to them.\r\n\r\nLike most interactive movies, Fahrenheit is played entirely while watching a digitized video. At certain critical points in the video, players must press certain directions on the control pad or action buttons in order to progress in the game. Fahrenheit takes this a step further by providing several buildings in which the player has the ability to move from room to room in in a non-linear fashion. As players move from room to room, they have to locate victims and neutralize fire hazards."
-  },
-  {
    "id": "fahrenheit-key-disc-sega-cd",
    "title": "Fahrenheit (Key Disc, Sega CD)",
    "system": "sega_cd",
@@ -2917,40 +1896,6 @@
     "information": "thegamesdb:5015",
     "boxart": "libretro-thumbnails:FIFA International Soccer (USA)",
     "gameimage": "libretro-thumbnails:FIFA International Soccer (USA)",
-    "hero": "steamgriddb:4565"
-   },
-   "year": 1994,
-   "developer": null,
-   "publisher": "EA Sports",
-   "genres": [
-    "Sports"
-   ],
-   "players": 4,
-   "rating": "E - Everyone",
-   "description": "Based on international teams (with fictional player names), their abilities in each skill area rated out of 10 to give the player an overall impression of how good they are. The options available follow the standard set: fouls and offsides can be toggled on and off, the match length can be set, and if the timer operates continuously, or only while the ball is in play. Gameplay privileges quick runs, short passes and blistering shots outside the penalty box, and set pieces are controlled by moving a box into the target area for the ball, and then passed, lobbed or kicked directly. On the tactical side, formations can be selected, with 5 different strategies also available (although not all of these combinations make sense) as can the team Coverage - the areas which defenders, midfielders and strikers cover.\r\n\r\nFIFA International Soccer: Championship Edition, known in-game and in North America simply as FIFA International Soccer is a Sega Mega-CD football game released as part of Electronic Arts' FIFA series. Despite its potentially confusing title, the game is an upgrade over the original FIFA International Soccer released for the Sega Mega Drive, with sixteen new teams, a CD soundtrack (and crowd chants), updated intros and a licensing deal with Adidas and its Predator boot, leading to new in-game moves (such as the ability to curve shots similar to Sensible Soccer). More modes were added and the computer AI was improved, and the overall pace of play is much quicker than the prior iteration."
-  },
-  {
-   "id": "fifa-international-soccer-championship-edition",
-   "title": "FIFA International Soccer - Championship Edition",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "FIFA International Soccer - Championship Edition (Europe) (En,Fr,De,Es)",
-     "region": "Europe",
-     "serials": [
-      "T-50055-50"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/fifa-international-soccer-championship-edition/boxart.jpg",
-    "gameimage": "art/fifa-international-soccer-championship-edition/gameimage.png",
-    "hero": "art/fifa-international-soccer-championship-edition/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:5015",
-    "boxart": "libretro-thumbnails:FIFA International Soccer - Championship Edition (Europe) (En,Fr,De,Es)",
-    "gameimage": "libretro-thumbnails:FIFA International Soccer - Championship Edition (Europe)",
     "hero": "steamgriddb:4565"
    },
    "year": 1994,
@@ -3134,169 +2079,6 @@
    "description": "Beyond the Limit is a racing sim based on Formula One circa 1993. It features real-life cars, tracks, and drivers from the world of F1.\r\n\r\nThe graphics in Beyond the Limit are created from scaled and rotated sprites that create a 3D effect. It also features a lot of full-screen video clips taken from Fuji TV's coverage of actual races."
   },
   {
-   "id": "fresh-cleaner",
-   "title": "Fresh Cleaner",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Fresh Cleaner (Japan)",
-     "region": "Japan",
-     "serials": [
-      "M-20001"
-     ]
-    }
-   ],
-   "art": {},
-   "sources": {}
-  },
-  {
-   "id": "game-no-kandume-vol-1",
-   "title": "Game no Kandume Vol. 1",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Game no Kandume Vol. 1 (Japan)",
-     "region": "Japan",
-     "serials": [
-      "G-6032"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/game-no-kandume-vol-1/boxart.jpg",
-    "gameimage": "art/game-no-kandume-vol-1/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34379",
-    "boxart": "libretro-thumbnails:Game no Kandume Vol. 1 (Japan)",
-    "gameimage": "libretro-thumbnails:Game no Kandume Vol. 1 (Japan)"
-   },
-   "year": 1994,
-   "developer": "Sega",
-   "publisher": "Sega",
-   "genres": [
-    "Action",
-    "Adventure",
-    "Role-Playing",
-    "Puzzle",
-    "Strategy",
-    "Racing",
-    "Shooter",
-    "Fighting",
-    "Platform"
-   ],
-   "players": 2,
-   "rating": null,
-   "description": "Game no Kanzume Vol. 1 (ゲームのかんづめ ＶＯＬ.１) is a compilation of Sega Meganet games, released exclusively in Japan for the Sega Mega-CD. It was released alongside a Vol.2 and was followed by Game no Kanzume Otokuyou.\r\n\r\nThis compilation was partially translated by M.I.J.E.T. in that only the Phantasy Star II Text Adventures were translated.\r\n\r\nGames Included\r\nFlicky\r\nHyper Marbles\r\nPaddle Fighter\r\nPhantasy Star II: Amia's Adventure\r\nPhantasy Star II: Huey's Adventure\r\nPhantasy Star II: Shilka's Adventure\r\nPhantasy Star II: Yushis's Adventure\r\nPyramid Magic\r\nPyramid Magic II\r\nPyramid Magic III\r\nPyramid Magic Special"
-  },
-  {
-   "id": "game-no-kandume-vol-2",
-   "title": "Game no Kandume Vol. 2",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Game no Kandume Vol. 2 (Japan)",
-     "region": "Japan",
-     "serials": [
-      "G-6033"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/game-no-kandume-vol-2/boxart.jpg",
-    "gameimage": "art/game-no-kandume-vol-2/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34376",
-    "boxart": "libretro-thumbnails:Game no Kandume Vol. 2 (Japan)",
-    "gameimage": "libretro-thumbnails:Game no Kandume Vol. 2 (Japan)"
-   },
-   "year": 1994,
-   "developer": "Sega",
-   "publisher": "Sega",
-   "genres": [
-    "Action",
-    "Role-Playing",
-    "Puzzle",
-    "Racing",
-    "Shooter",
-    "Fighting",
-    "Sports",
-    "Sandbox",
-    "Platform",
-    "Stealth"
-   ],
-   "players": 2,
-   "rating": null,
-   "description": "Game no Kanzume Vol. 2 (ゲームのかんづめ ＶＯＬ.２) is a compilation of Sega Meganet games, released exclusively in Japan for the Sega Mega-CD. It was released alongside a Vol.1 and was followed by Game no Kanzume Otokuyou.\r\n\r\nThis compilation was partially translated by M.I.J.E.T. in that only the Phantasy Star II Text Adventures and Fatal Labyrinth were translated.\r\n\r\nGames Included\r\n16t\r\nAworg: Hero in the Sky\r\nFatal Labyrinth\r\nIkasuze! Koi no Doki Doki Penguin Land MD\r\nMedal City\r\nPhantasy Star II: Anne's Adventure\r\nPhantasy Star II: Kinds's Adventure\r\nPhantasy Star II: Nei's Adventure\r\nPhantasy Star II: Rudger's Adventure\r\nPutter Golf\r\nRobot Battler\r\nTeddy Boy Blues"
-  },
-  {
-   "id": "garou-densetsu-special",
-   "title": "Garou Densetsu Special",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Garou Densetsu Special (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-60214"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/garou-densetsu-special/boxart.jpg",
-    "gameimage": "art/garou-densetsu-special/gameimage.png",
-    "hero": "art/garou-densetsu-special/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:5014",
-    "boxart": "libretro-thumbnails:Garou Densetsu Special (Japan)",
-    "gameimage": "libretro-thumbnails:Garou Densetsu Special (Japan)",
-    "hero": "steamgriddb:38295"
-   },
-   "year": 1993,
-   "developer": "SNK",
-   "publisher": "JVC Musical Industries, Inc.",
-   "genres": [
-    "Fighting"
-   ],
-   "players": 2,
-   "rating": null,
-   "description": "Fatal Fury Special is an improved version of SNK's 2D one-on-one fighter Fatal Fury 2. It's a conversion of the 1993 arcade game of the same name. The objective is still to win the tournament by defeating all other fighters including end boss Wolfgang Krauser. \r\nFatal Fury Special still features the series' trademark pseudo-3D movement along two planes."
-  },
-  {
-   "id": "genei-toshi-illusion-city",
-   "title": "Gen'ei Toshi - Illusion City",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Gen'ei Toshi - Illusion City (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-51014"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/genei-toshi-illusion-city/boxart.jpg",
-    "gameimage": "art/genei-toshi-illusion-city/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34319",
-    "boxart": "libretro-thumbnails:Gen'ei Toshi - Illusion City (Japan)",
-    "gameimage": "libretro-thumbnails:Gen'ei Toshi - Illusion City (Japan)"
-   },
-   "year": 1993,
-   "developer": "Micro Cabin Co.",
-   "publisher": "Micro Cabin Co., Aisystem Tokyo",
-   "genres": [
-    "Role-Playing"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Genei Toshi (幻影都市) is an RPG for Japanese computers, later ported to the Sega Mega-CD. It was only released in Japan."
-  },
-  {
    "id": "ground-zero-texas",
    "title": "Ground Zero Texas",
    "system": "sega_cd",
@@ -3355,38 +2137,6 @@
    "description": "Space aliens are infiltrating the U.S. from a sleepy little town on the Texas/Mexico border, snatching bodies and paving the way for a greater invasion. Those they abduct return as Pod People-like drones, normal in appearance until they reveal themselves. The government's response is you - a technician driving custom-built gun cameras mounted around the town. Similar to Night Trap or Double Switch, you must monitor the town for alien activity, and respond to protect the lives of the citizens and your agents."
   },
   {
-   "id": "gyuwambler-jiko-chuushinha-2-gekitou-tokyo-mahjongland-hen",
-   "title": "Gyuwambler Jiko Chuushinha 2 - Gekitou! Tokyo Mahjongland-hen",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Gyuwambler Jiko Chuushinha 2 - Gekitou! Tokyo Mahjongland-hen (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-45044"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/gyuwambler-jiko-chuushinha-2-gekitou-tokyo-mahjongland-hen/boxart.jpg",
-    "gameimage": "art/gyuwambler-jiko-chuushinha-2-gekitou-tokyo-mahjongland-hen/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34290",
-    "boxart": "libretro-thumbnails:Gyuwambler Jiko Chuushinha 2 - Gekitou! Tokyo Mahjongland-hen (Japan)",
-    "gameimage": "libretro-thumbnails:Gyuwambler Jiko Chuushinha 2 - Gekitou! Tokyo Mahjongland-hen (Japan)"
-   },
-   "year": 1992,
-   "developer": "Game Arts",
-   "publisher": "Game Arts Co., Ltd.",
-   "genres": [
-    "Puzzle"
-   ],
-   "players": 2,
-   "rating": null,
-   "description": "Gambler Jiko Chuushinha 2: Gekitou! Tokyo Mahjong Land Hen (ぎゅわんぶらあ自己中心派2 激闘! 東京マージャンランド編) is a Sega Mega-CD sequel to Gambler Jiko Chuushinha."
-  },
-  {
    "id": "heart-of-the-alien-out-of-this-world-parts-i-and-ii",
    "title": "Heart of the Alien - Out of This World Parts I and II",
    "system": "sega_cd",
@@ -3419,62 +2169,6 @@
    "players": 1,
    "rating": "E - Everyone",
    "description": "Enter the award-winning sci fi universe of Out of This World. A cool blue world where the past and future coexist. Where electric torture chambers are manned by primitive humanoids. And the merciful turn merciless just to survive. Imagine an alien prison. Where every passage you enter is one you may never exit. Every creature lives to try and take your life. And the further you run the closer you get to the sadist they call The Warden."
-  },
-  {
-   "id": "heavenly-symphony-formula-one-world-championship-1993",
-   "title": "Heavenly Symphony - Formula One World Championship 1993",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Heavenly Symphony - Formula One World Championship 1993 (Japan)",
-     "region": "Japan",
-     "serials": [
-      "G-6034"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/heavenly-symphony-formula-one-world-championship-1993/boxart.jpg",
-    "gameimage": "art/heavenly-symphony-formula-one-world-championship-1993/gameimage.png"
-   },
-   "sources": {
-    "boxart": "libretro-thumbnails:Heavenly Symphony - Formula One World Championship 1993 (Japan)",
-    "gameimage": "libretro-thumbnails:Heavenly Symphony - Formula One World Championship 1993 (Japan)"
-   }
-  },
-  {
-   "id": "heavy-nova",
-   "title": "Heavy Nova",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Heavy Nova (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-22014"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/heavy-nova/boxart.jpg",
-    "gameimage": "art/heavy-nova/gameimage.png",
-    "hero": "art/heavy-nova/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:34377",
-    "boxart": "libretro-thumbnails:Heavy Nova (Japan)",
-    "gameimage": "libretro-thumbnails:Heavy Nova (Japan)",
-    "hero": "steamgriddb:5334837"
-   },
-   "year": 1991,
-   "developer": "Micronet Co. Ltd.",
-   "publisher": "Micronet Co. Ltd.",
-   "genres": [
-    "Action"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Heavy Nova (ヘビーノバ) is a 1991 action game for the Sharp X68000 by Micronet. It was ported to the Sega Mega-CD as one of the system's two launch titles (the other being Wolf Team's Sol-Feace); the Mega-CD port was not released outside Japan. Micronet subsequently ported it to the Sega Mega Drive for an American release in 1992.\r\n\r\nYou play as a giant mech beating up other mechs of various sizes. A punches and B kicks. Up rockets up for as long as the button is held; you will eventually come back down."
   },
   {
    "id": "heimdall",
@@ -3595,39 +2289,6 @@
    "description": "A rogue navy ship, Jeremiah Obrian, threatens to start a war. A virus has wiped out its crew, but the threat of it firing its Iron Helix doomsday weapon is still there. You must remotely pilot an unarmed science robot to explore the ship and work out how to shut the weapon down.\r\n\r\nThe game uses interactive quarter-screen footage to display the ship's interiors. The main challenge is that an automated security device is chasing you down, and must be avoided and ultimately destroyed. A delay between your commands and the robot's receipt of them forces you to pay close attention to the security drone and plan several steps ahead.\r\n\r\nAs you explore the ship, you will find data ports, which can be jacked into to gain information or to open doorways. To access most of these, you will need to find and collect a DNA sample from a member of staff whose role gave him/her access."
   },
   {
-   "id": "ishii-hisaichi-no-daiseikai",
-   "title": "Ishii Hisaichi no Daiseikai",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Ishii Hisaichi no Daiseikai (Japan)",
-     "region": "Japan",
-     "serials": [
-      "G-6016"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/ishii-hisaichi-no-daiseikai/boxart.jpg",
-    "gameimage": "art/ishii-hisaichi-no-daiseikai/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34380",
-    "boxart": "libretro-thumbnails:Ishii Hisaichi no Daiseikai (Japan)",
-    "gameimage": "libretro-thumbnails:Ishii Hisaichi no Daiseikai (Japan)"
-   },
-   "year": 1994,
-   "developer": "Sega, G-Sat",
-   "publisher": "Sega",
-   "genres": [
-    "Construction and Management Simulation",
-    "Puzzle"
-   ],
-   "players": null,
-   "rating": null,
-   "description": "Ishii Hisaichi no Daiseikai (いしいひさいちの大政界) is a simulation game for the Sega Mega-CD. It was only released in Japan."
-  },
-  {
    "id": "jaguar-xj220",
    "title": "Jaguar XJ220",
    "system": "sega_cd",
@@ -3674,38 +2335,6 @@
    "players": 2,
    "rating": "E - Everyone",
    "description": "Jaguar XJ220 is a view from behind racer. There are 32 tracks all over the world, with varying road conditions and animated weather conditions such as rain and fog in England, snow in Switzerland, and tumbleweed crossing the street in Egypt. You race your Jaguar in a constructor grand prix, with opponents running for Porsche, Ferrari and other famous makers. Between races, you must mend the damage your car has sustained, which eats up your prize money."
-  },
-  {
-   "id": "jangou-world-cup",
-   "title": "Jangou World Cup",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Jangou World Cup (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-60124"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/jangou-world-cup/boxart.jpg",
-    "gameimage": "art/jangou-world-cup/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:51693",
-    "boxart": "libretro-thumbnails:Jangou World Cup (Japan)",
-    "gameimage": "libretro-thumbnails:Jangou World Cup (Japan)"
-   },
-   "year": 1993,
-   "developer": "Victor Interactive Software, Inc.",
-   "publisher": "Victor Interactive Software, Inc.",
-   "genres": [
-    "Sports"
-   ],
-   "players": null,
-   "rating": null,
-   "description": "Jangou World Cup is a Miscellaneous game, developed and published by Victor Interactive Software, which was released in Japan in 1993."
   },
   {
    "id": "jeopardy",
@@ -3843,38 +2472,6 @@
    "description": "This is the Sega CD game based on the 1993 Steven Spielberg movie based on the book by Michael Crichton. This game differs greatly from other Jurassic Park games. It is a point-and-click adventure game, with a strong emphasis on action sequences which require split-second timing.\r\n\r\nThe story takes place after the events of the movie/book. You are sent back to Jurassic Park to retrieve dinosaur eggs from around the park and put them in an incubator. You only have 12 hours to retrieve one egg from every species of dino in the park. Unfortunately, shortly before arriving at the park, your helicopter crashes!"
   },
   {
-   "id": "kamen-rider-zo",
-   "title": "Kamen Rider ZO",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Kamen Rider ZO (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-141014"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/kamen-rider-zo/boxart.jpg",
-    "gameimage": "art/kamen-rider-zo/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:113551",
-    "boxart": "libretro-thumbnails:Kamen Rider Zo (Japan)",
-    "gameimage": "libretro-thumbnails:Kamen Rider ZO (Japan)"
-   },
-   "year": 1994,
-   "developer": "Toei Animation",
-   "publisher": "Toei Video",
-   "genres": [
-    "Action"
-   ],
-   "players": 1,
-   "rating": "Not Rated",
-   "description": "The Masked Rider is a Japanese super hero, a man who has become genetically altered to be a man/grasshopper who rides a motorcycle.\r\n\r\nThis FMV game adapts scenes from the movie Masked Rider ZO, and creates a Dragon's Lair style experience. The game centers around 10 battles of the film's 3 main characters.\r\n\r\nThe player watches the video and hits the correct direction or button at the right time to achieve success. The visual cues of the movie suggest the correct buttons. For example, when the Masked Rider punches, the player should press the Punch button. If he dodges left on screen, the player should press the left direction pad. Correct timing hits the enemy harder, lowering their health bar. Failure reduces the players health."
-  },
-  {
    "id": "keio-flying-squadron",
    "title": "Keio Flying Squadron",
    "system": "sega_cd",
@@ -3903,41 +2500,6 @@
     "information": "thegamesdb:2578",
     "boxart": "libretro-thumbnails:Keio Flying Squadron (USA)",
     "gameimage": "libretro-thumbnails:Keio Flying Squadron (USA)",
-    "hero": "steamgriddb:5209457"
-   },
-   "year": 1993,
-   "developer": "Victor Musical Industries",
-   "publisher": "JVC Musical Industries, Inc.",
-   "genres": [
-    "Action",
-    "Shooter"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Keio Flying Squadron (慶応遊撃隊 Keiōyūgekitai?) is a scrolling shooter video game developed and published by Victor Entertainment in 1994 for the Sega/Mega CD in Japan, Europe, and North America. It is the first game of the Keio Flying Squadron series with a simple shoot-'em-up style of play.\r\nGameplay\r\nThe game consists of the protagonist Rami riding on top of Spot, who can shoot fireballs at enemies. When Spot is not firing, two smaller dragons (Companion fighters) appear one after another to assist Rami and Spot. The lesser dragons shoot smaller fireballs and can be sacrificed to do larger damage, only to reappear when Spot ceases to shoot.\r\nRelease\r\nIn Europe, a demo of the first level of this game was provided by Sega Pro magazine. The game seemed to end after the first level, but in fact the whole game was accessible on the disc by using a level-select cheat to skip to the second level, and then continuing through the game.\r\nReception\r\nRetro Gamer included among top ten Mega CD games, calling it \"a perfectly acceptable substitute\" OF Konami's Parodius that features \"similar style of horizontally scrolling wackiness and puts the Mega-CD hardware to good use to produce some excellent cut-scenes and a brilliant CD-quality soundtrack.\""
-  },
-  {
-   "id": "keiou-yuugekitai",
-   "title": "Keiou Yuugekitai",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Keiou Yuugekitai (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-60114"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/keiou-yuugekitai/boxart.jpg",
-    "gameimage": "art/keiou-yuugekitai/gameimage.png",
-    "hero": "art/keiou-yuugekitai/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:2578",
-    "boxart": "libretro-thumbnails:Keiou Yuugekitai (Japan)",
-    "gameimage": "libretro-thumbnails:Keiou Yuugekitai (Japan)",
     "hero": "steamgriddb:5209457"
    },
    "year": 1993,
@@ -4066,38 +2628,6 @@
     "information": "thegamesdb:5049",
     "boxart": "libretro-thumbnails:Lethal Enforcers II - Gun Fighters (USA)",
     "gameimage": "libretro-thumbnails:Lethal Enforcers II - Gun Fighters (USA)"
-   },
-   "year": 1994,
-   "developer": "Konami",
-   "publisher": "Konami",
-   "genres": [
-    "Shooter"
-   ],
-   "players": 1,
-   "rating": "Not Rated",
-   "description": "In this sequel to Lethal Enforcers you are the sheriff of a town set in the old Wild West. Using the control pad or Konami's own Justifier lightgun, you'll be taking out outlaws who are robbing banks and kidnapping innocents. You have the opportunity to upgrade and keep you gun, as long as you don't shoot the people you are trying to save.\r\n\r\nThe action is usually shown on a single screen with enemies \"popping out\" from various sections. If you do not shoot them in time they will either shoot or throw various weapons at you. You will lose energy if they hit you or you hit an innocent civilian."
-  },
-  {
-   "id": "lethal-enforcers-ii-the-western",
-   "title": "Lethal Enforcers II - The Western",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Lethal Enforcers II - The Western (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-95034"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/lethal-enforcers-ii-the-western/boxart.jpg",
-    "gameimage": "art/lethal-enforcers-ii-the-western/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:5049",
-    "boxart": "libretro-thumbnails:Lethal Enforcers II - The Western (Japan)",
-    "gameimage": "libretro-thumbnails:Lethal Enforcers II - The Western (Japan)"
    },
    "year": 1994,
    "developer": "Konami",
@@ -4374,38 +2904,6 @@
    "description": "Mag Dog McCree and his gang have kidnapped the Mayor and his daughter, and its up to you to rescue them. You must blast through bars and bank robberies to take the gang out and save everything you regard as good and true. Where the game differs from other Operation Wolf-influenced shoot-'em-ups is in the use of live video, with real people appearing on the screen before you shoot them down. You have unlimited continues with which to reach the end, so the actors will have their screen deaths seen by as many people as they would had they starred in a film."
   },
   {
-   "id": "mahou-no-shoujo-silky-lip",
-   "title": "Mahou no Shoujo - Silky Lip",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Mahou no Shoujo - Silky Lip (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-49024"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/mahou-no-shoujo-silky-lip/boxart.jpg",
-    "gameimage": "art/mahou-no-shoujo-silky-lip/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34291",
-    "boxart": "libretro-thumbnails:Mahou no Shoujo - Silky Lip (Japan)",
-    "gameimage": "libretro-thumbnails:Mahou no Shoujo - Silky Lip (Japan)"
-   },
-   "year": 1992,
-   "developer": "Riot",
-   "publisher": "Telenet Japan Co., Ltd.",
-   "genres": [
-    "Adventure"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Mahou no Shoujo: Silky Lip (魔法の少女シルキーリップ) is an adventure game for the Sega Mega-CD. It was only released in Japan."
-  },
-  {
    "id": "make-my-video-inxs",
    "title": "Make My Video - INXS",
    "system": "sega_cd",
@@ -4576,38 +3074,6 @@
    "description": "Welcome to the world of Marko, a world of cartoon madness. Experience the addictive blend of football skills and platform action that combine to make a superb gameplaying experience. Add the most incredible graphics ever to be seen and the result is Marko's Magic Football. It's just like playing a cartoon."
   },
   {
-   "id": "markos-magic-football",
-   "title": "Marko's Magic Football",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Marko's Magic Football (Europe) (En,Fr,De,Es)",
-     "region": "Europe",
-     "serials": [
-      "T-88025-50"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/markos-magic-football/boxart.jpg",
-    "gameimage": "art/markos-magic-football/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34292",
-    "boxart": "libretro-thumbnails:Marko's Magic Football (Europe)",
-    "gameimage": "libretro-thumbnails:Marko's Magic Football (Europe)"
-   },
-   "year": 1994,
-   "developer": "Domark Software, The Cartoon Mavericks",
-   "publisher": "Domark Group Ltd.",
-   "genres": [
-    "Action"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Welcome to the world of Marko, a world of cartoon madness. Experience the addictive blend of football skills and platform action that combine to make a superb gameplaying experience. Add the most incredible graphics ever to be seen and the result is Marko's Magic Football. It's just like playing a cartoon."
-  },
-  {
    "id": "mary-shelleys-frankenstein",
    "title": "Mary Shelley's Frankenstein",
    "system": "sega_cd",
@@ -4640,39 +3106,6 @@
    "description": "MARY SHELLEY'S FRANKENSTEIN: Three game play views - isometric, forced isometric and side views - offer enhanced 3D environment. Six huge levels of action, from the cholera-infested streets of Ingolstadt to the freezing ice fields of the Arctic. Fantastic assortment of bosses including outlaws, landlords and wolves"
   },
   {
-   "id": "mega-schwarzschild",
-   "title": "Mega Schwarzschild",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Mega Schwarzschild (Japan)",
-     "region": "Japan",
-     "serials": [
-      "G-6020"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/mega-schwarzschild/boxart.jpg",
-    "gameimage": "art/mega-schwarzschild/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34293",
-    "boxart": "libretro-thumbnails:Mega Schwarzschild (Japan)",
-    "gameimage": "libretro-thumbnails:Mega Schwarzschild (Japan)"
-   },
-   "year": 1993,
-   "developer": "Kogado Studio",
-   "publisher": "Sega",
-   "genres": [
-    "Adventure",
-    "Role-Playing"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Mega Schwarzschild (メガシュヴァルツシルト) is a Sega Mega-CD simulation game released exclusively in Japan."
-  },
-  {
    "id": "megarace",
    "title": "MegaRace",
    "system": "sega_cd",
@@ -4703,40 +3136,6 @@
    "players": null,
    "rating": "T - Teen",
    "description": "Virtual Television has given us a chance to do the things that we can't make real in everyday life: Race through 14 great tracks in 5 different environments in a totally virtual place where you can kill each other quite easily with sidekicks or guns. In every track you will see some symbols that can make your car speed up, slow up or even blow up, like your mega-host Lance Boyle says, \"Who knows; who cares!\" Everything you see in MegaRace is virtual and no one really dies there. So have fun!"
-  },
-  {
-   "id": "mickey-mania",
-   "title": "Mickey Mania",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Mickey Mania (Europe)",
-     "region": "Europe",
-     "serials": [
-      "T-93305-50"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/mickey-mania/boxart.jpg",
-    "gameimage": "art/mickey-mania/gameimage.png",
-    "hero": "art/mickey-mania/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:5062",
-    "boxart": "libretro-thumbnails:Mickey Mania (Europe)",
-    "gameimage": "libretro-thumbnails:Mickey Mania (Europe)",
-    "hero": "steamgriddb:36422"
-   },
-   "year": 1994,
-   "developer": "Traveller's Tales Ltd., Psygnosis",
-   "publisher": "Sony Imagesoft, Disney Software",
-   "genres": [
-    "Platform"
-   ],
-   "players": 1,
-   "rating": "E - Everyone",
-   "description": "Mickey has friends wherever he goes. Not here. No Goofy! No Minnie! No mercy! This is Mickey Mouse like you've never seen him before. Faster, tougher and smarter than ever. In 26 action-packed levels, Mickey takes on a ton of bosses from six of his coolest animated classics. From Steamboat Willie, The Mad Doctor and Moose Hunters to Lonesome Ghosts, Mickey and the Beanstalk and The Prince and the Pauper, this is Mickey on the adventure of a lifetime. Mickey Mania. This mouse roars!"
   },
   {
    "id": "mickey-mania-the-timeless-adventures-of-mickey-mouse",
@@ -4861,40 +3260,6 @@
    "description": "A FMV rail shooter placing you in the helmet of rookie chopper gunner \"Joker.\" Terrorists have kidnapped a German biochemist and taken him to a Middle Eastern oil refinery, where he is forced to work on a lethal toxin. Joker and crew must fly to the refinery, shooting down enemy tanks and helicopters, then Joker must rappel down to the refinery and rescue the chemist on foot.\r\n\r\nThe helicopter sections follow a pattern similar to Tomcat Alley, showing brief clips of the cast in the cockpit, followed by a \"nose camera\" shot of an enemy approaching. During this shot, you have the ability to move a set of crosshairs over the enemy and press the \"fire\" button. If you're on target, you are rewarded with military archival footage of helicopters shooting rockets, and close up footage of models exploding.\r\n\r\nThe on-foot sections follow an identical pattern, though with hand-held cameras placing you in the \"eyes\" of Joker, and black-clad guards taking the place of helicopters. Otherwise, the idea of having a few seconds to react and aim crosshairs is the same. The plot is expanded through occasional cutscenes in both the helicopter and foot sections."
   },
   {
-   "id": "might-and-magic-iii-isles-of-terra",
-   "title": "Might and Magic III - Isles of Terra",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Might and Magic III - Isles of Terra (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-68024"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/might-and-magic-iii-isles-of-terra/boxart.jpg",
-    "gameimage": "art/might-and-magic-iii-isles-of-terra/gameimage.png",
-    "hero": "art/might-and-magic-iii-isles-of-terra/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:34294",
-    "boxart": "libretro-thumbnails:Might and Magic III - Isles of Terra (Japan)",
-    "gameimage": "libretro-thumbnails:Might and Magic III - Isles of Terra (Japan)",
-    "hero": "steamgriddb:35110"
-   },
-   "year": 1993,
-   "developer": null,
-   "publisher": null,
-   "genres": [
-    "Role-Playing"
-   ],
-   "players": 1,
-   "rating": "Not Rated",
-   "description": null
-  },
-  {
    "id": "mighty-mighty-missile",
    "title": "Mighty Mighty Missile",
    "system": "sega_cd",
@@ -4994,41 +3359,6 @@
     "information": "thegamesdb:5065",
     "boxart": "libretro-thumbnails:Mortal Kombat (USA)",
     "gameimage": "libretro-thumbnails:Mortal Kombat (USA)",
-    "hero": "thegamesdb:5065"
-   },
-   "year": 1994,
-   "developer": "Acclaim, Acclaim Entertainment, Acclaim Entertainment, Inc., Midway Manufacturing Co., Probe Entertainment, Probe Software",
-   "publisher": "Arena Entertainment",
-   "genres": [
-    "Action",
-    "Fighting"
-   ],
-   "players": 2,
-   "rating": "M - Mature 17+",
-   "description": "Five hundred years ago, an ancient and well respected Shaolin fighting tournament, held every 50 years, was corrupted by an evil and elderly sorcerer by the name of Shang Tsung. Shang was accompanied by Prince Goro, a warrior of the Shokan race (a four-armed half-human / half-dragon). Knowing that if ten tournaments in a row were won by the Outworld champion, the Earth Realm would be conquered by evil and fall into darkness, Shang entered Goro in the tournament and had him defeat the great Kung Lao. Goro has been reigning supreme as the undefeated fighting champion for five hundred years now. As the last tournament required draws near, Raiden, Thunder God and protector of the Earth Realm, enacts a plan to tip the scales in the humans' favor, Seven fighters step into the arena on Shang Tsung's mysterious island: Shaolin warrior Liu Kang, Special Forces operative Sonya Blade, the mercenary thug Kano, fame-seeking actor Johnny Cage, the ice-wielding Lin Kuei warrior Sub-Zero and his undead adversary Scorpion, and Raiden himself.\r\n\r\nMortal Kombat is a side-scrolling fighting game. Fighting is set as one-on-one combat, allowing each player to perform a variety of punches, kicks, and special moves in order to defeat their opponent. When the opponent faces their second round loss, the winner can perform a finishing move called a \"Fatality\" on the loser. The Fatality is a move unique to each fighter that graphically kills the loser in a blood-soaked finale.\r\n\r\nMortal Kombat began its life as a 2-player arcade title. It is notable for its use of digitized actors to represent the game's fighters, as well as its use of copious amounts of blood during gameplay."
-  },
-  {
-   "id": "mortal-kombat-kanzenban",
-   "title": "Mortal Kombat Kanzenban",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Mortal Kombat Kanzenban (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-81014"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/mortal-kombat-kanzenban/boxart.jpg",
-    "gameimage": "art/mortal-kombat-kanzenban/gameimage.png",
-    "hero": "art/mortal-kombat-kanzenban/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:5065",
-    "boxart": "libretro-thumbnails:Mortal Kombat Kanzenban (Japan)",
-    "gameimage": "libretro-thumbnails:Mortal Kombat Kanzenban (Japan)",
     "hero": "thegamesdb:5065"
    },
    "year": 1994,
@@ -5221,75 +3551,6 @@
    "description": "After establishing themselves in the virtual rinks, EA combined both NHL and NHLPA licenses in NHL '94, allowing them to feature all 26 real teams (including both expansion teams) and players of the new NHL season for the first time in the series.\r\n\r\nAside from the licenses, the gameplay for this edition sees for the first time the inclusion of the devastating one-timer shot, but to keep forwards (literally) in check, defenders also feature harder body checks, with new animations. For an additional challenge, players can also choose to control the goalkeeper manually. A popular feature in previous editions, fighting is completely removed from the game. Game modes include exhibition games (or \"regular season\" in-game), playoffs (best of one or best of seven) and an all new shoot-out mode. The main options remain basically the same couple since the establishment of the series - period length (5, 10 or 20 minutes), line changes (off, manual or the new automatic mode) and penalties. (off, on, on but no offsides).\r\n\r\nWhile there are some minor differences between platforms (Genesis features record keeping for users and the MegaCD version has more stat screens, CD quality audio backdrops and the usual highlight clips here and there), only the PC version released at the same time features complete season action."
   },
   {
-   "id": "nhl-hockey-94",
-   "title": "NHL Hockey '94",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "NHL Hockey '94 (Europe)",
-     "region": "Europe",
-     "serials": [
-      "T-50015-50"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/nhl-hockey-94/boxart.jpg",
-    "gameimage": "art/nhl-hockey-94/gameimage.png",
-    "hero": "art/nhl-hockey-94/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:5070",
-    "boxart": "libretro-thumbnails:NHL Hockey '94 (Europe)",
-    "gameimage": "libretro-thumbnails:NHL Hockey '94 (Europe)",
-    "hero": "steamgriddb:37464"
-   },
-   "year": 1993,
-   "developer": "EA Canada, Electronic Arts Canada, High Score Productions",
-   "publisher": "Electronic Arts, EA Sports, Electronic Arts Sports",
-   "genres": [
-    "Sports"
-   ],
-   "players": 4,
-   "rating": "E - Everyone",
-   "description": "After establishing themselves in the virtual rinks, EA combined both NHL and NHLPA licenses in NHL '94, allowing them to feature all 26 real teams (including both expansion teams) and players of the new NHL season for the first time in the series.\r\n\r\nAside from the licenses, the gameplay for this edition sees for the first time the inclusion of the devastating one-timer shot, but to keep forwards (literally) in check, defenders also feature harder body checks, with new animations. For an additional challenge, players can also choose to control the goalkeeper manually. A popular feature in previous editions, fighting is completely removed from the game. Game modes include exhibition games (or \"regular season\" in-game), playoffs (best of one or best of seven) and an all new shoot-out mode. The main options remain basically the same couple since the establishment of the series - period length (5, 10 or 20 minutes), line changes (off, manual or the new automatic mode) and penalties. (off, on, on but no offsides).\r\n\r\nWhile there are some minor differences between platforms (Genesis features record keeping for users and the MegaCD version has more stat screens, CD quality audio backdrops and the usual highlight clips here and there), only the PC version released at the same time features complete season action."
-  },
-  {
-   "id": "night-striker",
-   "title": "Night Striker",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Night Striker (Japan, Korea)",
-     "region": "Japan",
-     "serials": [
-      "GD0010JT",
-      "T-11014"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/night-striker/boxart.jpg",
-    "gameimage": "art/night-striker/gameimage.png",
-    "hero": "art/night-striker/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:34378",
-    "boxart": "libretro-thumbnails:Night Striker (Japan, Korea)",
-    "gameimage": "libretro-thumbnails:Night Striker (Japan, Korea)",
-    "hero": "steamgriddb:5357796"
-   },
-   "year": 1993,
-   "developer": "Aisystem Tokyo, Taito Corporation",
-   "publisher": "Taito Corporation",
-   "genres": [
-    "Shooter"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Night Striker (ナイトストライカー) is an arcade game developed by Taito. It is a futuristic on-the-rails shooter which plays similarly to Sega's Space Harrier, though has you pilot a hover vehicle instead.\r\n\r\nThe game was brought to the Sega Mega-CD in 1993, where graphically it was downscaled for the weaker hardware. It was also brought to the Sega Saturn as Night Striker S (ナイトストライカーＳ) in 1996 - essentially the same game, but with an extra \"Saturn Mode\" and a few small enhancements. No versions have ever left Japan."
-  },
-  {
    "id": "night-trap",
    "title": "Night Trap",
    "system": "sega_cd",
@@ -5462,70 +3723,6 @@
    "description": "Five girls go to a party to a nice house on a lakeside. Five girls disappear without a trace... Now another five girls go there, in order to spend the vacation with the Martins, the owners of the house, in particular with the lovely Ms. Martin. This time, you should not let them die a gruesome death! Because \"nice people\" can sometimes turn out to be... yes, that's right - vampires. The whole house is full of traps, that are intended to catch the poor innocent girls, so that the vampires can suck their blood... ugh. Luckily, the brave adventurer is there in order to cease to be hunted and to become a hunter instead! Set the traps so that they will capture the villains themselves, using precise timing and good organization."
   },
   {
-   "id": "nobunaga-no-yabou-haouden",
-   "title": "Nobunaga no Yabou - Haouden",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Nobunaga no Yabou - Haouden (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-76024"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/nobunaga-no-yabou-haouden/boxart.jpg",
-    "gameimage": "art/nobunaga-no-yabou-haouden/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34299",
-    "boxart": "libretro-thumbnails:Nobunaga no Yabou - Haouden (Japan)",
-    "gameimage": "libretro-thumbnails:Nobunaga no Yabou - Haouden (Japan)"
-   },
-   "year": 1994,
-   "developer": "Koei",
-   "publisher": "Koei Co., Ltd.",
-   "genres": [
-    "Strategy"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Nobunaga no Yabou: Haouden (信長の野望 覇王伝) is a Sega Mega Drive and Sega Mega-CD strategy game by Koei released exclusively in Japan. It is compatible with the Sega Mouse."
-  },
-  {
-   "id": "nostalgia-1907-in-north-atlantic-sea",
-   "title": "Nostalgia 1907 - In North Atlantic Sea",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Nostalgia 1907 - In North Atlantic Sea (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-77014"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/nostalgia-1907-in-north-atlantic-sea/boxart.jpg",
-    "gameimage": "art/nostalgia-1907-in-north-atlantic-sea/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34300",
-    "boxart": "libretro-thumbnails:Nostalgia 1907 - In North Atlantic Sea (Japan)",
-    "gameimage": "libretro-thumbnails:Nostalgia 1907 - In North Atlantic Sea (Japan)"
-   },
-   "year": 1991,
-   "developer": "Takeru",
-   "publisher": "Sur de Wave",
-   "genres": [
-    "Adventure"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Nostalgia 1907 (ノスタルジア1907) is a Sega Mega-CD adventure game released exclusively in Japan."
-  },
-  {
    "id": "note-color-mechanica",
    "title": "Note! Color Mechanica",
    "system": "sega_cd",
@@ -5625,29 +3822,6 @@
    "players": 1,
    "rating": "T - Teen",
    "description": "A virus has infected the world's computer network, which effects all electronical devices on the earth. However, a special program called \"Panic!\" is designed to counter the effects of the virus and restore the network back to working order. You play Slap the Boy and his sidekick, Stick the Dog(they're not actions, it's their names) who set out to restore the network back to working order."
-  },
-  {
-   "id": "pier-solar-and-the-great-architects-the-definitive-original-soundtrack-enhanced-soundtrack-disc",
-   "title": "Pier Solar and the Great Architects - The Definitive Original Soundtrack (Enhanced Soundtrack Disc)",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Pier Solar and the Great Architects - The Definitive Original Soundtrack (Europe) (Disc 4) (Enhanced Soundtrack Disc)",
-     "region": "Europe",
-     "serials": [
-      "725-0117",
-      "725-0117-3"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/pier-solar-and-the-great-architects-the-definitive-original-soundtrack-enhanced-soundtrack-disc/boxart.jpg",
-    "gameimage": "art/pier-solar-and-the-great-architects-the-definitive-original-soundtrack-enhanced-soundtrack-disc/gameimage.png"
-   },
-   "sources": {
-    "boxart": "libretro-thumbnails:Pier Solar and the Great Architects - The Definitive Original Soundtrack (Europe) (Disc 4) (Enhanced Soundtrack Disc)",
-    "gameimage": "libretro-thumbnails:Pier Solar and the Great Architects - The Definitive Original Soundtrack (Europe) (Disc 4) (Enhanced Soundtrack Disc)"
-   }
   },
   {
    "id": "pier-solar-and-the-great-architects-enhanced-soundtrack-disc",
@@ -5961,120 +4135,6 @@
    "description": "Prize Fighter is a FMV boxing game which puts the player in the body of a boxer known as \"The Kid\" and must face off against four opponents: Honeyboy Fernandez, Mega Joe Falco, Rex Hawkins, and, the ultimate challenge, Nuke \"The Duke\" Johnson, over the course of two CDs."
   },
   {
-   "id": "pro-yakyuu-super-league-cd",
-   "title": "Pro Yakyuu Super League CD",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Pro Yakyuu Super League CD (Japan)",
-     "region": "Japan",
-     "serials": [
-      "G-6010"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/pro-yakyuu-super-league-cd/boxart.jpg",
-    "gameimage": "art/pro-yakyuu-super-league-cd/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34312",
-    "boxart": "libretro-thumbnails:Pro Yakyuu Super League CD (Japan)",
-    "gameimage": "libretro-thumbnails:Pro Yakyuu Super League CD (Japan)"
-   },
-   "year": 1992,
-   "developer": "Sega",
-   "publisher": "Sega",
-   "genres": [
-    "Sports"
-   ],
-   "players": 2,
-   "rating": null,
-   "description": "Pro Yakyuu Super League CD (プロ野球スーパーリーグＣＤ) is a baseball game released as part of the Super League series for the Sega Mega-CD exclusively in Japan."
-  },
-  {
-   "id": "psychic-detective-series-vol-3-aya",
-   "title": "Psychic Detective Series Vol. 3 - Aya",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Psychic Detective Series Vol. 3 - Aya (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-84024"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/psychic-detective-series-vol-3-aya/boxart.jpg",
-    "gameimage": "art/psychic-detective-series-vol-3-aya/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34268",
-    "boxart": "libretro-thumbnails:Psychic Detective Series Vol. 3 - Aya (Japan)",
-    "gameimage": "libretro-thumbnails:Psychic Detective Series Vol. 3 - Aya (Japan)"
-   },
-   "year": 1993,
-   "developer": "DataWest",
-   "publisher": "DataWest",
-   "genres": [
-    "Adventure"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Psychic Detective Series Vol. 3: Aya (サイキック・ディテクティブ・シリーズ 3 アヤ) is an adventure game for the Sega Mega-CD. It was only released in Japan."
-  },
-  {
-   "id": "psychic-detective-series-vol-4-orgel",
-   "title": "Psychic Detective Series Vol. 4 - Orgel",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Psychic Detective Series Vol. 4 - Orgel (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-84034"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/psychic-detective-series-vol-4-orgel/boxart.jpg",
-    "gameimage": "art/psychic-detective-series-vol-4-orgel/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34269",
-    "boxart": "libretro-thumbnails:Psychic Detective Series Vol. 4 - Orgel (Japan)",
-    "gameimage": "libretro-thumbnails:Psychic Detective Series Vol. 4 - Orgel (Japan)"
-   },
-   "year": 1993,
-   "developer": "DataWest",
-   "publisher": "DataWest",
-   "genres": [
-    "Adventure"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Psychic Detective Series Vol. 4: Orgel (サイキック・ディテクティブ・シリーズ 4 オルゴール) is an adventure game for the Sega Mega-CD. It was only released in Japan."
-  },
-  {
-   "id": "psygnosis-christmas-sampler",
-   "title": "Psygnosis Christmas Sampler",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Psygnosis Christmas Sampler (Europe)",
-     "region": "Europe",
-     "serials": []
-    }
-   ],
-   "art": {
-    "gameimage": "art/psygnosis-christmas-sampler/gameimage.png"
-   },
-   "sources": {
-    "gameimage": "libretro-thumbnails:Psygnosis Christmas Sampler (Europe)"
-   }
-  },
-  {
    "id": "puggsy",
    "title": "Puggsy",
    "system": "sega_cd",
@@ -6114,60 +4174,6 @@
    "players": 1,
    "rating": "E - Everyone",
    "description": "Puggsy is a platform game with a combination of action and puzzle-solving elements. You control the the creature Puggsy, who has crash landed on an alien planet and had his spaceship stolen. Your goal is find the spaceship so you can get off the planet and return home. To do this, you will need to make your way from the start to the exit of numerous levels which take place in a variety of environments. Throughout each level are a variety of objects which you can pick up; on many of the levels you will need to figure out how to use the objects available to you in order to reach the exit. Some objects can be used (like a gun or keys), and objects may be thrown, moved around and stacked. Of course, each level will also have a variety of bad guys wandering about which will cost Puggsy one of his lives if he's caught. On your quest there will also be six evil guardians which will need to be defeated before you get your spaceship back!"
-  },
-  {
-   "id": "quiz-scramble-special",
-   "title": "Quiz Scramble Special",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Quiz Scramble Special (Japan) (Rev B)",
-     "region": "Japan",
-     "serials": [
-      "G-6003"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/quiz-scramble-special/boxart.jpg",
-    "gameimage": "art/quiz-scramble-special/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34301",
-    "boxart": "libretro-thumbnails:Quiz Scramble Special (Japan)",
-    "gameimage": "libretro-thumbnails:Quiz Scramble Special (Japan)"
-   },
-   "year": 1992,
-   "developer": "Sega",
-   "publisher": "Sega",
-   "genres": [
-    "Puzzle"
-   ],
-   "players": 2,
-   "rating": null,
-   "description": "Quiz Scramble Special (クイズスクランブルスペシャル) is a Sega Mega-CD quiz game released exclusively in Japan."
-  },
-  {
-   "id": "quiz-tonosama-no-yabou",
-   "title": "Quiz Tonosama no Yabou",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Quiz Tonosama no Yabou (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-44024"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/quiz-tonosama-no-yabou/boxart.jpg",
-    "gameimage": "art/quiz-tonosama-no-yabou/gameimage.png"
-   },
-   "sources": {
-    "boxart": "libretro-thumbnails:Quiz Tonosama no Yabou (Japan)",
-    "gameimage": "libretro-thumbnails:Quiz Tonosama no Yabou (Japan)"
-   }
   },
   {
    "id": "racing-aces",
@@ -6236,40 +4242,6 @@
    "description": "Radical Rex is a fire-breathing Tyrannosaurus on a skateboard who has to save the dinosaur race under the spell of an evil creature. The game consists of 10 levels set in the prehistoric age. Radical Rex can use a skateboard or glide down hills, jump, kick and breath fire. Tougher enemies need multiple hits and when burnt Rex needs to kick them once more to destroy them or use his scream (hits everything on the screen). While playing Rex collects eggs, health, power-ups for his fire breath and scream refills. Checkpoints are shown as torches that need to be charged with fire. After each level, there is a Bomberman-like sequence to earn an extra continue. Enemies include flies, turtles, toads and all kinds of dinosaurs."
   },
   {
-   "id": "ranma-1-2-byakuranaika",
-   "title": "Ranma 1-2 - Byakuranaika",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Ranma 1-2 - Byakuranaika (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-25014"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/ranma-1-2-byakuranaika/boxart.jpg",
-    "gameimage": "art/ranma-1-2-byakuranaika/gameimage.png",
-    "hero": "art/ranma-1-2-byakuranaika/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:27806",
-    "boxart": "libretro-thumbnails:Ranma 1-2 - Byakuranaika (Japan)",
-    "gameimage": "libretro-thumbnails:Ranma 1-2 - Byakuranaika (Japan)",
-    "hero": "steamgriddb:5508319"
-   },
-   "year": 1993,
-   "developer": "NCS Corporation",
-   "publisher": "Masaya",
-   "genres": [
-    "Adventure"
-   ],
-   "players": 1,
-   "rating": "T - Teen",
-   "description": "This is the only Ranma game on this platform and was only released in Japan.\r\nIt features an original story centering on a new character, Arisa Nanjo. After Ranma Saotome's friends go missing, it is up to him to track them down.\r\nThe game is a video novel which involves the player, acting as Ranma, selecting from a series of choices, such as what to do or say to someone. The results are then played out in an animated sequence. It uses a Rock-Paper-Scissors-style battle system.\r\nThe characters are voiced by the original cast from the Anime series."
-  },
-  {
    "id": "rdf-global-conflict",
    "title": "RDF - Global Conflict",
    "system": "sega_cd",
@@ -6301,40 +4273,6 @@
    "players": 1,
    "rating": null,
    "description": "RDF (Rapid Deployment Force) is a first-person 3D tank shooter with the player going up against a plethora of enemies including other tanks, missile launchers, helicopters among many others. The player can use either their 120mm cannon or their laser-guided missiles in a variety of locations that including the Eastern European countryside to the Alaskan Tundra. The story is told through FMV clips"
-  },
-  {
-   "id": "record-of-lodoss-war",
-   "title": "Record of Lodoss War",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Record of Lodoss War (Japan)",
-     "region": "Japan",
-     "serials": [
-      "G-6024"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/record-of-lodoss-war/boxart.jpg",
-    "gameimage": "art/record-of-lodoss-war/gameimage.png",
-    "hero": "art/record-of-lodoss-war/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:34381",
-    "boxart": "libretro-thumbnails:Record Of Lodoss War (Japan)",
-    "gameimage": "libretro-thumbnails:Record of Lodoss War (Japan)",
-    "hero": "steamgriddb:5259548"
-   },
-   "year": 1994,
-   "developer": "Humming Bird Soft, Sega",
-   "publisher": "Sega",
-   "genres": [
-    "Role-Playing"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Lodoss-tou Senki: Eiyuu Sensou (ロードス島戦記~英雄戦争~) is an RPG for the Sega Mega-CD. It was only released in Japan."
   },
   {
    "id": "revenge-of-the-ninja",
@@ -6445,40 +4383,6 @@
    "description": "Rise of the Dragon is a futuristic first-person adventure game. The game's visuals are reminiscent of a comic book, with digitized photos of actors and hand-painted backgrounds. Unlike most other adventure games of the time, it relies less on inventory puzzles and more on specific choices made by the player. The game has an internal clock and requires the player to plan the protagonist's moves ahead in order to be in the right place at the right time. Dialogues with multiple choices are utilized as a gameplay tool; a wrong choice will often lead to a premature end of the adventure."
   },
   {
-   "id": "rise-of-the-dragon-a-blade-hunter-mystery",
-   "title": "Rise of the Dragon - A Blade Hunter Mystery",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Rise of the Dragon - A Blade Hunter Mystery (Japan)",
-     "region": "Japan",
-     "serials": [
-      "G-6002"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/rise-of-the-dragon-a-blade-hunter-mystery/boxart.jpg",
-    "gameimage": "art/rise-of-the-dragon-a-blade-hunter-mystery/gameimage.png",
-    "hero": "art/rise-of-the-dragon-a-blade-hunter-mystery/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:5085",
-    "boxart": "libretro-thumbnails:Rise of the Dragon - A Blade Hunter Mystery (Japan)",
-    "gameimage": "libretro-thumbnails:Rise of the Dragon - A Blade Hunter Mystery (Japan)",
-    "hero": "steamgriddb:36721"
-   },
-   "year": 1993,
-   "developer": "Dynamix, Inc.",
-   "publisher": "Sega",
-   "genres": [
-    "Adventure"
-   ],
-   "players": 1,
-   "rating": "M - Mature 17+",
-   "description": "Rise of the Dragon is a futuristic first-person adventure game. The game's visuals are reminiscent of a comic book, with digitized photos of actors and hand-painted backgrounds. Unlike most other adventure games of the time, it relies less on inventory puzzles and more on specific choices made by the player. The game has an internal clock and requires the player to plan the protagonist's moves ahead in order to be in the right place at the right time. Dialogues with multiple choices are utilized as a gameplay tool; a wrong choice will often lead to a premature end of the adventure."
-  },
-  {
    "id": "road-avenger",
    "title": "Road Avenger",
    "system": "sega_cd",
@@ -6507,41 +4411,6 @@
     "information": "thegamesdb:5086",
     "boxart": "libretro-thumbnails:Road Avenger (USA)",
     "gameimage": "libretro-thumbnails:Road Avenger (USA)",
-    "hero": "steamgriddb:5277008"
-   },
-   "year": 1993,
-   "developer": "Data East Corporation",
-   "publisher": "Wolf Team",
-   "genres": [
-    "Action",
-    "Racing"
-   ],
-   "players": 1,
-   "rating": "T - Teen",
-   "description": "Action that reaches out and grabs you! Wipe S.C.U.M. (Secret Criminal Underground Movement) off the highway. Smash through a hotel lobby, spin off a bridge at high speed, and tear up the beach on the tail of perpetrators. Shift into high gear for the ultimate hot pursuit. So much fun it should be illegal!"
-  },
-  {
-   "id": "road-blaster-fx",
-   "title": "Road Blaster FX",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Road Blaster FX (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-32124"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/road-blaster-fx/boxart.jpg",
-    "gameimage": "art/road-blaster-fx/gameimage.png",
-    "hero": "art/road-blaster-fx/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:5086",
-    "boxart": "libretro-thumbnails:Road Blaster FX (Japan)",
-    "gameimage": "libretro-thumbnails:Road Blaster FX (Japan)",
     "hero": "steamgriddb:5277008"
    },
    "year": 1993,
@@ -6675,82 +4544,6 @@
    "description": "In early Japan, a man named Shiro Tokisada Amakusa preaches a heretic religion. Little does anyone know that Amakusa is really a servant of the evil Ambrosia, who took over Amakusa's body. Ambrosia wishes to shroud the world in darkness. Now, choose between 12 warriors (and 3 bonus characters) to fight for the honor of destroying Amakusa, and fulfilling a mission."
   },
   {
-   "id": "sangokushi-iii",
-   "title": "Sangokushi III",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Sangokushi III (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-76014"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/sangokushi-iii/boxart.jpg",
-    "gameimage": "art/sangokushi-iii/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34303",
-    "boxart": "libretro-thumbnails:Sangokushi III (Japan)",
-    "gameimage": "libretro-thumbnails:Sangokushi III (Japan)"
-   },
-   "year": 1992,
-   "developer": "Koei",
-   "publisher": "Koei Co., Ltd.",
-   "genres": [
-    "Strategy"
-   ],
-   "players": 1,
-   "rating": "Not Rated",
-   "description": "Sangokushi III (三國志III), known as Romance of the Three Kingdoms III: Dragon of Destiny in the west, is the third game in Koei's Sangokushi franchise, a part of their Historical Simulation Series and a sequel to Romance of the Three Kingdoms II. It was first released in 1992 on various home computers and was ported to a variety of other platforms, including to the Sega Mega Drive in 1992 and Sega Mega-CD in 1993."
-  },
-  {
-   "id": "sega-cd-demo-proto",
-   "title": "Sega CD Demo (Proto)",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Sega CD Demo (Japan) (Proto)",
-     "region": "Japan",
-     "serials": []
-    }
-   ],
-   "art": {},
-   "sources": {}
-  },
-  {
-   "id": "sega-classic-arcade-collection-limited-edition",
-   "title": "Sega Classic Arcade Collection - Limited Edition",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Sega Classic Arcade Collection - Limited Edition (Japan)",
-     "region": "Japan",
-     "serials": [
-      "G-6012"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/sega-classic-arcade-collection-limited-edition/boxart.jpg",
-    "gameimage": "art/sega-classic-arcade-collection-limited-edition/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:14048",
-    "boxart": "libretro-thumbnails:Sega Classic Arcade Collection - Limited Edition (Japan)",
-    "gameimage": "libretro-thumbnails:Sega Classic Arcade Collection - Limited Edition (Japan)"
-   },
-   "year": 1994,
-   "developer": null,
-   "publisher": "Sega",
-   "genres": [],
-   "players": null,
-   "rating": "M - Mature 17+",
-   "description": "Sega Classics Arcade Collection is a compilation of four (or five) Sega Mega Drive games for the Sega Mega-CD. It was a pack-in game bundled with launch Mega CDs in the United Kingdom and North America, and was released separately in other regions.\r\n\r\n Two variants of Sega Classics Arcade Collection exist; an earlier version seen in North America and Japan, which contains Golden Axe, Streets of Rage, Columns and The Revenge of Shinobi, and a later version seen in Europe and later North American bundles, which throws in Super Monaco GP. In North America the older \"4-in-1\" variant came in the same box as Sherlock Holmes: Consulting Detective Vol. I, while the later \"5-in-1\" one came with Ecco the Dolphin.\r\n\r\n Each game is mostly identical to their Mega Drive counterparts, though have minor changes thanks to the Mega CD's enhancements. All digitised speech samples have been replaced with higher quality audio, the first level in Golden Axe uses different instruments and Super Monaco GP has extra drums. The Revenge of Shinobi is based on a later version than its cartridge counterparts, altering some of the bosses which infringe copyrights. For unknown reasons, Golden Axe is only a one-player game in this compilation.\r\n\r\n Despite being the Mega CD's selling point, only two games have an updated CD soundtrack (Golden Axe in the form of music recorded from its arcade board, and Columns which has a new title theme). This means only a small fraction of the disc is used. \r\n\r\nGames:\r\nColumns\r\nGolden Axe\r\nRevenge of Shinobi\r\nStreets of Rage\r\nSuper Monaco GP"
-  },
-  {
    "id": "sega-classics-arcade-collection-4-in-1",
    "title": "Sega Classics Arcade Collection (4-in-1)",
    "system": "sega_cd",
@@ -6819,167 +4612,6 @@
    "players": null,
    "rating": "M - Mature 17+",
    "description": "Sega Classics Arcade Collection is a compilation of four (or five) Sega Mega Drive games for the Sega Mega-CD. It was a pack-in game bundled with launch Mega CDs in the United Kingdom and North America, and was released separately in other regions.\r\n\r\n Two variants of Sega Classics Arcade Collection exist; an earlier version seen in North America and Japan, which contains Golden Axe, Streets of Rage, Columns and The Revenge of Shinobi, and a later version seen in Europe and later North American bundles, which throws in Super Monaco GP. In North America the older \"4-in-1\" variant came in the same box as Sherlock Holmes: Consulting Detective Vol. I, while the later \"5-in-1\" one came with Ecco the Dolphin.\r\n\r\n Each game is mostly identical to their Mega Drive counterparts, though have minor changes thanks to the Mega CD's enhancements. All digitised speech samples have been replaced with higher quality audio, the first level in Golden Axe uses different instruments and Super Monaco GP has extra drums. The Revenge of Shinobi is based on a later version than its cartridge counterparts, altering some of the bosses which infringe copyrights. For unknown reasons, Golden Axe is only a one-player game in this compilation.\r\n\r\n Despite being the Mega CD's selling point, only two games have an updated CD soundtrack (Golden Axe in the form of music recorded from its arcade board, and Columns which has a new title theme). This means only a small fraction of the disc is used. \r\n\r\nGames:\r\nColumns\r\nGolden Axe\r\nRevenge of Shinobi\r\nStreets of Rage\r\nSuper Monaco GP"
-  },
-  {
-   "id": "sega-classics-arcade-collection-limited-edition",
-   "title": "Sega Classics Arcade Collection - Limited Edition",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Sega Classics Arcade Collection - Limited Edition (Europe) (Rev A)",
-     "region": "Europe",
-     "serials": [
-      "4127"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/sega-classics-arcade-collection-limited-edition/boxart.jpg",
-    "gameimage": "art/sega-classics-arcade-collection-limited-edition/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:14048",
-    "boxart": "libretro-thumbnails:Sega Classics Arcade Collection - Limited Edition (Europe) (Rev A)",
-    "gameimage": "libretro-thumbnails:Sega Classics Arcade Collection - Limited Edition (Europe) (Rev A)"
-   },
-   "year": 1994,
-   "developer": null,
-   "publisher": "Sega",
-   "genres": [],
-   "players": null,
-   "rating": "M - Mature 17+",
-   "description": "Sega Classics Arcade Collection is a compilation of four (or five) Sega Mega Drive games for the Sega Mega-CD. It was a pack-in game bundled with launch Mega CDs in the United Kingdom and North America, and was released separately in other regions.\r\n\r\n Two variants of Sega Classics Arcade Collection exist; an earlier version seen in North America and Japan, which contains Golden Axe, Streets of Rage, Columns and The Revenge of Shinobi, and a later version seen in Europe and later North American bundles, which throws in Super Monaco GP. In North America the older \"4-in-1\" variant came in the same box as Sherlock Holmes: Consulting Detective Vol. I, while the later \"5-in-1\" one came with Ecco the Dolphin.\r\n\r\n Each game is mostly identical to their Mega Drive counterparts, though have minor changes thanks to the Mega CD's enhancements. All digitised speech samples have been replaced with higher quality audio, the first level in Golden Axe uses different instruments and Super Monaco GP has extra drums. The Revenge of Shinobi is based on a later version than its cartridge counterparts, altering some of the bosses which infringe copyrights. For unknown reasons, Golden Axe is only a one-player game in this compilation.\r\n\r\n Despite being the Mega CD's selling point, only two games have an updated CD soundtrack (Golden Axe in the form of music recorded from its arcade board, and Columns which has a new title theme). This means only a small fraction of the disc is used. \r\n\r\nGames:\r\nColumns\r\nGolden Axe\r\nRevenge of Shinobi\r\nStreets of Rage\r\nSuper Monaco GP"
-  },
-  {
-   "id": "seima-densetsu-3x3-eyes",
-   "title": "Seima Densetsu 3x3 Eyes",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Seima Densetsu 3x3 Eyes (Japan, Korea)",
-     "region": "Japan",
-     "serials": [
-      "G-6007",
-      "GD0004JG"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/seima-densetsu-3x3-eyes/boxart.jpg",
-    "gameimage": "art/seima-densetsu-3x3-eyes/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34262",
-    "boxart": "libretro-thumbnails:Seima Densetsu 3x3 Eyes (Japan, Korea)",
-    "gameimage": "libretro-thumbnails:Seima Densetsu 3x3 Eyes (Japan, Korea)"
-   },
-   "year": 1993,
-   "developer": "Sega, Arc SystemWorks",
-   "publisher": "Sega",
-   "genres": [
-    "Role-Playing"
-   ],
-   "players": 1,
-   "rating": "Not Rated",
-   "description": "Seima Densetsu 3x3 Eyes (聖魔伝説 サザンアイズ) is an RPG for the Sega Mega-CD based upon the 3×3 Eyes anime and manga. It was only released in Japan."
-  },
-  {
-   "id": "seirei-shinseiki-fhey-area",
-   "title": "Seirei Shinseiki - Fhey Area",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Seirei Shinseiki - Fhey Area (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-32034"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/seirei-shinseiki-fhey-area/boxart.jpg",
-    "gameimage": "art/seirei-shinseiki-fhey-area/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34289",
-    "boxart": "libretro-thumbnails:Seirei Shinseiki - Fhey Area (Japan)",
-    "gameimage": "libretro-thumbnails:Seirei Shinseiki - Fhey Area (Japan)"
-   },
-   "year": 1992,
-   "developer": "Wolf Team",
-   "publisher": "Wolf Team",
-   "genres": [
-    "Role-Playing"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Seirei Shinseiki Fhey Area (精霊新世紀フェイエリア) is an RPG for the Sega Mega-CD. It was only released in Japan"
-  },
-  {
-   "id": "sengoku-denshou",
-   "title": "Sengoku Denshou",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Sengoku Denshou (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-24034"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/sengoku-denshou/boxart.jpg",
-    "gameimage": "art/sengoku-denshou/gameimage.png",
-    "hero": "art/sengoku-denshou/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:34305",
-    "boxart": "libretro-thumbnails:Sengoku Denshou (Japan)",
-    "gameimage": "libretro-thumbnails:Sengoku Denshou (Japan)",
-    "hero": "steamgriddb:5325183"
-   },
-   "year": 1993,
-   "developer": "SNK",
-   "publisher": "Sammy Corporation",
-   "genres": [
-    "Action"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Sengoku Denshou (戦国伝承) is a beat-'em-up released for the Sega Mega-CD exclusively in Japan."
-  },
-  {
-   "id": "sensible-soccer",
-   "title": "Sensible Soccer",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Sensible Soccer (Europe) (En,Fr,De,It)",
-     "region": "Europe",
-     "serials": [
-      "T-93185-50"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/sensible-soccer/boxart.jpg",
-    "gameimage": "art/sensible-soccer/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:4947",
-    "boxart": "libretro-thumbnails:Sensible Soccer (Europe)",
-    "gameimage": "libretro-thumbnails:Sensible Soccer (Europe)"
-   },
-   "year": 1994,
-   "developer": "Sensible Software",
-   "publisher": "Sega",
-   "genres": [
-    "Sports"
-   ],
-   "players": 2,
-   "rating": "E - Everyone",
-   "description": "Sensible Soccer (known in the US as Championship Soccer '94) is a soccer (football) game similar to the Kick Off series. The graphical view is from a distance overhead, making the players small on screen, but allowing player to view around half the pitch.\r\n\r\nThis version of Sensible Soccer is based upon the Amiga/Atari ST Sensible Soccer 92/93, an update to the \"real\" Sensible Soccer which was released exclusively for these computers."
   },
   {
    "id": "sewer-shark",
@@ -7070,74 +4702,6 @@
    "players": 1,
    "rating": "M - Mature 17+",
    "description": "Combining non-stop battle action with perplexing puzzle solving, Shadow of the Beast II thrusts you into a dark and mysterious world where wits and combat-hardened game playing skills are your only defense. Take the action to the limit as you fight a relentless onslaught of monsters and ogres. Bashing them into submission, you make your way through a labyrinth of adventure and enter final confrontation with the Beast Mage!"
-  },
-  {
-   "id": "shadow-of-the-beast-ii-juushin-no-jubaku",
-   "title": "Shadow of the Beast II - Juushin no Jubaku",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Shadow of the Beast II - Juushin no Jubaku (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-60034"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/shadow-of-the-beast-ii-juushin-no-jubaku/boxart.jpg",
-    "gameimage": "art/shadow-of-the-beast-ii-juushin-no-jubaku/gameimage.png",
-    "hero": "art/shadow-of-the-beast-ii-juushin-no-jubaku/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:965",
-    "boxart": "libretro-thumbnails:Shadow of the Beast II - Juushin no Jubaku (Japan)",
-    "gameimage": "libretro-thumbnails:Shadow of the Beast II - Juushin no Jubaku (Japan)",
-    "hero": "steamgriddb:37260"
-   },
-   "year": 1994,
-   "developer": "Reflections Interactive",
-   "publisher": "Psygnosis Limited",
-   "genres": [
-    "Action"
-   ],
-   "players": 1,
-   "rating": "M - Mature 17+",
-   "description": "Combining non-stop battle action with perplexing puzzle solving, Shadow of the Beast II thrusts you into a dark and mysterious world where wits and combat-hardened game playing skills are your only defense. Take the action to the limit as you fight a relentless onslaught of monsters and ogres. Bashing them into submission, you make your way through a labyrinth of adventure and enter final confrontation with the Beast Mage!"
-  },
-  {
-   "id": "shadowrun",
-   "title": "Shadowrun",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Shadowrun (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-66024"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/shadowrun/boxart.jpg",
-    "gameimage": "art/shadowrun/gameimage.png",
-    "hero": "art/shadowrun/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:23755",
-    "boxart": "libretro-thumbnails:Shadowrun (Japan)",
-    "gameimage": "libretro-thumbnails:Shadowrun (Japan)",
-    "hero": "steamgriddb:5331187"
-   },
-   "year": 1996,
-   "developer": "Compile",
-   "publisher": "Compile",
-   "genres": [
-    "Shooter"
-   ],
-   "players": 1,
-   "rating": "Not Rated",
-   "description": "Shadowrun (シャドウラン?) is a cyberpunk interactive fiction role-playing video game for the Sega Mega-CD adapted from the Japanese version of the pen and paper RPG Shadowrun by FASA (which was created by Group SNE). It was developed by Japanese company Compile[3] and released on February 23, 1996 in Japan only as both the last Mega-CD game released in Japan and the last game released anywhere on the Mega-CD/Sega CD.\r\n\r\nThe game has a cartoonish manga-based visual style; it is loosely based on a contemporary Japanese manga series which was based on the Shadowrun franchise. Unlike the other Shadowrun video games which are set in Seattle and surrounding areas, this game is set entirely in Japan. In the fictional Shadowrun setting, Japan maintains a practice of exiling all orcs and trolls; thus there are no characters of those races in this game. Setting it apart is the combat system, turn-based rather than action-based, and six-sided dice appear rolling on the screen to determine the results of combat—the conflict resolution system used in the Shadowrun table-top game."
   },
   {
    "id": "sherlock-holmes-consulting-detective",
@@ -7236,42 +4800,6 @@
    "description": "The same structure brings a familiar look, inviting to channel all attention to the task of solving mysteries: your intelligence, skills and patience are required to find clues by listening to people, observing details, or even reading the London Times - but don't let yourself be misguided by a wrong hint."
   },
   {
-   "id": "shin-megami-tensei",
-   "title": "Shin Megami Tensei",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Shin Megami Tensei (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-44044"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/shin-megami-tensei/boxart.jpg",
-    "gameimage": "art/shin-megami-tensei/gameimage.png",
-    "hero": "art/shin-megami-tensei/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:34310",
-    "boxart": "libretro-thumbnails:Shin Megami Tensei (Japan)",
-    "gameimage": "libretro-thumbnails:Shin Megami Tensei (Japan)",
-    "hero": "steamgriddb:35894"
-   },
-   "year": 1994,
-   "developer": "SIMS Co., Ltd., Atlus",
-   "publisher": "Sims Co., Ltd.",
-   "genres": [
-    "Action",
-    "Role-Playing",
-    "Horror"
-   ],
-   "players": 1,
-   "rating": "M - Mature 17+",
-   "description": "Shin Megami Tensei (真・女神転生) is a 1992 game for the Super Famicom by Atlus ported to the Sega Mega-CD by SIMS. The Mega CD version was only released in Japan."
-  },
-  {
    "id": "shining-force-cd",
    "title": "Shining Force CD",
    "system": "sega_cd",
@@ -7368,62 +4896,6 @@
    "players": 1,
    "rating": "E - Everyone",
    "description": "Fight back against Xacalite's terrorist forces and reclaim Earth's mother computer in your SA-77 Silpheed starfighter!  A remake of the 1986 Japanese PC game, Silpheed is a shoot-'em-up that combines polygonal graphics with creative use of the Sega CD's FMV capabilities to provide excellent visuals and gameplay."
-  },
-  {
-   "id": "simearth",
-   "title": "SimEarth",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "SimEarth (Japan)",
-     "region": "Japan",
-     "serials": [
-      "G-6008"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/simearth/boxart.jpg",
-    "gameimage": "art/simearth/gameimage.png",
-    "hero": "art/simearth/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:34308",
-    "boxart": "libretro-thumbnails:Sim Earth (Japan)",
-    "gameimage": "libretro-thumbnails:SimEarth (Japan)",
-    "hero": "steamgriddb:34002"
-   },
-   "year": 1993,
-   "developer": "Game Arts, Maxis",
-   "publisher": "Sega",
-   "genres": [
-    "Life Simulation"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "SimEarth (シムアース) is a simulation game originally developed by Maxis which was ported to the Sega Mega-CD by Game Arts and Sega. Unusually, despite it being an American invention, the Mega CD version of the game was a Japanese exclusive."
-  },
-  {
-   "id": "sing-sega-game-music-presented-by-b-b-queens",
-   "title": "Sing!! Sega Game Music Presented by B. B. Queens",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Sing!! Sega Game Music Presented by B. B. Queens (Japan)",
-     "region": "Japan",
-     "serials": [
-      "BVRR-1"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/sing-sega-game-music-presented-by-b-b-queens/boxart.jpg",
-    "gameimage": "art/sing-sega-game-music-presented-by-b-b-queens/gameimage.png"
-   },
-   "sources": {
-    "boxart": "libretro-thumbnails:Sing!! Sega Game Music Presented by B. B. Queens (Japan)",
-    "gameimage": "libretro-thumbnails:Sing!! Sega Game Music Presented by B. B. Queens (Japan)"
-   }
   },
   {
    "id": "slam-city-with-scottie-pippen-fingers",
@@ -7948,40 +5420,6 @@
    "description": "Sonic the Hedgehog Megamix (commonly shortened to Sonic Megamix) is a work-in-progress multiperson disassembly modification of the original Sonic the Hedgehog videogame for the Sega Mega Drive / Genesis, developed by Team Megamix and more recently moved to the Sega Mega-CD. The game features the ability to play as one of five different characters: Sonic the Hedgehog, Mighty the Armadillo, Shadow the Hedgehog, Miles \"Tails\" Prower, and Knuckles the Echidna. It is an extensive reworking of the original game, featuring new art, music, abilities, layouts, and other things."
   },
   {
-   "id": "sonic-the-hedgehog-cd",
-   "title": "Sonic the Hedgehog CD",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Sonic the Hedgehog CD (Japan)",
-     "region": "Japan",
-     "serials": [
-      "G-6021"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/sonic-the-hedgehog-cd/boxart.jpg",
-    "gameimage": "art/sonic-the-hedgehog-cd/gameimage.png",
-    "hero": "art/sonic-the-hedgehog-cd/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:129",
-    "boxart": "libretro-thumbnails:Sonic The Hedgehog CD (Europe)",
-    "gameimage": "libretro-thumbnails:Sonic The Hedgehog CD (Japan)",
-    "hero": "steamgriddb:1734"
-   },
-   "year": 1993,
-   "developer": "Sonic Team",
-   "publisher": "Sega of America, Inc.",
-   "genres": [
-    "Platform"
-   ],
-   "players": 1,
-   "rating": "E - Everyone",
-   "description": "Sonic the Hedgehog and his self-proclaimed girlfriend Amy Rose travel to Never Lake, only to discover the legendary Little Planet there, tied in chains and covered by metal. It appears that Sonic's archenemy, Dr. Robotnik, is using the powers of the planet in order to manipulate the fabric of time. He created Sonic's evil counterpart, Metal Sonic, who kidnaps Amy and disappears. Now the brave hedgehog must explore the Little Planet, collect seven jewels capable of altering the passage of time, free Amy, and defeat Metal Sonic along with his master. \r\n\r\nSonic CD is a fast-paced side-scrolling platform action game, similar in gameplay to other installments of the series. Sonic uses his patented spin attacks to destroy the doctor's minions, and collects various items, such as protective rings, shields, and speed shoes. His special attacks include the Spin Dash and the Super Peel Out. A stand-out gameplay feature of this installment is Sonic's ability to travel to past and future versions of the stages he traverses. Depending on the player's action in the past version of a level, the future versions (which contain obligatory boss enemies) will change from \"bad\" to \"good\", having more or less enemies and obstacles, respectively. \r\n\r\nTime Stones can be collected by completing special stages, in which Sonic has to shoot UFOs within an allotted time limit. The game's \"good\" ending can be achieved either by collecting all the seven Time Stones, or by turning all future level versions into \"good\". The game has features that take advantage of the CD format such as CD audio, video clips, and more levels (over fifty in total)."
-  },
-  {
    "id": "soulstar",
    "title": "SoulStar",
    "system": "sega_cd",
@@ -8219,49 +5657,6 @@
    "description": "Super Strike Trilogy is an unreleased game compilation for the Sega Mega-CD. Super Strike Trilogy was shown at E3 1995 and was intended to incorporate upgraded versions of Electronic Arts' initial three Strike games, Desert Strike, Jungle Strike and Urban Strike.So now for the first time you can play the game that never was.Please remember that this game was never officially finished and will contain bugs.Many thanks to HeadCrab for making this happen."
   },
   {
-   "id": "supreme-warrior",
-   "title": "Supreme Warrior",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Supreme Warrior (Europe) (Disc 1)",
-     "region": "Europe",
-     "serials": [
-      "T-162045-50",
-      "T-162045-50-0"
-     ]
-    },
-    {
-     "name": "Supreme Warrior (Europe) (Disc 2)",
-     "region": "Europe",
-     "serials": [
-      "T-162045-50",
-      "T-162045-50-1"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/supreme-warrior/boxart.jpg",
-    "gameimage": "art/supreme-warrior/gameimage.png",
-    "hero": "art/supreme-warrior/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:5104",
-    "boxart": "libretro-thumbnails:Supreme Warrior (Europe)",
-    "gameimage": "libretro-thumbnails:Supreme Warrior (Europe) (Disc 1)",
-    "hero": "steamgriddb:5345973"
-   },
-   "year": 1994,
-   "developer": "Digital Pictures",
-   "publisher": "Digital Pictures, Inc.",
-   "genres": [
-    "Action"
-   ],
-   "players": 1,
-   "rating": "M - Mature 17+",
-   "description": "Supreme Warrior is a full-motion video fighting game. The game, or interactive movie, is set in China hundreds of years ago. You are tasked with protecting half of a magical mask. The wearer of the mask will be granted untold power. Unfortunately, the villanous Wang Tu has the other half of the mask, and wants your half badly. So, you must fight off Wang Tu's minions, and eventually Fang Tu himself."
-  },
-  {
    "id": "supreme-warrior-fire-earth",
    "title": "Supreme Warrior (Fire & Earth)",
    "system": "sega_cd",
@@ -8319,49 +5714,6 @@
     "information": "thegamesdb:5104",
     "boxart": "libretro-thumbnails:Supreme Warrior (USA) (Disc 1) (Fire _ Earth) (Sega CD 32X)",
     "gameimage": "libretro-thumbnails:Supreme Warrior (USA) (Disc 1) (Fire _ Earth) (Sega CD 32X)",
-    "hero": "steamgriddb:5345973"
-   },
-   "year": 1994,
-   "developer": "Digital Pictures",
-   "publisher": "Digital Pictures, Inc.",
-   "genres": [
-    "Action"
-   ],
-   "players": 1,
-   "rating": "M - Mature 17+",
-   "description": "Supreme Warrior is a full-motion video fighting game. The game, or interactive movie, is set in China hundreds of years ago. You are tasked with protecting half of a magical mask. The wearer of the mask will be granted untold power. Unfortunately, the villanous Wang Tu has the other half of the mask, and wants your half badly. So, you must fight off Wang Tu's minions, and eventually Fang Tu himself."
-  },
-  {
-   "id": "supreme-warrior-sega-cd-32x",
-   "title": "Supreme Warrior (Sega CD 32X)",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Supreme Warrior (Europe) (Disc 1) (Mega-CD 32X)",
-     "region": "Europe",
-     "serials": [
-      "T-16203F-50",
-      "T-16203F-50-0"
-     ]
-    },
-    {
-     "name": "Supreme Warrior (Europe) (Disc 2) (Mega-CD 32X)",
-     "region": "Europe",
-     "serials": [
-      "T-16203F-50",
-      "T-16203F-50-1"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/supreme-warrior-sega-cd-32x/boxart.jpg",
-    "gameimage": "art/supreme-warrior-sega-cd-32x/gameimage.png",
-    "hero": "art/supreme-warrior-sega-cd-32x/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:5104",
-    "boxart": "libretro-thumbnails:Supreme Warrior (Europe) (Disc 1) (Mega-CD 32X)",
-    "gameimage": "libretro-thumbnails:Supreme Warrior (Europe) (Disc 1) (Mega-CD 32X)",
     "hero": "steamgriddb:5345973"
    },
    "year": 1994,
@@ -8490,171 +5842,6 @@
    "players": null,
    "rating": "T - Teen",
    "description": "The elite Special Forces unit, The Surgical Strike Team, have been called into action. High-tech urban guerrillas are attacking innocent people but once they're done with their carnage they fade back into the landscape. In a very delicate way, the Team must find these hidden enemies and get rid of them without harming innocent citizens. Inside your hovercraft, you can charge at the violent creatures, turn 180 degrees to watch your own back and explore new uncharted areas. You have a choice of weaponry choose the 30MM Gatling gun or the laser-guided rockets. AWACs C-130's hover above and give you pointers, plus on-board mapping allows you to zero in on hidden emplacements."
-  },
-  {
-   "id": "surgical-strike-sega-cd-32x",
-   "title": "Surgical Strike (Sega CD 32X)",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Surgical Strike (Brazil) (Sega CD 32X)",
-     "region": "Brazil",
-     "serials": [
-      "4435",
-      "157036"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/surgical-strike-sega-cd-32x/boxart.jpg",
-    "gameimage": "art/surgical-strike-sega-cd-32x/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:741",
-    "boxart": "libretro-thumbnails:Surgical Strike (Brazil) (Sega CD 32X)",
-    "gameimage": "libretro-thumbnails:Surgical Strike (Brazil) (Sega CD 32X)"
-   },
-   "year": 1993,
-   "developer": "The Code Monkeys Ltd.",
-   "publisher": "Sega",
-   "genres": [
-    "Action"
-   ],
-   "players": null,
-   "rating": "T - Teen",
-   "description": "The elite Special Forces unit, The Surgical Strike Team, have been called into action. High-tech urban guerrillas are attacking innocent people but once they're done with their carnage they fade back into the landscape. In a very delicate way, the Team must find these hidden enemies and get rid of them without harming innocent citizens. Inside your hovercraft, you can charge at the violent creatures, turn 180 degrees to watch your own back and explore new uncharted areas. You have a choice of weaponry choose the 30MM Gatling gun or the laser-guided rockets. AWACs C-130's hover above and give you pointers, plus on-board mapping allows you to zero in on hidden emplacements."
-  },
-  {
-   "id": "switch",
-   "title": "Switch",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Switch (Japan)",
-     "region": "Japan",
-     "serials": [
-      "G-6009"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/switch/boxart.jpg",
-    "gameimage": "art/switch/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:108118",
-    "boxart": "libretro-thumbnails:Switch (Japan)",
-    "gameimage": "libretro-thumbnails:Switch (Japan)"
-   },
-   "year": 1993,
-   "developer": "Sega AM7 R&D Division",
-   "publisher": "Sega",
-   "genres": [
-    "Adventure",
-    "Puzzle"
-   ],
-   "players": 1,
-   "rating": "Not Rated",
-   "description": "Stay calm and cool and you might save the world. Reality is turned upside down and only the right combination of switches and buttons will replace chaos with order. Choose the wrong switch and WATCH OUT - the unexpected can be expected! What better way for Data East to enter the CD market than with this totally original, unique and hilarious adult puzzle game for the Sega CD system. No guns, no kicks, and no pressure. Just use your wits and watch what happens!"
-  },
-  {
-   "id": "syndicate",
-   "title": "Syndicate",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Syndicate (Europe) (En,Fr,De)",
-     "region": "Europe",
-     "serials": [
-      "T-88065-50"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/syndicate/boxart.jpg",
-    "gameimage": "art/syndicate/gameimage.png",
-    "hero": "art/syndicate/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:34314",
-    "boxart": "libretro-thumbnails:Syndicate (Europe)",
-    "gameimage": "libretro-thumbnails:Syndicate (Europe)",
-    "hero": "steamgriddb:35899"
-   },
-   "year": 1995,
-   "developer": "Bullfrog Productions",
-   "publisher": "Electronic Arts, Domark Software",
-   "genres": [
-    "Role-Playing",
-    "Life Simulation"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Syndicate is an isometric strategy game developed by Bullfrog Productions. It was released among other systems for the Sega Mega Drive and Sega Mega-CD. Its sequel, Syndicate Wars, was due to be released on the Sega Saturn but was cancelled."
-  },
-  {
-   "id": "tenbu-mega-cd-special",
-   "title": "Tenbu Mega CD Special",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Tenbu Mega CD Special (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-32084"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/tenbu-mega-cd-special/boxart.jpg",
-    "gameimage": "art/tenbu-mega-cd-special/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34315",
-    "boxart": "libretro-thumbnails:Tenbu Mega CD Special (Japan)",
-    "gameimage": "libretro-thumbnails:Tenbu Mega CD Special (Japan)"
-   },
-   "year": 1992,
-   "developer": "Wolf Team",
-   "publisher": "Wolf Team",
-   "genres": [
-    "Strategy"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Tenbu Mega CD Special (天舞メガＣＤスペシャル) is a Sega Mega-CD simulation game released exclusively in Japan."
-  },
-  {
-   "id": "tenkafubu-eiyuutachi-no-houkou",
-   "title": "Tenkafubu - Eiyuutachi no Houkou",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Tenkafubu - Eiyuutachi no Houkou (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-45024"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/tenkafubu-eiyuutachi-no-houkou/boxart.jpg",
-    "gameimage": "art/tenkafubu-eiyuutachi-no-houkou/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34316",
-    "boxart": "libretro-thumbnails:Tenkafubu - Eiyuutachi no Houkou (Japan)",
-    "gameimage": "libretro-thumbnails:Tenkafubu - Eiyuutachi no Houkou (Japan)"
-   },
-   "year": 1991,
-   "developer": "Game Arts",
-   "publisher": "Game Arts Co., Ltd.",
-   "genres": [
-    "Strategy"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Tenka Fubu: Eiyuutachi no Houkou (天下布武 英雄たちの咆哮) is a simulation game for the Sega Mega-CD."
   },
   {
    "id": "the-adventures-of-batman-and-robin",
@@ -8815,38 +6002,6 @@
    "description": "Demo disc: The best new rock comes alive in Virtual VCR"
   },
   {
-   "id": "the-iiird-world-war",
-   "title": "The IIIrd World War",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "IIIrd World War, The (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-22034"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/the-iiird-world-war/boxart.jpg",
-    "gameimage": "art/the-iiird-world-war/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:5109",
-    "boxart": "libretro-thumbnails:IIIrd World War, The (Japan)",
-    "gameimage": "libretro-thumbnails:IIIrd World War, The (Japan)"
-   },
-   "year": 1994,
-   "developer": "Micronet Co. Ltd.",
-   "publisher": "Micronet Co. Ltd.",
-   "genres": [
-    "Strategy"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Third World War is a \"hypothetical/what if\" wargame with a twist. Set sometime in the late 20th century, when conflicts all over the world have erupted, and world peace is but a thing of the past.\r\n\r\nAs the leader of one of 16 nations, your ultimate goal is none other than world domination. To accomplish this you have a multitude of options ranging from raw military might, diplomacy, foreign or domestic investment policy, aiding terrorists or revolutionaries, to media manipulation. In other words, it's just like the real world."
-  },
-  {
    "id": "the-lawnmower-man",
    "title": "The Lawnmower Man",
    "system": "sega_cd",
@@ -8913,40 +6068,6 @@
    "players": 1,
    "rating": "T - Teen",
    "description": "The Masked Rider is a Japanese super hero, a man who has become genetically altered to be a man/grasshopper who rides a motorcycle.\r\n\r\nThis FMV game adapts scenes from the movie Masked Rider ZO, and creates a Dragon's Lair style experience. The game centers around 10 battles of the film's 3 main characters.\r\n\r\nThe player watches the video and hits the correct direction or button at the right time to achieve success. The visual cues of the movie suggest the correct buttons. For example, when the Masked Rider punches, the player should press the Punch button. If he dodges left on screen, the player should press the left direction pad. Correct timing hits the enemy harder, lowering their health bar. Failure reduces the players health."
-  },
-  {
-   "id": "the-ninja-warriors",
-   "title": "The Ninja Warriors",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Ninja Warriors, The (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-11024P"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/the-ninja-warriors/boxart.jpg",
-    "gameimage": "art/the-ninja-warriors/gameimage.png",
-    "hero": "art/the-ninja-warriors/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:34318",
-    "boxart": "libretro-thumbnails:Ninja Warriors, The (Japan)",
-    "gameimage": "libretro-thumbnails:Ninja Warriors, The (Japan)",
-    "hero": "steamgriddb:34497"
-   },
-   "year": 1993,
-   "developer": "Aisystem Tokyo, Taito Corporation",
-   "publisher": "Taito Corporation",
-   "genres": [
-    "Action"
-   ],
-   "players": 2,
-   "rating": null,
-   "description": "The Ninja Warriors (ニンジャウォーリアーズ) is a beat-'em-up originally developed by Taito for the arcades. It was brought to the Sega Mega-CD in 1993 exclusively for Japan. To emulate the three-screen setup of the original arcade game (3 288x224 screens arranged in a horizontal line like with the Darius games), porters Aisystem Tokyo simply capped the screen resolution in software, resulting in the entire game running in a small window.\r\n\r\nPlayable characters are two androids called Kunoichi (female ninja, red color) and Ninja (male ninja, blue color). Both characters play identically.\r\n\r\nAs indicated by the boxart, one of the game's main selling points was the soundtrack composed by Taito's inhouse band Zuntata. The game includes both the arcade versions's soundtrack as well as remixed tracks. An exclusive Zuntata mode was also included, which is bascially a movie scene that explains the game's backstory. Members of Zuntata served as actors.\r\n\r\nTo this day, this is the most faithful port of The Ninja Warriors."
   },
   {
    "id": "the-san-diego-zoo-presents-the-animals",
@@ -9024,40 +6145,6 @@
    "players": null,
    "rating": null,
    "description": "The Secret of Monkey Island is an adventure game that utilizes the command verb-based SCUMM interface first introduced in Maniac Mansion: the player constructs commands for Guybrush by selecting an appropriate verb and then combining it with an object or an inventory item. Objects that can be interacted with are highlighted when the player places a cursor over them. The game is the first LucasArts adventure in which it is impossible to get irrevocably stuck; like in Loom, the player character also cannot die. The branching dialogue system, where the player chooses between several available responses during conversations, allows the player to talk to characters in different ways without fearing a wrong choice, and is often used as a humorous device."
-  },
-  {
-   "id": "the-smurfs",
-   "title": "The Smurfs",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Smurfs, The (Europe) (En,Fr,De,Es,It)",
-     "region": "Europe",
-     "serials": [
-      "T-151015-50"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/the-smurfs/boxart.jpg",
-    "gameimage": "art/the-smurfs/gameimage.png",
-    "hero": "art/the-smurfs/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:5107",
-    "boxart": "libretro-thumbnails:Smurfs, The (Europe)",
-    "gameimage": "libretro-thumbnails:Smurfs, The (Europe) (En,Fr,De,Es,It)",
-    "hero": "steamgriddb:35660"
-   },
-   "year": 1995,
-   "developer": "Infogrames",
-   "publisher": "Infogrames Entertainment",
-   "genres": [
-    "Action"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Gargamel has just perfected a terrible plot to kidnap ALL the Smurfs. Four of them have disappeared already. You will have to brave the Angry Smurfs and Buzz flies before smurfing the mountain riding on a sledge, travel on the back of a stork and finally challenge the infamous Gargamel!"
   },
   {
    "id": "the-software-toolworks-star-wars-chess",
@@ -9181,41 +6268,6 @@
    "description": "Just like the movie, you assume the role of Kyle Reese, a traveller from the future who returns to modern-day L.A. to protect the life of Sarah Conner - the beautiful woman who holds the key to the survival of the human race. Your mission: Outwit and outmaneuver a brutal killing machine known as the Terminator. He's big, he's bad and he's virtually unstoppable - let's hope you're smarter! Featuring 10 huge main levels pumped up with hardcore weaponry and heavy-hitting adversaries."
   },
   {
-   "id": "theme-park",
-   "title": "Theme Park",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Theme Park (Europe) (En,Fr,De,Es)",
-     "region": "Europe",
-     "serials": [
-      "T-88055-50"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/theme-park/boxart.jpg",
-    "gameimage": "art/theme-park/gameimage.png",
-    "hero": "art/theme-park/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:34317",
-    "boxart": "libretro-thumbnails:Theme Park (Europe)",
-    "gameimage": "libretro-thumbnails:Theme Park (Europe)",
-    "hero": "steamgriddb:48"
-   },
-   "year": 1995,
-   "developer": "Bullfrog Productions",
-   "publisher": "Electronic Arts, Domark Software",
-   "genres": [
-    "Strategy",
-    "Life Simulation"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Theme Park (テーマパーク) is a management simulator developed by Bullfrog Productions and published by Electronic Arts in 1994. It was released for a variety of systems, including the Sega Mega Drive, Sega Mega-CD, Sega Saturn in the following year.\r\n\r\nTheme Park was the first successful theme park simulator, and would go on to inspire other Theme games and the RollerCoaster Tycoon series. Players are given a plot of land and are tasked with buying (and creating) rides, as well as organising the general layout of the park, staff and attempting to keep visitors happy without going bankrupt.\r\n\r\nFrom a Sega perspective the game is fairly interesting - the game was technically released twice in Japan, first as regular Theme Park seen here, and again as Shin Theme Park, a localised variant. The game was originally designed with a mouse in mind, but none of the Sega ports are compatible with their respective mouse add ons, whether that be the Sega Mouse or Shuttle Mouse.\r\n\r\nTheme Park would later see a true sequel in the form of the fully 3D Theme Park World (known as Sim Theme Park in North America) in 1999."
-  },
-  {
    "id": "third-world-war",
    "title": "Third World War",
    "system": "sega_cd",
@@ -9246,82 +6298,6 @@
    "players": 1,
    "rating": null,
    "description": "Third World War is a \"hypothetical/what if\" wargame with a twist. Set sometime in the late 20th century, when conflicts all over the world have erupted, and world peace is but a thing of the past.\r\n\r\nAs the leader of one of 16 nations, your ultimate goal is none other than world domination. To accomplish this you have a multitude of options ranging from raw military might, diplomacy, foreign or domestic investment policy, aiding terrorists or revolutionaries, to media manipulation. In other words, it's just like the real world."
-  },
-  {
-   "id": "thunder-storm-fx",
-   "title": "Thunder Storm FX",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Thunder Storm FX (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-32064"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/thunder-storm-fx/boxart.jpg",
-    "gameimage": "art/thunder-storm-fx/gameimage.png",
-    "hero": "art/thunder-storm-fx/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:4950",
-    "boxart": "libretro-thumbnails:Thunder Storm FX (Japan)",
-    "gameimage": "libretro-thumbnails:Thunder Storm FX (Japan)",
-    "hero": "steamgriddb:16"
-   },
-   "year": 1992,
-   "developer": "Data East Corporation",
-   "publisher": "Renovation Products, Inc.",
-   "genres": [
-    "Action"
-   ],
-   "players": null,
-   "rating": null,
-   "description": "Cobra Command is an arcade conversion of a helicopter shooting game from Data East. It is an \"on rails\" style shooter with the player controlling only the aiming of the shooting but not the direction of the helicopter.\r\n\r\nYour job is to shoot down the enemies as you are flown through footage of New York streets, the Statue of Liberty, the Atlantic Ocean, Italy, the Grand Canyon and finally, the treacherous corners and return fire of the enemy's stronghold on Easter Island."
-  },
-  {
-   "id": "thunderhawk",
-   "title": "Thunderhawk",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Thunderhawk (Europe) (En,Fr,De,Es)",
-     "region": "Europe",
-     "serials": [
-      "T-115015-50"
-     ]
-    },
-    {
-     "name": "Thunderhawk (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-60134"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/thunderhawk/boxart.jpg",
-    "gameimage": "art/thunderhawk/gameimage.png",
-    "hero": "art/thunderhawk/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:4935",
-    "boxart": "libretro-thumbnails:Thunderhawk (Europe)",
-    "gameimage": "libretro-thumbnails:Thunderhawk (Europe) (En,Fr,De,Es) (RE)",
-    "hero": "steamgriddb:5262142"
-   },
-   "year": 1993,
-   "developer": "Core Design Ltd.",
-   "publisher": "Core Design Ltd.",
-   "genres": [
-    "Shooter",
-    "Flight Simulator"
-   ],
-   "players": 1,
-   "rating": "Not Rated",
-   "description": "AH-3 Thunderstrike is a helicopter sim/shooter. You will pilot the AH-3 over 10 operations all over the world. Each operation is composed of several missions, such as destroying tanks, or destroying bridges, or escorting trucks, and so on.\r\n\r\nThunderstrike's graphics consist of scaled sprites arranged to create a 3D environment. It makes use of the Sega CD's scaling and rotation hardware to create this effect with a smooth frame rate."
   },
   {
    "id": "time-gal",
@@ -9514,38 +6490,6 @@
    "description": "Players control the superhero Prime, a thirteen year-old boy called Kevin Green that has the power to transform into a superhero adult version of himself. Prime can punch, kick and jump, and combine these into some new moves and combos. The player as well as the enemies can also occasionally find weapons or objects to pick up and throw. Some stages are much faster as Prime flies at a fast speed and needs to punch obstacles and enemies out of the air."
   },
   {
-   "id": "urusei-yatsura-dear-my-friends",
-   "title": "Urusei Yatsura - Dear My Friends",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Urusei Yatsura - Dear My Friends (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-45064"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/urusei-yatsura-dear-my-friends/boxart.jpg",
-    "gameimage": "art/urusei-yatsura-dear-my-friends/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:27807",
-    "boxart": "libretro-thumbnails:Urusei Yatsura - Dear My Friends (Japan)",
-    "gameimage": "libretro-thumbnails:Urusei Yatsura - Dear My Friends (Japan)"
-   },
-   "year": 1994,
-   "developer": "Game Arts",
-   "publisher": "Game Arts Co., Ltd.",
-   "genres": [
-    "Adventure"
-   ],
-   "players": 1,
-   "rating": "T - Teen",
-   "description": "This adventure game was released only in Japan and is based on Rumiko Takashi's Urusei Yatsura series."
-  },
-  {
    "id": "vay",
    "title": "Vay",
    "system": "sega_cd",
@@ -9578,104 +6522,6 @@
    "players": 1,
    "rating": "M - Mature 17+",
    "description": "It came from space more than a millenium before. Two-tons of advanced technology, programmed only for destruction. The five mightiest wizards of the land joined forces and drew away the power of the battle machine, dividing the power into 5 orbs and sealing the armor away from humanity. Now, the Danek Empire has partially duplicated the fearsome mechanized technology, creating a deadly army of metal warriors programmed for world domination. The only hope for salvation is to find the legendary orbs and restore power to the armor that nearly destroyed the planet more than 1000 years before. Join Sandor as he begins a quest that will take him from the depths of Magmal Isle to the terrifying heights of Draktyr. \r\n\r\nFight over 100 types of monsters, explore towns, and enjoy exciting CD animation scenes as you pursue the orbs that will activate the legendary armor of Vay. But, will the armor save your world, or destroy it forever?"
-  },
-  {
-   "id": "vay-ryuusei-no-yoroi",
-   "title": "Vay - Ryuusei no Yoroi",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Vay - Ryuusei no Yoroi (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-44014"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/vay-ryuusei-no-yoroi/boxart.jpg",
-    "gameimage": "art/vay-ryuusei-no-yoroi/gameimage.png",
-    "hero": "art/vay-ryuusei-no-yoroi/hero.jpg"
-   },
-   "sources": {
-    "information": "thegamesdb:2579",
-    "boxart": "libretro-thumbnails:Vay - Ryuusei no Yoroi (Japan)",
-    "gameimage": "libretro-thumbnails:Vay - Ryuusei no Yoroi (Japan)",
-    "hero": "steamgriddb:5337882"
-   },
-   "year": 1994,
-   "developer": "SIMS Co., Ltd.",
-   "publisher": "Working Designs",
-   "genres": [
-    "Role-Playing"
-   ],
-   "players": 1,
-   "rating": "M - Mature 17+",
-   "description": "It came from space more than a millenium before. Two-tons of advanced technology, programmed only for destruction. The five mightiest wizards of the land joined forces and drew away the power of the battle machine, dividing the power into 5 orbs and sealing the armor away from humanity. Now, the Danek Empire has partially duplicated the fearsome mechanized technology, creating a deadly army of metal warriors programmed for world domination. The only hope for salvation is to find the legendary orbs and restore power to the armor that nearly destroyed the planet more than 1000 years before. Join Sandor as he begins a quest that will take him from the depths of Magmal Isle to the terrifying heights of Draktyr. \r\n\r\nFight over 100 types of monsters, explore towns, and enjoy exciting CD animation scenes as you pursue the orbs that will activate the legendary armor of Vay. But, will the armor save your world, or destroy it forever?"
-  },
-  {
-   "id": "wakusei-woodstock-funky-horror-band",
-   "title": "Wakusei Woodstock - Funky Horror Band",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Wakusei Woodstock - Funky Horror Band (Japan)",
-     "region": "Japan",
-     "serials": [
-      "G-6001"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/wakusei-woodstock-funky-horror-band/boxart.jpg",
-    "gameimage": "art/wakusei-woodstock-funky-horror-band/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34362",
-    "boxart": "libretro-thumbnails:Wakusei Woodstock - Funky Horror Band (Japan)",
-    "gameimage": "libretro-thumbnails:Wakusei Woodstock - Funky Horror Band (Japan)"
-   },
-   "year": 1991,
-   "developer": "Sega",
-   "publisher": "Sega",
-   "genres": [
-    "Role-Playing"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Funky Horror Band (ファンキーホラーバンド) is an RPG for the Sega Mega-CD. It was only released in Japan."
-  },
-  {
-   "id": "warau-salesman",
-   "title": "Warau Salesman",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Warau Salesman (Japan)",
-     "region": "Japan",
-     "serials": [
-      "G-6006"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/warau-salesman/boxart.jpg",
-    "gameimage": "art/warau-salesman/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:27808",
-    "boxart": "libretro-thumbnails:Warau Salesman (Japan)",
-    "gameimage": "libretro-thumbnails:Warau Salesman (Japan)"
-   },
-   "year": 1993,
-   "developer": "Compile, Sega",
-   "publisher": "Sega",
-   "genres": [
-    "Adventure"
-   ],
-   "players": 1,
-   "rating": "T - Teen",
-   "description": "It's a point-and-click adventure game released only in Japan tying into a media series by Fujiko Fujio A."
   },
   {
    "id": "what-is-xeye-multi-entertainment-system",
@@ -9836,39 +6682,6 @@
    "description": "Wing Commander is a space combat simulator interspersed with shipboard dialogs. Onboard the ship, you can save/load game, visit the bar to get the latest gossip, or go on to the next mission briefing, and the 3D space combat part.\r\n\r\nThe 3D space combat has you sitting in the cockpit, where you control the craft like roll, turn, up/down, afterburner, as well as fire guns and launch missiles. There are four different crafts on the Confed side, each with different flight characteristics and armament. You will have a wingman on each mission, and you should keep the wingman alive as the wingman will help you if you issue the right orders. You can also taunt the enemy. You'll be fighting several different types of enemy fighters and capital ships, and even combat a few Kilrathi aces."
   },
   {
-   "id": "winning-post",
-   "title": "Winning Post",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Winning Post (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-76044"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/winning-post/boxart.jpg",
-    "gameimage": "art/winning-post/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34321",
-    "boxart": "libretro-thumbnails:Winning Post (Japan)",
-    "gameimage": "libretro-thumbnails:Winning Post (Japan)"
-   },
-   "year": 1993,
-   "developer": "Koei",
-   "publisher": "Koei Co., Ltd.",
-   "genres": [
-    "Role-Playing",
-    "Life Simulation"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Winning Post (ウイニングポスト) is a Sega Mega-CD horse racing game released exclusively in Japan. It is the first in the Winning Post series."
-  },
-  {
    "id": "wirehead",
    "title": "WireHead",
    "system": "sega_cd",
@@ -9999,38 +6812,6 @@
    "description": "Cartoon-quality animation brings to life Wonder Dog's narrow escape from the invading Pitbully Space Armada on his home planet of K-9. In Bunny Hop Meadow you'll take of mangy mutts, rascally rabbits and dizzy ducks as your long journey back to free K-9 begins.\r\n\r\nClimb in the ring with boxers in Dogsville and wailing alley cats in the Scrapyard-or maybe you'll even find a hidden zone or two...or three."
   },
   {
-   "id": "wondermega-collection",
-   "title": "WonderMega Collection",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "WonderMega Collection (Japan) (Rev 2)",
-     "region": "Japan",
-     "serials": [
-      "CDS-135"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/wondermega-collection/boxart.jpg",
-    "gameimage": "art/wondermega-collection/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34372",
-    "boxart": "libretro-thumbnails:WonderMega Collection (Japan) (Rev 2)",
-    "gameimage": "libretro-thumbnails:WonderMega Collection (Japan)"
-   },
-   "year": 1992,
-   "developer": "JVC",
-   "publisher": "Victor Interactive Software, Inc.",
-   "genres": [
-    "Action"
-   ],
-   "players": 2,
-   "rating": null,
-   "description": "Wondermega Collection (ワンダーメガ　コレクション) is a sample disc bundled with Japanese Wondermega consoles. It contains four CD+G karaoke songs and Battle Fighter, Flicky, Pyramid Magic and Quiz Scramble as playable games."
-  },
-  {
    "id": "world-cup-usa-94",
    "title": "World Cup USA '94",
    "system": "sega_cd",
@@ -10110,142 +6891,6 @@
    "players": 2,
    "rating": "E - Everyone",
    "description": "WWF Rage in the Cage lets players choose from thirty WWF Superstars including The Undertaker, Yokozuna, Bret Hart, Bam Bam Bigelow, Shawn Michaels, Razor Ramon among many more. Each superstar has his own strengths and weaknesses as well as a personalized finisher such as the Tombstone for the Undertaker, Sweet Chin Music for Shawn Michaels, etc., along with the standard suplexes, body slams, and other moves.\r\n\r\nThere are many game modes to choose from, including a regular single-falls match, tag team, six-man tag team, battle royal, and the game's dreaded namesake, the Steel Cage. The main gameplay is reminiscent of WWF Royal Rumble, using the same engine, but featuring enhanced audio and graphics."
-  },
-  {
-   "id": "wwf-mania-tour-wwf-rage-in-the-cage",
-   "title": "WWF Mania Tour - WWF - Rage in the Cage",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "WWF Mania Tour - WWF - Rage in the Cage (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-81024"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/wwf-mania-tour-wwf-rage-in-the-cage/boxart.jpg",
-    "gameimage": "art/wwf-mania-tour-wwf-rage-in-the-cage/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:5123",
-    "boxart": "libretro-thumbnails:WWF Mania Tour - WWF - Rage in the Cage (Japan)",
-    "gameimage": "libretro-thumbnails:WWF Mania Tour - WWF - Rage in the Cage (Japan)"
-   },
-   "year": 1993,
-   "developer": "Sculptured Software, Sculptured Software, Inc.",
-   "publisher": "Arena Entertainment",
-   "genres": [
-    "Action",
-    "Sports"
-   ],
-   "players": 2,
-   "rating": "E - Everyone",
-   "description": "WWF Rage in the Cage lets players choose from thirty WWF Superstars including The Undertaker, Yokozuna, Bret Hart, Bam Bam Bigelow, Shawn Michaels, Razor Ramon among many more. Each superstar has his own strengths and weaknesses as well as a personalized finisher such as the Tombstone for the Undertaker, Sweet Chin Music for Shawn Michaels, etc., along with the standard suplexes, body slams, and other moves.\r\n\r\nThere are many game modes to choose from, including a regular single-falls match, tag team, six-man tag team, battle royal, and the game's dreaded namesake, the Steel Cage. The main gameplay is reminiscent of WWF Royal Rumble, using the same engine, but featuring enhanced audio and graphics."
-  },
-  {
-   "id": "yumemi-mystery-mansion",
-   "title": "Yumemi Mystery Mansion",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Yumemi Mystery Mansion (Europe)",
-     "region": "Europe",
-     "serials": [
-      "4430"
-     ]
-    },
-    {
-     "name": "Yumemi Mystery Mansion (Australia)",
-     "region": "Australia",
-     "serials": [
-      "4430"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/yumemi-mystery-mansion/boxart.jpg",
-    "gameimage": "art/yumemi-mystery-mansion/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:5060",
-    "boxart": "libretro-thumbnails:Yumemi Mystery Mansion (Australia)",
-    "gameimage": "libretro-thumbnails:Yumemi Mystery Mansion (Europe)"
-   },
-   "year": 1993,
-   "developer": "Vic Tokai",
-   "publisher": "Sega",
-   "genres": [
-    "Adventure"
-   ],
-   "players": 1,
-   "rating": "E - Everyone",
-   "description": "Mansion of Hidden Souls is an adventure game created entirely with full-motion video. It takes place in a pre-rendered mansion that the player explores from a first-person perspective. As they wander from room to room, the action unfolds via video sequences.\r\n\r\nThe player takes on the role of Jonathan, a boy whose sister has wandered into the spooky mansion. When she entered the mansion, she disappeared! What's more, the mansion is full of talking butterflies. The player must search the whole mansion to unlock its secrets and find Jonathan's sister."
-  },
-  {
-   "id": "yumemi-yakata-no-monogatari",
-   "title": "Yumemi Yakata no Monogatari",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Yumemi Yakata no Monogatari (Japan)",
-     "region": "Japan",
-     "serials": [
-      "G-6027"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/yumemi-yakata-no-monogatari/boxart.jpg",
-    "gameimage": "art/yumemi-yakata-no-monogatari/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:5060",
-    "boxart": "libretro-thumbnails:Yumemi Yakata No Monogatari (Japan)",
-    "gameimage": "libretro-thumbnails:Yumemi Yakata no Monogatari (Japan)"
-   },
-   "year": 1993,
-   "developer": "Vic Tokai",
-   "publisher": "Sega",
-   "genres": [
-    "Adventure"
-   ],
-   "players": 1,
-   "rating": "E - Everyone",
-   "description": "Mansion of Hidden Souls is an adventure game created entirely with full-motion video. It takes place in a pre-rendered mansion that the player explores from a first-person perspective. As they wander from room to room, the action unfolds via video sequences.\r\n\r\nThe player takes on the role of Jonathan, a boy whose sister has wandered into the spooky mansion. When she entered the mansion, she disappeared! What's more, the mansion is full of talking butterflies. The player must search the whole mansion to unlock its secrets and find Jonathan's sister."
-  },
-  {
-   "id": "yumimi-mix",
-   "title": "Yumimi Mix",
-   "system": "sega_cd",
-   "releases": [
-    {
-     "name": "Yumimi Mix (Japan)",
-     "region": "Japan",
-     "serials": [
-      "T-45034"
-     ]
-    }
-   ],
-   "art": {
-    "boxart": "art/yumimi-mix/boxart.jpg",
-    "gameimage": "art/yumimi-mix/gameimage.png"
-   },
-   "sources": {
-    "information": "thegamesdb:34322",
-    "boxart": "libretro-thumbnails:Yumimi Mix (Japan)",
-    "gameimage": "libretro-thumbnails:Yumimi Mix (Japan)"
-   },
-   "year": 1993,
-   "developer": "Game Arts",
-   "publisher": "Game Arts Co., Ltd.",
-   "genres": [
-    "Adventure"
-   ],
-   "players": 1,
-   "rating": null,
-   "description": "Yumimi Mix (ゆみみみっくす) is an adventure game for the Sega Mega-CD. It was only released in Japan, and was re-released on the Sega Saturn as Yumimi Mix Remix."
   }
  ]
 }

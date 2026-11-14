@@ -47,6 +47,10 @@ redux/database/
 }
 ```
 
+* The database covers **North American releases**. A game with a USA, Canada
+  or World pressing is in, with all of its regional pressings listed so a
+  European or Japanese disc of the same game is still recognised. An overseas
+  game gets in only by hand: `{"game id": {"keep": true}}` in `overrides.json`.
 * A **game** groups every pressing of one title and edition: regions,
   revisions, re-releases and the discs of a multi-disc set. Editions that are
   different discs keep their tag in the title, for example

@@ -5,7 +5,7 @@ a = Analysis(
     ['run_app.py'],
     pathex=['.'],
     binaries=[],
-    datas=[('redux/assets', 'assets')],
+    datas=[('redux/assets', 'assets'), ('redux/database', 'database')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

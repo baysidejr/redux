@@ -27,6 +27,7 @@ from .console_controllers import ConsoleControllers
 from .console_pc_games import ConsolePCGames
 from .console_cards import ConsoleGameCards
 from .console_controller_test import ConsoleControllerTest
+from .console_gamedb import ConsoleGameDatabase
 from .console_ingame import ConsoleIngame
 from .console_browser import ConsoleFileBrowser
 from .console_windows import ConsoleWindows
@@ -49,7 +50,7 @@ def display_title(game):
 from .console_cores import ConsoleCores
 from .console_redux_controller import ConsoleReduxController
 
-class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleControllerTest,ConsolePCGames,ConsoleScraper,ConsoleWindows,ConsoleFileBrowser,ConsoleIngame,ConsoleControllers,ConsoleMedia,ConsoleEditors,OverlayScreens,ReferenceLayout,SecondaryScreens,ToolsApp):
+class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleControllerTest,ConsoleGameDatabase,ConsolePCGames,ConsoleScraper,ConsoleWindows,ConsoleFileBrowser,ConsoleIngame,ConsoleControllers,ConsoleMedia,ConsoleEditors,OverlayScreens,ReferenceLayout,SecondaryScreens,ToolsApp):
     def __init__(self,root,library_root=None,*,activation=None):
         from .windows_activation import parse_activation
         from .windows_gaming import WindowsGamingExperience
@@ -426,6 +427,8 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
         elif screen=="settings":self.settings_menu=True;self.focus="system:home"
         elif screen=="collections":self.focus="collection:welcome"
         elif screen=="saves":self.focus="saves:create"
+        elif screen=="gamedb":self.focus=f"gamedb:{self.pages.get('gamedb',0)*27}"
+        elif screen=="gamedb_game":self.focus="gamedb:back"
 
     def back(self):
         if self.busy:

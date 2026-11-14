@@ -62,6 +62,7 @@ class SecondaryScreens:
     # system bar. The focused item names itself above the row; A opens it, B leaves.
     SYSTEM_ITEMS=(("home","Home","home","Return to My Collection"),
                   ("storage","Storage","storage","Where Redux and your games live."),
+                  ("database","Database","disc","Every game Redux knows, system by system."),
                   ("input","Controllers","controller","Made to feel at home in your hands."),
                   ("saves","Saves","storage","Keep your progress close."),
                   ("windows","Windows","systems","Ready when you sit down to play."),
@@ -163,6 +164,7 @@ class SecondaryScreens:
             self.text(X+66,347,"Two ways to keep your progress",16,WHITE,"bold")
             self.text(X+66,391,"Save states return to a moment in a supported running game.",14,MUTED,width=W-120)
             self.text(X+66,446,"File backups preserve a chosen save directory for restoration later.",14,MUTED,width=W-120)
+        elif section=="database":self._database_section(X,W,R)
         elif section=="windows":self._windows_settings()
         else:
             from . import __version__

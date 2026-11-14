@@ -20,7 +20,8 @@ from .brand import fuji_shapes
 LANE=1280*520/1920
 LANE_SCREENS=frozenset({"home","systems","collections","settings","saves","media"})
 BADGES={"welcome":("REDUX","#e5405e"),"psx":("PS","#8e24aa"),"nes":("NES","#ec407a"),"snes":("SNES","#7e57c2"),
-    "3do":("3DO","#bb653e"),
+    "3do":("3DO","#bb653e"),"sega_cd":("SEGA CD","#1f5fa8"),"pce_cd":("TG-CD","#c98a2e"),
+    "jaguar":("JAG","#9b2335"),"jaguar_cd":("JAG CD","#9b2335"),"32x":("32X","#3b7a57"),
     "pc":("PC","#2779b0"),
     "genesis":("GEN","#1976d2"),"saturn":("SAT","#00a6af"),"neo_geo_cd":("NGCD","#65a641"),
     "pce":("PCE","#dc9d38"),"n64":("N64","#4f9a58")}
@@ -56,7 +57,8 @@ class ReferenceLayout:
             "search":self._search,"saves":self._saves,"gameplay":self._gameplay,
             "text":self._text_editor,"screenshots":self._screenshots,"screenshot":self._screenshot,
             "media":self._media,"metadata_editor":self._metadata_editor,"disc_info":self._disc_info,
-            "controller_setup":self._controller_setup,"controller_test":self._controller_test}.get(self.screen)
+            "controller_setup":self._controller_setup,"controller_test":self._controller_test,
+            "gamedb":self._gamedb,"gamedb_game":self._gamedb_game}.get(self.screen)
         if screen:screen()
         self._footer()
         if self.overlay:self._overlay()
@@ -466,7 +468,7 @@ class ReferenceLayout:
     def _footer(self):
         if self.screen!="home":
             self.rect(0,684,1280,36,"#09090a")
-            left=140 if self.screen=="settings" else 370 if self.screen in LANE_SCREENS else 80
+            left=140 if self.screen in {"settings","gamedb"} else 370 if self.screen in LANE_SCREENS else 80
             if self.screen=="gameplay" and not self.overlay:
                 self.display(80,694,"Home / Guide or Select + Start (hold 1s) opens the game menu",15,"#9898a1")
             else:
