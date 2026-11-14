@@ -90,17 +90,28 @@ class Artwork:
         photo=ImageTk.PhotoImage(surface,master=self.master);self.cache[key]=photo
         return photo
 
+    @staticmethod
+    def bundled(*parts):
+        """Art that ships inside the frontend itself, from the build bundle or the source tree."""
+        bundle=getattr(sys,"_MEIPASS",None)
+        roots=([Path(bundle)/"assets",Path(bundle)/"redux"/"assets"] if bundle else [])
+        roots.append(Path(__file__).resolve().parent/"assets")
+        for root in roots:
+            candidate=root.joinpath(*parts)
+            if candidate.is_file():return candidate
+        return None
+
+    def welcome(self,kind="hero"):
+        """The welcome banner (hero) or box art shown before any game is chosen."""
+        return self.bundled("welcome","banner.jpg" if kind=="hero" else "box.jpg")
+
     def path(self,system,kind="hero",custom=None):
         if custom and Path(custom).is_file():return Path(custom)
         if system=="pc":
             # Original PC category art ships with the frontend, independent of
             # optional reference assets and the user's game artwork.
-            bundle=getattr(sys,"_MEIPASS",None)
-            roots=([Path(bundle)/"assets",Path(bundle)/"redux"/"assets"] if bundle else [])
-            roots.append(Path(__file__).resolve().parent/"assets")
-            for root in roots:
-                candidate=root/"platforms"/"pc-games.png"
-                if candidate.is_file():return candidate
+            candidate=self.bundled("platforms","pc-games.png")
+            if candidate:return candidate
         if not self.reference_root.is_dir():return None
         stem,tile,_=SYSTEM_ART.get(system,(system,"","#536079"))
         candidate=self.reference_root/(f"home/system_hero/{stem}_hero_color.png" if kind=="hero" else f"home/collectiontiles/{tile}")

@@ -186,7 +186,8 @@ class DiscEmbeddedGame(EmbeddedGame):
             from .buffer_install import install_buffered_disc
             try:
                 return install_buffered_disc(self._install_library, self.media_lease, self.game,
-                                             cancelled=cancelled, progress=progress)
+                                             cancelled=cancelled, progress=progress,
+                                             destination=getattr(self, "install_destination", None))
             finally:
                 installed = getattr(self.media_lease, "_redux_installed_game", None)
                 if installed is not None:

@@ -216,7 +216,7 @@ class ConsoleMediaTests(unittest.TestCase):
         self.deliver(app, event("inserted", identity()))
         app.discs.update("G:", "saturn-one", artwork={"hero_path": "saturn-game.png"})
         app.focus = "hero:play"
-        app.art = SimpleNamespace(path=lambda system, kind: f"{system}-{kind}.png")
+        app.art = SimpleNamespace(path=lambda system, kind: f"{system}-{kind}.png", welcome=lambda kind="hero": f"welcome-{kind}.jpg")
         app.picture = Mock(return_value=False)
         app.rect = Mock()
         app.display = Mock()

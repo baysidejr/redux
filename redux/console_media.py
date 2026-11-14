@@ -116,7 +116,7 @@ class ConsoleMedia:
         if disc is None:
             current=self.inserted_disc()
             if current and current.drive==drive:disc=current
-        library=self.library
+        library=self.library;destination=self.install_destination()
         def work():
             from .disc_buffer import buffer_disc,DiscBufferCancelled
             from .disc_session import prepare_disc_game
@@ -137,7 +137,7 @@ class ConsoleMedia:
                     progress=capture_progress,expected_fingerprint=disc.fingerprint if disc else None)
                 metadata=disc.metadata if disc else catalogue_disc_match(self.catalogue,lease.identity)
                 game=prepare_disc_game(library,lease,metadata=metadata,cancelled=self.cancelled)
-                result=install_buffered_disc(library,lease,game,cancelled=self.cancelled,progress=copy_progress)
+                result=install_buffered_disc(library,lease,game,cancelled=self.cancelled,progress=copy_progress,destination=destination)
                 installed=True
                 return result
             except (ImportCancelled,DiscBufferCancelled,RawCaptureCancelled):

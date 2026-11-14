@@ -22,13 +22,6 @@ def main(argv=None):
     listing=sub.add_parser("list")
     listing.add_argument("--query",default="")
     listing.add_argument("--system")
-    importing=sub.add_parser("import")
-    importing.add_argument("files",nargs="+",type=Path)
-    importing.add_argument("--system",default="auto")
-    importing.add_argument("--link",action="store_true")
-    scanning=sub.add_parser("scan")
-    scanning.add_argument("folder",type=Path)
-    scanning.add_argument("--link",action="store_true")
     verify=sub.add_parser("verify")
     verify.add_argument("id",type=int)
     configure=sub.add_parser("configure")
@@ -82,12 +75,6 @@ def main(argv=None):
         library=Library(args.library)
         if args.command=="list":
             print(json.dumps(library.games(args.query,args.system),indent=2))
-        elif args.command in {"import","scan"}:
-            from .importing import import_identified
-            files=args.files if args.command=="import" else discover_media(args.folder)
-            for path in files:
-                game,created,identity=import_identified(library,path,system=getattr(args,"system","auto"),linked=args.link)
-                print(json.dumps(dict(created=created,game=game,identity=asdict(identity))))
         elif args.command=="verify":
             rows=library.verify(args.id)
             print(json.dumps(rows,indent=2))

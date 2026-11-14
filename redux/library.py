@@ -326,12 +326,16 @@ class Library:
                 "CREATE INDEX IF NOT EXISTS idx_collection_games_game ON collection_games(game_id)",
             ):
                 db.execute(statement)
+            # Playlists keep a play order; libraries from before it number existing rows as found.
+            if "position" not in {row[1] for row in db.execute("PRAGMA table_info(collection_games)")}:
+                db.execute("ALTER TABLE collection_games ADD COLUMN position INTEGER NOT NULL DEFAULT 0")
+                db.execute("UPDATE collection_games SET position=rowid")
             required_tables={
                 "games":{"id","title","system","storage","path","source_path","bundle_hash","size","imported_at",*additions},
                 "media_files":{"game_id","relative_path","sha256","size"},
                 "launchers":{"system","executable","arguments"},
                 "collections":{"id","name","name_key","created_at"},
-                "collection_games":{"collection_id","game_id"},
+                "collection_games":{"collection_id","game_id","position"},
                 "play_sessions":{"id","game_id","started_at","ended_at","duration_seconds","status","exit_code"},
             }
             for table,required in required_tables.items():
@@ -402,12 +406,16 @@ class Library:
             # LIKE wildcards in user search are literal, not unintended match-all.
             q = query.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
             pattern=f"%{q}%"
+            order=orders[sort];parameters=[pattern,pattern,pattern,pattern,system,system,collection_id,collection_id]
+            if collection_id is not None:
+                # A playlist plays in the order its owner set, whatever the library sort is.
+                order="(SELECT cg.position FROM collection_games cg WHERE cg.collection_id=? AND cg.game_id=games.id),id"
+                parameters.append(collection_id)
             rows = db.execute("SELECT * FROM games WHERE "
                 "(title LIKE ? ESCAPE '\\' OR publisher LIKE ? ESCAPE '\\' OR developer LIKE ? ESCAPE '\\' OR genre LIKE ? ESCAPE '\\') "
                 f"AND (? IS NULL OR system=?) AND ({clauses[view]}) "
                 "AND (? IS NULL OR id IN (SELECT game_id FROM collection_games WHERE collection_id=?)) "
-                f"ORDER BY {orders[sort]}",
-                (pattern,pattern,pattern,pattern,system,system,collection_id,collection_id)).fetchall()
+                f"ORDER BY {order}",parameters).fetchall()
             all_files = db.execute("SELECT game_id,relative_path FROM media_files").fetchall()
         by_id={}
         for row in all_files:
@@ -723,8 +731,20 @@ class Library:
         self.collection(collection_id)
         self.game(game_id)
         with self.connect() as db:
-            db.execute("INSERT OR IGNORE INTO collection_games VALUES(?,?)",(collection_id,game_id))
+            db.execute("INSERT OR IGNORE INTO collection_games(collection_id,game_id,position) VALUES(?,?,COALESCE((SELECT MAX(position) FROM collection_games WHERE collection_id=?),0)+1)",(collection_id,game_id,collection_id))
         return self.collection(collection_id)
+
+    def move_in_collection(self,collection_id,game_id,delta):
+        """Move one game earlier (negative) or later in its playlist; positions are renumbered 1..n."""
+        self.collection(collection_id)
+        with self.connect() as db:
+            rows=[row["game_id"] for row in db.execute("SELECT game_id FROM collection_games WHERE collection_id=? ORDER BY position,game_id",(collection_id,))]
+            if game_id not in rows:raise KeyError("That game is not in this playlist")
+            index=rows.index(game_id);target=max(0,min(len(rows)-1,index+int(delta)))
+            rows.insert(target,rows.pop(index))
+            for position,identity in enumerate(rows,1):
+                db.execute("UPDATE collection_games SET position=? WHERE collection_id=? AND game_id=?",(position,collection_id,identity))
+        return rows
 
     def remove_from_collection(self,collection_id,game_id):
         self.collection(collection_id)

@@ -2,6 +2,7 @@
 from __future__ import annotations
 from datetime import datetime
 import shutil
+from pathlib import Path
 from .library import SYSTEMS
 
 WHITE="#f4f4f2"
@@ -42,142 +43,170 @@ class SecondaryScreens:
         if page<maximum:self.button_canvas(f"{key}:next","Next",1078,y,154,32,lambda:self._change_page(key,1))
 
     def _setting_row(self,key,title,detail,y,callback,*,icon="settings",value=None,toggle=None):
+        x,w=getattr(self,"settings_frame",(618,630));right=x+w
         selected=self.focus==key
-        self.panel(618,y,630,72,"#242128" if selected else "#17181c",3,WHITE if selected else None)
-        self.icon(icon,635,y+24,23,ACCENT if selected else "#b6b9c4")
-        self.text(676,y+14,title,15,WHITE,"bold")
-        self.text(676,y+41,self.fit_text(str(detail),370 if value else 524,13),13,MUTED)
+        self.panel(x,y,w,72,"#242128" if selected else "#17181c",3,WHITE if selected else None)
+        self.icon(icon,x+17,y+24,23,ACCENT if selected else "#b6b9c4")
+        self.text(x+58,y+14,title,15,WHITE,"bold")
+        self.text(x+58,y+41,self.fit_text(str(detail),w-(260 if value else 106),13),13,MUTED)
         if toggle is not None:
-            self.panel(1170,y+24,48,26,ACCENT if toggle else "#424651",13)
-            self.panel(1195 if toggle else 1174,y+28,18,18,WHITE,9)
+            self.panel(right-78,y+24,48,26,ACCENT if toggle else "#424651",13)
+            self.panel(right-53 if toggle else right-74,y+28,18,18,WHITE,9)
         elif value:
-            self.text(1205,y+27,self.fit_text(str(value),145,12),12,MUTED,anchor="ne")
-            self.icon("chevron",1224,y+28,14,WHITE if selected else FAINT)
-        else:self.icon("chevron",1220,y+28,16,WHITE if selected else FAINT)
-        self.target(key,(618,y,1248,y+72),callback,title)
+            self.text(right-43,y+27,self.fit_text(str(value),145,12),12,MUTED,anchor="ne")
+            self.icon("chevron",right-24,y+28,14,WHITE if selected else FAINT)
+        else:self.icon("chevron",right-28,y+28,16,WHITE if selected else FAINT)
+        self.target(key,(x,y,right,y+72),callback,title)
+
+    # The System menu: one horizontal row of icons over the dimmed screen, like a console's
+    # system bar. The focused item names itself above the row; A opens it, B leaves.
+    SYSTEM_ITEMS=(("home","Home","home","Return to Now Playing"),
+                  ("storage","Storage","storage","Where Redux and your games live."),
+                  ("input","Controllers","controller","Made to feel at home in your hands."),
+                  ("saves","Saves","storage","Keep your progress close."),
+                  ("windows","Windows","systems","Ready when you sit down to play."),
+                  ("about","About","info","Version, folders and the screen."),
+                  ("exit","Exit","power","Close Redux."))
+
+    def _system_menu(self):
+        self.panel(0,0,1280,720,"#000000b4",0)
+        # Only the row is reachable while the menu is open; the screen behind it is dimmed.
+        self.targets=[];self.callbacks={}
+        items=self.SYSTEM_ITEMS
+        if self.focus not in {f"system:{item[0]}" for item in items}:self.focus="system:home"
+        focused=next(item for item in items if f"system:{item[0]}"==self.focus)
+        self.display(140,318,"REDUX" if focused[0]=="home" else focused[1].upper(),46,WHITE,"bold")
+        self.display(140,384,focused[3],18,"#c9c9ce")
+        left,spacing=274,122
+        for index,(section,label,icon,_) in enumerate(items):
+            cx=left+index*spacing;key=f"system:{section}";active=key==self.focus
+            color=WHITE if active else "#8a8a90"
+            self.icon(icon,cx-14,448,28,color)
+            self.display(cx,499,label,15,color,anchor="n")
+            if active:self.rect(cx-50,520,100,3,ACCENT)
+            if section=="home":callback=lambda:self.navigate("home",remember=False)
+            elif section=="exit":callback=self.exit_app_menu
+            else:callback=lambda s=section:self._set_settings(s)
+            self.target(key,(cx-61,430,cx+61,536),callback,label)
 
     def _settings(self):
-        self._secondary_heading("System","Settings")
-        categories=[("general","Library & storage","storage"),("disc","Discs & imports","disc"),
-                    ("emulators","Emulators & firmware","play"),("input","Controllers","controller"),
-                    ("saves","Saves & backups","storage"),("display","Display & artwork","settings"),
-                    ("artwork","Artwork & scraping","collections"),
-                    ("windows","Windows & Xbox mode","systems"),
-                    ("about","System information","home")]
-        for index,(section,label,icon) in enumerate(categories):
-            x,y,key=370,147+index*52,f"setting:{section}"
-            focused,active=self.focus==key,self.settings_section==section
-            if focused or active:self.panel(x,y,211,46,"#2b232a" if active else "#1d2028",2,WHITE if focused else None)
-            if active:self.rect(x,y+9,3,28,ACCENT)
-            self.icon(icon,x+14,y+15,18,WHITE if active else MUTED)
-            self.text(x+45,y+15,label,13,WHITE if active or focused else MUTED,"bold" if active else "normal")
-            self.target(key,(x,y,x+211,y+46),lambda s=section:self._set_settings(s),label)
-        self.button_canvas("settings:exit","Exit app",370,630,211,40,self.exit_app_menu)
-        self.rect(600,148,1,528,LINE)
+        if getattr(self,"settings_menu",True):self._system_menu();return
         section=self.settings_section
-        title=next(label for name,label,_ in categories if name==section)
-        self.display(618,147,title,24,WHITE)
-        captions={"general":"Your games, wherever you keep them.","disc":"Bring discs and images into one library.",
-                  "emulators":"Choose how each system plays.","input":"Made to feel at home in your hands.",
-                  "saves":"Keep your progress close.","display":"Make room for the games.",
-                  "artwork":"Give every game its own cover, tile and background.",
-                  "windows":"Ready when you sit down to play.","about":"An independent home for your collection."}
-        self.text(618,181,captions[section],13,MUTED)
-        if section=="general":
-            self._setting_row("settings:folder","Library folder",str(self.library.root),218,self.choose_library,icon="storage")
-            linked=self.linked.get()
-            self._setting_row("settings:link","Import mode","Keep original files linked" if linked else "Copy complete media into this library",300,self.toggle_import_mode,icon="library",value="Link files" if linked else "Managed copy")
-            self._setting_row("settings:refresh","Check media availability","Refresh connected storage and linked files",382,self.refresh,icon="check")
+        item=next((entry for entry in self.SYSTEM_ITEMS if entry[0]==section and entry[0] not in {"home","exit"}),None)
+        if item is None:
+            self.settings_menu=True;self._system_menu();return
+        # A section page keeps the menu's look: dimmed screen, one title, full-width rows, B back.
+        self.panel(0,0,1280,720,"#000000c4",0)
+        self.targets=[];self.callbacks={}
+        self.settings_frame=(140,1000)
+        X,W=self.settings_frame;R=X+W
+        self.display(X,54,item[1].upper(),40,WHITE,"bold")
+        self.display(X,108,item[3],17,"#c9c9ce")
+        self.icon(item[2],R-40,62,32,"#8a8a90")
+        if section=="storage":
+            from .console_windows import application_directory
+            # Internal storage: where Redux is installed and its library lives.
+            self.text(X,156,"INTERNAL STORAGE",11,ACCENT,"bold")
+            selected=self.focus=="storage:internal"
+            self.panel(X,178,W,92,"#242128" if selected else "#17181c",3,WHITE if selected else None)
+            self.icon("storage",X+17,200,26,ACCENT if selected else "#b6b9c4")
+            self.text(X+58,190,"Internal storage",15,WHITE,"bold")
+            self.text(X+58,214,self.fit_text("Redux at "+str(application_directory()),W-420,12),12,MUTED)
+            self.text(X+58,236,self.fit_text("Library at "+str(self.library.root),W-420,12),12,MUTED)
             try:
                 usage=shutil.disk_usage(self.library.root);ratio=min(1,max(0,usage.used/max(1,usage.total)))
-                self.text(618,501,"STORAGE",11,MUTED,"bold")
-                self.text(1248,501,f"{_size(usage.free)} free / {_size(usage.total)}",12,WHITE,anchor="ne")
-                self.panel(618,526,630,4,LINE,2)
-                if ratio>0:self.panel(618,526,max(4,630*ratio),4,ACCENT,2)
-                self.text(618,547,f"{len(self.all_games)} games in this library",13,MUTED)
-            except OSError:self.text(618,515,"Connect the library storage to see free space.",13,MUTED)
-        elif section=="disc":
-            self._setting_row("settings:files","Add media files","Choose a game, disc image or complete image bundle",218,self.add_files,icon="plus")
-            self._setting_row("settings:scan","Scan a folder","Find media on your SSD, SD card or local drive",300,self.scan_folder,icon="search")
-            self._setting_row("settings:drives","Optical & mounted drives","Inspect a disc, import its source or choose a capture method",382,self.disc_dialog,icon="disc")
-            self.text(618,501,"Original image bundles keep their referenced tracks together.",13,MUTED,width=600)
-        elif section=="emulators":
-            self._setting_row("settings:emulator","System playback","Assign an integrated core or external emulator",218,self.launcher_dialog,icon="play")
-            backends=getattr(self,"detected_backends",())
-            self._setting_row("settings:detect","Detect local backends","Look in local emulator folders",300,self._configure_detected_backends,icon="search",value=f"{len(backends)} detected")
-            self._setting_row("settings:firmware","Firmware directory",str(self.firmware_directory()),382,self.choose_firmware,icon="storage")
-            self._setting_row('settings:core-setup','Emulator setup','Download, repair or update integrated cores',464,self.core_setup_menu,icon='play')
+                self.text(R-18,194,f"{_size(usage.free)} free of {_size(usage.total)}",12,WHITE,anchor="ne")
+                self.panel(R-318,222,300,4,LINE,2)
+                if ratio>0:self.panel(R-318,222,max(4,300*ratio),4,ACCENT,2)
+                self.text(R-18,238,f"{len(self.all_games)} games • discs install {'to '+str(self.install_destination().anchor.rstrip(chr(92)+'/')) if self.install_destination() else 'here'}",12,MUTED,anchor="ne")
+            except OSError:self.text(R-18,194,"Storage unavailable",12,MUTED,anchor="ne")
+            self.target("storage:internal",(X,178,R,270),self.refresh,"Internal storage")
+            # External storage: every data drive, plus the optical drive.
+            self.text(X,296,"EXTERNAL STORAGE",11,ACCENT,"bold")
+            drives=self.storage_drives()
+            if not drives:
+                self.panel(X,318,W,92,PANEL,3);self.icon("library",X+21,342,30,ACCENT)
+                self.text(X+70,336,"Nothing connected",15,WHITE,"bold")
+                self.text(X+70,362,"Connect an SD card, micro SD card or SSD caddy. Redux sets it up as extra storage and plays its games in place.",13,MUTED,width=W-100)
+            for index,drive in enumerate(drives[:4]):
+                y=318+index*82;letter=Path(drive["root"]).anchor.rstrip(chr(92)+"/");name=(drive["label"] or ("Optical drive" if drive["optical"] else "External drive"))
+                if drive["optical"]:
+                    self._setting_row(f"storage:{letter}",f"{name} ({letter})","Disc tools: inspect, capture or import a mounted image",y,self.disc_dialog,icon="disc");continue
+                usage=drive.get("usage");value=f"{_size(usage[0])} free" if usage else None
+                if drive["ignored"]:detail="Not used by Redux • A to use it as extra storage"
+                elif drive["card"]:detail=f"Extra storage • {drive['games']} game{'' if drive['games']==1 else 's'}"+(" • discs install here" if drive["destination"] else "")
+                else:detail="A sets it up as extra storage"
+                self._setting_row(f"storage:{letter}",f"{name} ({letter}) · {drive['kind']}",detail,y,lambda root=drive["root"]:self.storage_menu(root),icon="library",value=value)
         elif section=="input":
             connected=getattr(self.controller,"connected_indices",()) if self.controller else ()
-            self.panel(618,218,630,76,PANEL,3)
-            self.icon("controller",636,240,33,ACCENT)
-            self.text(691,233,"Game controllers",16,WHITE,"bold")
-            self.text(691,261,f"{len(connected)} connected" if connected else "No controller connected",13,MUTED)
+            self.panel(X,218,W,76,PANEL,3)
+            self.icon("controller",X+18,240,33,ACCENT)
+            self.text(X+73,233,"Game controllers",16,WHITE,"bold")
+            self.text(X+73,261,f"{len(connected)} connected" if connected else "No controller connected",13,MUTED)
             bindings=[("D-pad / left stick","Navigate"),("A / B","Select / go back"),("X / Y","Favorite / manage game"),("Home / Guide","Open or close game menu"),("Select + Start (hold 1s)","Same game menu")]
             for index,(control,action) in enumerate(bindings):
                 y=324+index*43
-                self.text(618,y,control,14,WHITE,"bold");self.text(845,y,action,14,MUTED)
-                if index<len(bindings)-1:self.rect(618,y+30,630,1,LINE)
-            self.button_canvas("settings:controller-bind","Configure a controller",618,552,294,43,self.configure_controller)
-            self.button_canvas("settings:phone-controller","Phone controller",930,552,318,43,self.redux_controller_menu)
+                self.text(X,y,control,14,WHITE,"bold");self.text(X+330,y,action,14,MUTED)
+                if index<len(bindings)-1:self.rect(X,y+30,W,1,LINE)
+            self.button_canvas("settings:controller-bind","Configure a controller",X,552,320,43,self.configure_controller)
+            self.button_canvas("settings:controller-test","Test controllers",X+338,552,320,43,self.open_controller_test)
+            self.button_canvas("settings:phone-controller","Phone controller",X+676,552,324,43,self.redux_controller_menu)
             phone_first,phone_second=self.redux_controller_status_lines()
-            self.text(618,610,phone_first,13,WHITE,"bold")
-            self.text(618,634,self.fit_text(phone_second,620,12),12,MUTED)
-            self.text(618,658,"Known pads are mapped automatically. USB and Bluetooth use Windows drivers.",11,MUTED,width=620)
+            self.text(X,610,phone_first,13,WHITE,"bold")
+            self.text(X,634,self.fit_text(phone_second,W,12),12,MUTED)
+            self.text(X,658,"Known pads are mapped automatically. USB and Bluetooth use Windows drivers.",11,MUTED,width=W)
         elif section=="saves":
             game=self.selected();detail=_game_title(game) if game else "Choose a game from your library first"
             self._setting_row("settings:savegame","Game saves & backups",detail,218,lambda:self.navigate("saves"),icon="storage")
-            self.panel(618,322,630,192,PANEL,3)
-            self.icon("check",639,346,25,ACCENT)
-            self.text(684,347,"Two ways to keep your progress",16,WHITE,"bold")
-            self.text(684,391,"Save states return to a moment in a supported running game.",14,MUTED,width=525)
-            self.text(684,446,"File backups preserve a chosen save directory for restoration later.",14,MUTED,width=525)
-        elif section=="display":
-            fullscreen=bool(self.root.attributes("-fullscreen"))
-            self._setting_row("settings:fullscreen","Fullscreen","ON · A switches to windowed mode" if fullscreen else "OFF · A fills the display",218,self.fullscreen,icon="systems",toggle=fullscreen)
-            self._setting_row("settings:artroot","Local artwork folder",self.preferences.get("reference_assets") or "Use available local system artwork",300,self.choose_reference_art,icon="collections")
-            self.text(618,428,"Change game-specific cover art from each game's details.",14,MUTED,width=600)
-        elif section=="artwork":self._artwork_settings()
+            self.panel(X,322,W,192,PANEL,3)
+            self.icon("check",X+21,346,25,ACCENT)
+            self.text(X+66,347,"Two ways to keep your progress",16,WHITE,"bold")
+            self.text(X+66,391,"Save states return to a moment in a supported running game.",14,MUTED,width=W-120)
+            self.text(X+66,446,"File backups preserve a chosen save directory for restoration later.",14,MUTED,width=W-120)
         elif section=="windows":self._windows_settings()
         else:
             from . import __version__
-            self.panel(618,218,630,110,PANEL,3)
-            self.display(640,234,"REDUX",33,WHITE);self.text(642,280,f"VERSION {__version__}",12,ACCENT,"bold")
-            self.text(1225,252,"WINDOWS",11,MUTED,"bold",anchor="ne")
-            facts=[("Collection",f"{len(self.all_games)} games"),("Library format","Version 2"),("Media","PC storage & optical drives"),("Connection","Local library · no account required")]
+            self.panel(X,218,W,110,PANEL,3)
+            self.display(X+22,234,"REDUX",33,WHITE);self.text(X+24,280,f"VERSION {__version__}",12,ACCENT,"bold")
+            self.text(R-23,252,"WINDOWS",11,MUTED,"bold",anchor="ne")
+            facts=[("Collection",f"{len(self.all_games)} games"),("Library folder",str(self.library.root)),
+                   ("Firmware (BIOS) folder",str(self.firmware_directory())),("Media","Discs, game cards and optical drives"),
+                   ("Connection","Local library · no account required")]
             for index,(label,value) in enumerate(facts):
-                y=360+index*48;self.text(618,y,label,14,MUTED);self.text(1248,y,value,14,WHITE,anchor="ne")
-                if index<len(facts)-1:self.rect(618,y+31,630,1,LINE)
+                y=352+index*44;self.text(X,y,label,14,MUTED);self.text(R,y,self.fit_text(value,640,14),14,WHITE,anchor="ne")
+                if index<len(facts)-1:self.rect(X,y+31,W,1,LINE)
+            fullscreen=bool(self.root.attributes("-fullscreen"))
+            self._setting_row("settings:fullscreen","Fullscreen","ON · A switches to windowed mode" if fullscreen else "OFF · A fills the display",584,self.fullscreen,icon="systems",toggle=fullscreen)
 
     def _collections(self):
         self._secondary_heading("Made for your collection","Playlists","Keep great games together.")
         self.button_canvas("collection:new","+  New playlist",1040,67,208,40,self.create_collection_dialog,True)
-        presets=[("Favorites","favorites","star"),("Continue playing","continue","play"),("Wishlist","wishlist","plus"),("Completed","completed","check")]
-        for index,(label,view,icon) in enumerate(presets):
-            x,y,key=370+(index%2)*450,157+(index//2)*126,f"collection:{view}"
-            focused=self.focus==key
-            self.panel(x,y,428,108,"#2c232a" if focused else PANEL,3,WHITE if focused else None)
-            self.icon(icon,x+20,y+22,28,ACCENT)
-            self.display(x+69,y+19,label,23,WHITE)
-            count=len(self.library.games(view=view));self.text(x+71,y+64,f"{count} game"+("" if count==1 else "s"),13,MUTED)
-            self.icon("chevron",x+393,y+47,15,WHITE if focused else FAINT)
-            self.target(key,(x,y,x+428,y+108),lambda v=view:self._open_collection_view(v),label)
-        collections=self.library.collections();self.text(370,420,"YOUR PLAYLISTS",11,MUTED,"bold")
-        self.text(1248,420,str(len(collections)),12,MUTED,anchor="ne")
+        # The Welcome tile leads Playlists as it leads Now Playing: box art, then the banner.
+        focused=self.focus=="collection:welcome"
+        self.panel(370,140,878,128,"#2c232a" if focused else PANEL,3,WHITE if focused else None)
+        self.rect(372,142,128,124,"#111113")
+        self.picture(self.art.welcome("box"),372,142,128,124,mode="contain")
+        if not self.picture(self.art.welcome("hero"),502,142,744,124,shade=True,radius=3):self.rect(502,142,744,124,"#17121f")
+        self.display(524,170,"WELCOME",14,"#c7c1d1","bold")
+        self.display(524,194,"It's dangerous to go alone. Bring your games.",22,WHITE)
+        self.target("collection:welcome",(370,140,1248,268),self._open_collection_view_all,"Welcome")
+        # A playlist is an ordered list of installed games, nothing more.
+        collections=self.library.collections();self.text(370,288,"YOUR PLAYLISTS",11,MUTED,"bold")
+        self.text(1248,288,str(len(collections)),12,MUTED,anchor="ne")
         if not collections:
-            self.panel(370,453,878,140,PANEL,3);self.icon("collections",396,486,31,ACCENT)
-            self.display(451,480,"A place for your favorites",24,WHITE)
-            self.text(451,521,"Create a playlist, then add games from their details.",14,MUTED,width=730)
-        start,end=self._page_bounds("collections",len(collections),8)
+            self.panel(370,315,878,140,PANEL,3);self.icon("collections",396,348,31,ACCENT)
+            self.display(451,342,"Play your games in your order",24,WHITE)
+            self.text(451,383,"Create a playlist, then add games from each game's Manage menu. Move them up or down from Edit playlist.",14,MUTED,width=730)
+        start,end=self._page_bounds("collections",len(collections),14)
         for offset,item in enumerate(collections[start:end]):
-            x,y=370+(offset%2)*450,447+(offset//2)*47;key=f"custom:{item['id']}";focused=self.focus==key
+            x,y=370+(offset%2)*450,315+(offset//2)*47;key=f"custom:{item['id']}";focused=self.focus==key
             self.panel(x,y,428,40,"#2c232a" if focused else PANEL,2,WHITE if focused else None)
             self.icon("collections",x+13,y+12,16,ACCENT if focused else MUTED)
             self.text(x+42,y+12,self.fit_text(item["name"],322,13),13,WHITE)
             self.text(x+389,y+12,str(item["game_count"]),12,MUTED,anchor="ne")
             self.icon("chevron",x+400,y+14,12,FAINT)
             self.target(key,(x,y,x+428,y+40),lambda cid=item["id"]:self._open_custom_collection(cid),item["name"])
-        self._secondary_pager("collections",len(collections),8)
+        self._secondary_pager("collections",len(collections),14)
 
     def _systems(self):
         self._secondary_heading("Every era. One collection.","Systems","Explore the hardware that made the games.")
@@ -186,8 +215,8 @@ class SecondaryScreens:
         if not systems:
             self.panel(370,182,878,357,PANEL,3);self.icon("systems",784,236,51,ACCENT)
             self.display(809,332,"Your first system is waiting",29,WHITE,anchor="center")
-            self.text(809,378,"Add media to begin building your collection.",14,MUTED,anchor="center")
-            self.button_canvas("systems:add","Add media",709,428,200,42,self.add_files,True);return
+            self.text(809,378,"Insert a disc or connect a game card to begin.",14,MUTED,anchor="center")
+            self.button_canvas("systems:storage","Storage",709,428,200,42,self._open_media,True);return
         start,end=self._page_bounds("systems",len(systems),6)
         for index,system in enumerate(systems[start:end]):
             x,y,key=370+(index%3)*300,165+(index//3)*230,f"system:{system}";focused=self.focus==key

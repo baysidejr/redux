@@ -2,44 +2,8 @@
 
 
 class ConsolePCGames:
-    def add_pc_game(self):
-        if self.busy:return
-        self.open_file_browser("Choose installed PC game EXE",mode="files",extensions={".exe"},
-            on_select=self._pc_selected_executable,initialdir=self.preferences.get("pc_source_dir"))
-
-    def _pc_selected_executable(self,path):
-        from .pc_games import validate_executable
-        def ready(executable):
-            self.pc_game_draft={"path":executable,"title":executable.parent.name or executable.stem}
-            self.preferences["pc_source_dir"]=str(executable.parent)
-            self._pc_add_menu()
-        self.task(lambda:validate_executable(path),ready,"Checking game executable…")
-
-    def _pc_add_menu(self):
-        draft=self.pc_game_draft
-        self.menu("Add PC game",[
-            ("Title: "+draft["title"],self._pc_edit_title),
-            ("Choose another EXE",self.add_pc_game),
-            ("Add to library",self._pc_commit_shortcut),
-            ("Cancel",lambda:None)],
-            message=str(draft["path"])+"\nThe game stays here. Choose the installed game, not its setup or uninstall EXE. Gameplay controls and saves are managed by the game.")
-        self.overlay["back_action"]=lambda:None
-
-    def _pc_edit_title(self):
-        def changed(value):
-            if not value.strip():raise ValueError("Enter a game title")
-            self.pc_game_draft["title"]=value.strip()
-        self.overlay=None
-        self.text_input("PC game title","Game title",changed,self.pc_game_draft["title"],return_callback=self._pc_add_menu)
-
-    def _pc_commit_shortcut(self):
-        draft=dict(self.pc_game_draft)
-        self.overlay=None
-        def added(game):
-            self._save_preferences();self.refresh();self.open_game(game["id"])
-            self.status.set("PC game added • its installation stays on the original drive")
-        self.task(lambda:self.library.add_pc_game(draft["path"],title=draft["title"]),added,"Adding PC game…")
-
+    # PC games arrive from a game card's PC folder (game_cards.py); only setup of an existing
+    # entry happens here.
     def pc_game_setup(self):
         game=self.selected()
         if not game or game["system"]!="pc":return

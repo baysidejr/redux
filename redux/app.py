@@ -118,8 +118,6 @@ class App:
         self.root_label=tk.Label(sidebar,text="",wraplength=198,justify="left",font=("Segoe UI",9),fg=MUTED,bg=PANEL)
         self.root_label.pack(anchor="w",padx=20,pady=(8,12))
         self.button(sidebar,"Choose library folder",self.choose_library,fill="x",padx=16,pady=4)
-        self.button(sidebar,"Add media files",self.add_files,True,fill="x",padx=16,pady=(18,4))
-        self.button(sidebar,"Scan a folder",self.scan_folder,fill="x",padx=16,pady=4)
         self.linked=tk.BooleanVar(value=False)
         ttk.Checkbutton(sidebar,text="Link files in place",variable=self.linked).pack(anchor="w",padx=16,pady=8)
         tk.Label(sidebar,text="Default: copy complete media bundles\ninto this library. Sources stay intact.",
@@ -228,17 +226,6 @@ class App:
                 self.status.set("Library opened • managed media paths remain relative to this folder")
             except (OSError,ValueError,sqlite3.Error) as error:
                 messagebox.showerror("Cannot open library",str(error),parent=self.root)
-
-    def add_files(self):
-        files=filedialog.askopenfilenames(parent=self.root,title="Add your own media files",
-            filetypes=[("Game media"," ".join("*"+ext for ext in sorted(MEDIA_EXTENSIONS))),("All files","*.*")])
-        if files:
-            self.import_files([Path(p) for p in files])
-
-    def scan_folder(self):
-        folder=filedialog.askdirectory(parent=self.root,title="Scan a media folder (including subfolders)")
-        if folder:
-            self.task(lambda:discover_media(folder),self.import_files,"Scanning media folder…")
 
     def import_files(self,files,*,system="auto"):
         if not files:

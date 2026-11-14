@@ -82,7 +82,7 @@ class ReferenceInteractionTests(unittest.TestCase):
     def test_entering_media_and_collection_focuses_their_content(self):
         app=self.navigation_app()
         app.navigate("media")
-        self.assertEqual(app.focus,"media:files")
+        self.assertEqual(app.focus,"shot:0")
         app.rows=[{"id":4}]
         app.navigate("library")
         self.assertEqual((app.focus,app.selected_id),("game:4",4))

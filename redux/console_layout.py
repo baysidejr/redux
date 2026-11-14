@@ -19,7 +19,7 @@ from .brand import fuji_shapes
 
 LANE=1280*520/1920
 LANE_SCREENS=frozenset({"home","systems","collections","settings","saves","media"})
-BADGES={"psx":("PS","#8e24aa"),"nes":("NES","#ec407a"),"snes":("SNES","#7e57c2"),
+BADGES={"welcome":("REDUX","#e5405e"),"psx":("PS","#8e24aa"),"nes":("NES","#ec407a"),"snes":("SNES","#7e57c2"),
     "3do":("3DO","#bb653e"),
     "pc":("PC","#2779b0"),
     "genesis":("GEN","#1976d2"),"saturn":("SAT","#00a6af"),"neo_geo_cd":("NGCD","#65a641"),
@@ -45,7 +45,8 @@ class ReferenceLayout:
         self.painter.begin_frame(scale=self.scale,offset=(self.offset_x,self.offset_y))
         self.rect(0,0,1280,720,"#080909")
         if self.screen!="gameplay":
-            lane=self.screen in LANE_SCREENS
+            # System stands alone: no lane, no header, just the menu over the dimmed backdrop.
+            lane=self.screen in LANE_SCREENS and self.screen!="settings"
             background=self.art.backdrop(round(1280*self.scale),round(720*self.scale),lane)
             self.photos.append(background)
             self.canvas.create_image(self.offset_x,self.offset_y,anchor="nw",image=background)
@@ -55,7 +56,7 @@ class ReferenceLayout:
             "search":self._search,"saves":self._saves,"gameplay":self._gameplay,
             "text":self._text_editor,"screenshots":self._screenshots,"screenshot":self._screenshot,
             "media":self._media,"metadata_editor":self._metadata_editor,"disc_info":self._disc_info,
-            "controller_setup":self._controller_setup}.get(self.screen)
+            "controller_setup":self._controller_setup,"controller_test":self._controller_test}.get(self.screen)
         if screen:screen()
         self._footer()
         if self.overlay:self._overlay()
@@ -178,11 +179,15 @@ class ReferenceLayout:
         game=self.selected();system=game["system"] if game else "psx"
         disc=self.inserted_disc()
         if disc:system=disc.system or "unknown"
+        # The welcome banner is the first thing on screen: it fronts the Welcome card and
+        # any home without a chosen game, until a disc or a focused game takes over.
+        welcome=not disc and (self.focus=="welcome:card" or not game)
+        if welcome:system="welcome"
         x=LANE;w=1280-x;h=w*437/1400
-        image=(disc.hero_path if disc else self._game_hero(game)) or self.art.path(system,"hero")
+        image=disc.hero_path if disc else self.art.welcome("hero") if welcome else self._game_hero(game) or self.art.path(system,"hero")
         if not self.picture(image,x,0,w,h,shade=bool(disc)):
             self.rect(x,0,w,h,"#17121f")
-            if not disc:self.display(x+54,100,SYSTEMS.get(system,"Your collection"),54,"#72707a")
+            if not disc:self.display(x+54,100,"Welcome to Redux" if welcome else SYSTEMS.get(system,"Your collection"),54,"#72707a")
         if disc:
             self._top_shade(x,0,w,h-29)
             has_cover=disc.cover_path and self.picture(disc.cover_path,x+22,20,168,h-66,mode="contain")
@@ -198,11 +203,11 @@ class ReferenceLayout:
         strip_y=h-29
         self.rect(x,strip_y,w,29,"#080808")
         badge_width=self._badge(system,x+12,strip_y+4)
-        self.display(x+max(65,24+badge_width),strip_y+7,self.fit_text(disc.title.upper() if disc else title(game).upper() if game else "ADD YOUR FIRST GAME",540,15),15,WHITE)
-        self._controller_hint("A","Disc options" if disc else "Play" if game else "Add media",1042 if disc else 1080,strip_y+6,"#35a4c6")
+        self.display(x+max(65,24+badge_width),strip_y+7,self.fit_text(disc.title.upper() if disc else "WELCOME TO REDUX" if welcome else title(game).upper(),540,15),15,WHITE)
+        self._controller_hint("A","Disc options" if disc else "Storage" if welcome else "Play",1042 if disc else 1080,strip_y+6,"#35a4c6")
         self._controller_hint("Y","Info" if disc else "Manage",1180 if disc else 1163,strip_y+6,"#d6bb34")
-        self.target("hero:play",(x+2,2,1278,h-2),self.inserted_disc_options if disc else self.play if game else self.add_files,"Disc options" if disc else "Play selected game")
-        self.target("hero:details",(1174 if disc else 1158,strip_y,1279,h),self.inserted_disc_information if disc else lambda:self.open_game(game["id"]) if game else self.add_files(),"Disc information" if disc else "Manage game")
+        self.target("hero:play",(x+2,2,1278,h-2),self.inserted_disc_options if disc else self._open_media if welcome else self.play,"Disc options" if disc else "Storage" if welcome else "Play selected game")
+        self.target("hero:details",(1174 if disc else 1158,strip_y,1279,h),self.inserted_disc_information if disc else (lambda:self.open_game(game["id"])) if game else self._open_media,"Disc information" if disc else "Manage game")
         if self.focus in {"hero:play","hero:details"}:self.rect(x+1,1,w-3,h-2,"",WHITE,2)
         self.display(360,315,"Collection",21,"#a2a2a4")
         systems=[s for s in SYSTEMS if s!="unknown" and any(g["system"]==s for g in self.all_games)]
@@ -216,15 +221,32 @@ class ReferenceLayout:
         self.display(360,524,"Continue Playing" if any(g.get("last_played") for g in self.all_games) else "My Games",21,"#a2a2a4")
         games=sorted(self.all_games,key=lambda item:item.get("last_played") or "",reverse=True)
         self.home_rows=games
-        index=next((i for i,g in enumerate(games) if f"game:{g['id']}"==self.focus),0)
-        start=max(0,min(index-3,len(games)-4))
-        for i,entry in enumerate(games[start:start+4]):self._card(entry,360+i*226.5,558,213,149)
+        # The Welcome card leads the row; the game cards follow it in the same window.
+        entries=["welcome",*games]
+        index=next((i for i,g in enumerate(entries) if (g=="welcome" and self.focus=="welcome:card") or (g!="welcome" and f"game:{g['id']}"==self.focus)),0)
+        start=max(0,min(index-3,len(entries)-4))
+        for i,entry in enumerate(entries[start:start+4]):
+            if entry=="welcome":self._welcome_card(360+i*226.5,558,213,149)
+            else:self._card(entry,360+i*226.5,558,213,149)
+
+    def _welcome_card(self,x,y,w,h):
+        key="welcome:card"
+        self.rect(x,y,w,h,"#111113")
+        if not self.picture(self.art.welcome("box"),x,y,w,h,mode="contain"):
+            self.display(x+w/2,y+h/2,"Welcome",24,WHITE,anchor="center")
+        if self.focus==key:self.rect(x-3,y-3,w+6,h+6,"",WHITE,2)
+        self.target(key,(x,y,x+w,y+h),self._open_media,"Welcome")
+
+    def _open_media(self):
+        """Where games come from: the System → Storage page."""
+        self.navigate("settings");self._set_settings("storage")
 
     def _empty_home(self):
-        self._add_tile("add:tile",360,348,213,149,self.add_files,"Add media")
-        self.display(599,365,"Make room for your collection",30,WHITE)
-        self.display(600,409,"Add a disc image or scan a media folder.\nYour games stay on your own storage.",20,"#a1a1a5",width=610)
-        self.button_canvas("home:scan","Scan a folder",600,473,205,42,self.scan_folder)
+        # Games arrive from a disc or an attached game drive; there is nothing to add by hand.
+        self._welcome_card(360,348,213,149)
+        self.display(599,365,"Your games arrive on their own",30,WHITE)
+        self.display(600,409,"Insert a disc or connect your game card or drive.\nRedux plays them from where they are.",20,"#a1a1a5",width=610)
+        self.button_canvas("home:storage","Storage",600,473,205,42,self._open_media)
 
     def _system_tile(self,system,key,x,y,w,h,callback):
         if not self.picture(self.art.path(system,"tile"),x,y,w,h):
@@ -294,8 +316,8 @@ class ReferenceLayout:
         if collection:self.button_canvas("collection:manage","Edit playlist",1030,220,170,35,self.manage_collection)
         if not self.rows:
             self.display(80,325,"No games in this view",34,WHITE)
-            self.display(80,378,"Choose a different filter or add your media.",21,"#8e8e94")
-            self.button_canvas("empty:import","Add media",80,440,213,45,self.add_files,True);return
+            self.display(80,378,"Choose a different filter, insert a disc or connect a game card.",21,"#8e8e94")
+            self.button_canvas("empty:storage","Storage",80,440,213,45,self._open_media,True);return
         index=next((i for i,g in enumerate(self.rows) if f"game:{g['id']}"==self.focus),0)
         start,end=page_window(len(self.rows),index,5,2)
         for i,game in enumerate(self.rows[start:end]):self._card(game,80+(i%5)*226.5,285+(i//5)*163,213,149)
@@ -396,22 +418,43 @@ class ReferenceLayout:
         self.status.set("Rating saved");self.schedule_draw()
 
     def _media(self):
+        """Media: the screenshots you took, newest first, across every game."""
         self.display(370,49,"Media",40,WHITE,"bold")
-        self.display(370,107,"Add games from your own discs and storage.",21,"#a6a6ad")
-        entries=[("media:files","disc","Add media files","Import a complete disc image or cartridge file.",self.add_files),
-            ("media:pc","play","Add PC game","Link an installed GOG or other Windows game EXE.",self.add_pc_game),
-            ("media:scan","storage","Scan a folder","Find game images on your SSD, SD card or local drive.",self.scan_folder),
-            ("media:disc","disc","Optical drives","Inspect a mounted image or capture a supported CD.",self.disc_dialog),
-            ("media:library","library","Library location",str(self.library.root),self.choose_library)]
-        for i,(key,icon,label,description,callback) in enumerate(entries):
-            y=160+i*96;focused=self.focus==key
-            self.rect(370,y,865,89,"#272727" if focused else "#161618")
-            if focused:self.rect(370,y,3,89,ACCENT)
-            self.icon(icon,393,y+25,31,"#c6c6cc")
-            self.display(446,y+14,label,25,WHITE)
-            self.display(447,y+49,self.fit_text(description,710,17),18,"#97979e")
-            self.icon("chevron",1193,y+31,23,"#777780")
-            self.target(key,(370,y,1235,y+89),callback,label)
+        shots=self._all_screenshots()
+        self.display(370,107,f"{len(shots)} screenshot{'' if len(shots)==1 else 's'} • taken from the in-game menu" if shots else "Screenshots you take from the in-game menu appear here.",21,"#a6a6ad")
+        if not shots:
+            self.rect(370,160,878,300,"#161618")
+            self.icon("library",784,232,48,"#5e5e66")
+            self.display(809,312,"No screenshots yet",28,WHITE,anchor="center")
+            self.display(809,356,"Open the game menu while playing and choose Screenshot.",18,"#97979e",anchor="center")
+            return
+        start,end=self._page_bounds("media",len(shots),6)
+        for i,(path,game) in enumerate(shots[start:end]):
+            x=370+(i%3)*297;y=150+(i//3)*243;key=f"shot:{start+i}"
+            self.rect(x-3,y-3,290,224,WHITE if self.focus==key else SURFACE)
+            self.picture(path,x,y,284,160)
+            self.rect(x,y+160,284,58,"#101012")
+            self.display(x+10,y+166,self.fit_text(title(game) if game else path.stem,264,18),18,WHITE)
+            self.display(x+10,y+192,self.fit_text(SYSTEMS.get(game["system"],"") if game else "",264,13),13,"#8e8e94")
+            self.target(key,(x,y,x+284,y+218),lambda p=path:self._open_screenshot(p),path.name)
+        self._pager("media",len(shots),6)
+
+    def _all_screenshots(self):
+        """(path, game) for every captured frame under the library's game data, newest first."""
+        results=[]
+        root=self.library.root/"game_data"
+        games={str(game["id"]):game for game in self.all_games}
+        try:
+            for folder in root.iterdir() if root.is_dir() else ():
+                game=games.get(folder.name)
+                for shots in (folder/"screenshots",*(child/"screenshots" for child in folder.iterdir() if child.is_dir())):
+                    try:
+                        if not shots.is_dir() or not shots.resolve().is_relative_to(self.library.root.resolve()):continue
+                        results.extend((path,game) for path in shots.glob("*.png") if path.is_file() and not path.is_symlink())
+                    except OSError:continue
+        except OSError:return []
+        results.sort(key=lambda item:item[0].stat().st_mtime if item[0].exists() else 0,reverse=True)
+        return results
 
     def _empty(self,message):self.display(800,340,message,30,"#aaaab2",width=810,anchor="center")
 
@@ -423,13 +466,13 @@ class ReferenceLayout:
     def _footer(self):
         if self.screen!="home":
             self.rect(0,684,1280,36,"#09090a")
-            left=370 if self.screen in LANE_SCREENS else 80
+            left=140 if self.screen=="settings" else 370 if self.screen in LANE_SCREENS else 80
             if self.screen=="gameplay" and not self.overlay:
                 self.display(80,694,"Home / Guide or Select + Start (hold 1s) opens the game menu",15,"#9898a1")
             else:
                 self._controller_hint("A","Select",left,693,"#35a4c6")
                 self._controller_hint("B","Back",left+110,693,"#d75b78")
-            self.display(1200,694,"Fullscreen: Pause → Display" if self.screen=="gameplay" else "Fullscreen: System → Display",15,"#777780",anchor="ne")
+            self.display(1200,694,"Fullscreen: Pause → Display" if self.screen=="gameplay" else "Fullscreen: System → About",15,"#777780",anchor="ne")
         status=self.status.get()
         if self.busy:
             self.panel(860,103,380,43,"#222225",radius=2)

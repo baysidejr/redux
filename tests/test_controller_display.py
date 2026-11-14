@@ -28,8 +28,12 @@ class ControllerDisplayTests(unittest.TestCase):
         app.overlay = None
         app.embedded = None
         app.screen = "settings"
-        app.settings_section = "display"
-        app.focus = "setting:display"
+        app.settings_section = "about"
+        app.focus = "settings:fullscreen"
+        app.settings_menu = False  # the About page itself, not the System menu
+        app.all_games = []
+        app.controller = None
+        app.firmware_directory = lambda: Path("C:/fixtures/bios")
         app.held_keys = set()
         app.preferences = {}
         app.library = SimpleNamespace(root=Path("C:/fixtures/library"))
@@ -67,8 +71,6 @@ class ControllerDisplayTests(unittest.TestCase):
     def test_system_display_fullscreen_is_reachable_by_dpad_and_a_and_shows_live_state(self):
         self.render_settings()
         self.assertIn("OFF · A fills the display", self.drawn)
-        self.app.input_action("right")
-        self.app.input_action("up")
         self.assertEqual(self.app.focus, "settings:fullscreen")
         self.app.input_action("confirm")
         self.assertTrue(self.app.root.fullscreen)

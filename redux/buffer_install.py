@@ -200,8 +200,39 @@ class BufferSaveHandoff:
         return self.target
 
 
-def install_buffered_disc(library, lease, game, cancelled=None, progress=None):
+def copy_bundle_to_storage(entry, destination, cancelled=None, progress=None):
+    """Copy a disc bundle (its entry file and every referenced track) into ``destination``.
+
+    Existing files are never overwritten; the new entry path is returned.
+    """
+    from .library import ImportCancelled, inspect_bundle
+    bundle = inspect_bundle(entry)
+    destination = Path(destination)
+    destination.mkdir(parents=True, exist_ok=True)
+    _plain(destination)
+    for source in bundle.files:
+        target = destination / source.relative_to(bundle.root)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        with source.open("rb") as reader, target.open("xb") as writer:
+            while True:
+                if cancelled is not None and cancelled.is_set():
+                    raise ImportCancelled("Install cancelled")
+                block = reader.read(1024 * 1024)
+                if not block:
+                    break
+                writer.write(block)
+                if progress:
+                    progress(len(block))
+            writer.flush()
+            os.fsync(writer.fileno())
+    return destination / Path(bundle.entry).relative_to(bundle.root)
+
+
+def install_buffered_disc(library, lease, game, cancelled=None, progress=None, destination=None):
     """Copy an existing leased bundle to managed storage, retaining the lease.
+
+    With ``destination`` (an extra-storage drive root) the bundle is copied into that drive's
+    ``Redux Games`` system folder instead and linked in place, like any game on a card.
 
     ``progress(delta_bytes)`` follows Library.import_game. Cancellation remains
     supported through media publication; after commit, the small durable save
@@ -224,11 +255,18 @@ def install_buffered_disc(library, lease, game, cancelled=None, progress=None):
     current = prepare_disc_game(library, lease, cancelled=cancelled)
     if current["bundle_hash"] != game["bundle_hash"]:
         raise ValueError("The buffered disc changed from the expected game identity")
-    installed, created = library.import_game(entry, system=game["system"], linked=False,
-        title=game["title"], cancelled=cancelled, progress=progress,
-        expected_bundle_hash=game["bundle_hash"])
-    if installed["bundle_hash"] != game["bundle_hash"] or installed["storage"] != "managed":
-        raise BufferInstallError("The importer did not publish the expected managed game")
+    if destination:
+        from .game_cards import MARKER, system_folder_name, _safe_name
+        folder = Path(destination) / MARKER / system_folder_name(game["system"]) / _safe_name(game["title"])
+        copied_entry = copy_bundle_to_storage(entry, folder, cancelled=cancelled, progress=progress)
+        installed, created = library.import_game(copied_entry, system=game["system"], linked=True,
+            title=game["title"], cancelled=cancelled, expected_bundle_hash=game["bundle_hash"])
+    else:
+        installed, created = library.import_game(entry, system=game["system"], linked=False,
+            title=game["title"], cancelled=cancelled, progress=progress,
+            expected_bundle_hash=game["bundle_hash"])
+    if installed["bundle_hash"] != game["bundle_hash"] or installed["storage"] != ("linked" if destination else "managed"):
+        raise BufferInstallError("The importer did not publish the expected installed game")
     lease._redux_installed_game = dict(installed)
     try:
         handoff = getattr(lease, "_redux_save_handoff", None)

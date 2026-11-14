@@ -105,27 +105,6 @@ class PCConsoleTests(unittest.TestCase):
         app.task=lambda work,done,*a,**k:done(work())
         return app
 
-    def test_add_uses_controller_file_browser_for_exe_only(self):
-        app=self.bare();app.add_pc_game()
-        self.assertEqual(app.open_file_browser.call_args.kwargs['extensions'],{'.exe'})
-        self.assertTrue(callable(app.open_file_browser.call_args.kwargs['on_select']))
-
-    def test_title_uses_onscreen_keyboard_and_returns_to_draft(self):
-        app=self.bare();app.pc_game_draft={'path':Path('Game.exe'),'title':'Old'}
-        app.text_input=Mock();app._pc_edit_title()
-        args=app.text_input.call_args;args.args[2]('New')
-        args.kwargs['return_callback']()
-        self.assertEqual(app.pc_game_draft['title'],'New')
-        self.assertEqual(app.overlay['title'],'Add PC game')
-        self.assertIn('Add to library',[name for name,_ in app.overlay['items']])
-
-    def test_add_commits_shortcut_only_and_opens_new_game(self):
-        app=self.bare();app.pc_game_draft={'path':Path('Game.exe'),'title':'My game'}
-        app.library=SimpleNamespace(add_pc_game=Mock(return_value={'id':5}))
-        app._save_preferences=Mock();app.open_game=Mock();app._pc_commit_shortcut()
-        app.library.add_pc_game.assert_called_once_with(Path('Game.exe'),title='My game')
-        app.open_game.assert_called_once_with(5)
-
     def test_missing_drive_explains_controller_relocation(self):
         app=self.bare();app._game_context=lambda:{'id':2,'system':'pc','available':False}
         app.notice=Mock();app.play()

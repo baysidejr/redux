@@ -195,6 +195,11 @@ class Painter:
         elif name == "volume":
             line((3, 9), (7, 9), (12, 4), (12, 20), (7, 15), (3, 15), (3, 9))
             line((16, 8), (18, 10), (18, 14), (16, 16)); line((19, 4), (22, 8), (23, 12), (22, 16), (19, 20))
+        elif name == "info":
+            oval(3, 3, 21, 21); line((12, 11), (12, 17)); oval(11.1, 7.1, 12.9, 8.9, True)
+        elif name == "power":
+            arc = tuple((12 + math.cos(math.radians(a)) * 8.5, 12 + math.sin(math.radians(a)) * 8.5) for a in range(-55, 236, 10))
+            line(*arc); line((12, 3), (12, 12))
         elif name == "settings":
             gear = []
             for tooth in range(8):
@@ -207,4 +212,4 @@ class Painter:
 
 _ICONS = frozenset({"search", "settings", "home", "library", "collections", "systems",
     "play", "plus", "back", "chevron", "chevron_left", "chevron_down", "chevron_up",
-    "star", "check", "controller", "disc", "storage", "volume"})
+    "star", "check", "controller", "disc", "storage", "volume", "info", "power"})

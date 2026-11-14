@@ -66,70 +66,6 @@ class ConsoleMediaBrowserTests(unittest.TestCase):
         self.assertNotEqual(thread_ids,[threading.get_ident()])
         done(result[0])
 
-    def test_console_resolves_its_own_add_and_scan_methods_instead_of_native_tools_dialogs(self):
-        self.assertIsNot(ConsoleApp.add_files,ToolsApp.add_files)
-        self.assertIsNot(ConsoleApp.scan_folder,ToolsApp.scan_folder)
-        self.app.add_files()
-        self.assertEqual(self.app.open_file_browser.call_args.kwargs.get("mode"),"files")
-        self.assertTrue(self.app.open_file_browser.call_args.kwargs.get("multiple"))
-        extensions=self.app.open_file_browser.call_args.kwargs.get("extensions")
-        if extensions is not None:self.assertTrue(set(MEDIA_EXTENSIONS).issubset(extensions))
-        self.app.open_file_browser.reset_mock()
-        self.app.scan_folder()
-        self.assertEqual(self.app.open_file_browser.call_args.kwargs.get("mode"),"folder")
-
-    def test_add_media_imports_multiple_selected_roots_without_cue_track_duplicates(self):
-        self.app.add_files()
-        selected=self.selection()
-        self.app.import_files.assert_not_called()
-        selected([self.cue,self.bin,self.rom,self.cue])
-        self.app.import_files.assert_not_called()
-        self.run_scan_worker()
-        self.app.import_files.assert_called_once()
-        paths=[Path(p) for p in self.app.import_files.call_args.args[0]]
-        self.assertEqual(len(paths),2)
-        self.assertEqual(set(paths),{self.cue,self.rom})
-
-    def test_scan_selection_defers_recursive_discovery_to_worker_and_deduplicates_cue_bins(self):
-        self.app.scan_folder()
-        selected=self.selection()
-        with patch("redux.console_ui.discover_media",wraps=discover_media) as discover:
-            selected(self.media)
-            discover.assert_not_called()
-            self.app.import_files.assert_not_called()
-            self.run_scan_worker()
-            discover.assert_called_once_with(self.media,cancelled=self.app.cancelled)
-        paths=[Path(p) for p in self.app.import_files.call_args.args[0]]
-        self.assertEqual(set(paths),{self.cue,self.rom})
-        self.assertEqual(len(paths),2)
-
-    def test_empty_folder_uses_console_notice_without_import_or_native_popup(self):
-        self.app.scan_folder()
-        self.selection()(self.empty)
-        self.run_scan_worker()
-        self.app.import_files.assert_not_called()
-        self.app.notice.assert_called_once()
-
-    def test_cancelled_add_and_scan_workers_do_not_import_or_show_empty_folder_notices(self):
-        for action,selection in (("add_files",[self.cue,self.bin,self.rom]),
-                                 ("scan_folder",self.media)):
-            self.app=self.bare()
-            getattr(self.app,action)()
-            self.selection()(selection)
-            self.app.cancelled.set()
-            self.app.status.set.reset_mock()
-            self.run_scan_worker()
-            with self.subTest(action=action):
-                self.app.import_files.assert_not_called()
-                self.app.notice.assert_not_called()
-                self.assertIn("cancelled",self.app.status.set.call_args.args[0].casefold())
-
-    def test_busy_add_and_scan_do_not_open_any_picker_or_start_import(self):
-        self.app.busy=True
-        self.app.add_files();self.app.scan_folder()
-        self.app.open_file_browser.assert_not_called()
-        self.app.task.assert_not_called();self.app.import_files.assert_not_called()
-
     def real_browser(self):
         del self.app.open_file_browser
         self.app.closing=False
@@ -148,44 +84,6 @@ class ConsoleMediaBrowserTests(unittest.TestCase):
         state=self.app.overlay["browser"]
         index=next(index for index,entry in enumerate(state.entries) if entry.path==path)
         state.focus_index=index;self.app.focus=f"browser:row:{index}"
-
-    def test_controller_a_b_y_adds_selected_media_across_folders_without_track_duplicates(self):
-        self.real_browser()
-        self.app.preferences["media_source_dir"]=str(self.media)
-        self.app.add_files();self.finish_browser_reads()
-        self.focus_path(self.nested);self.app.input_action("a");self.finish_browser_reads()
-        self.assertEqual(self.app.overlay["browser"].path,self.nested)
-        for path in (self.cue,self.bin):
-            self.focus_path(path);self.app.input_action("a")
-        self.app.input_action("b");self.finish_browser_reads()
-        self.assertEqual(self.app.overlay["browser"].path,self.media)
-        self.focus_path(self.rom);self.app.input_action("a")
-        self.assertEqual(len(self.app.overlay["browser"].selected),3)
-        self.app.input_action("y")
-        self.assertIsNone(self.app.overlay)
-        self.app.import_files.assert_not_called()
-        self.run_scan_worker()
-        self.assertEqual(set(self.app.import_files.call_args.args[0]),{self.cue,self.rom})
-
-    def test_controller_folder_navigation_a_back_b_and_use_y_starts_recursive_scan(self):
-        self.real_browser()
-        self.app.preferences["media_source_dir"]=str(self.media)
-        self.app.scan_folder();self.finish_browser_reads()
-        self.focus_path(self.nested);self.app.input_action("a");self.finish_browser_reads()
-        self.app.input_action("b");self.finish_browser_reads()
-        self.assertEqual(self.app.overlay["browser"].path,self.media)
-        self.app.input_action("y")
-        self.run_scan_worker()
-        self.assertEqual(set(self.app.import_files.call_args.args[0]),{self.cue,self.rom})
-
-    def test_controller_back_from_locations_cancels_without_import_or_selection_worker(self):
-        self.real_browser()
-        self.app.add_files();self.finish_browser_reads()
-        self.assertIsNone(self.app.overlay["browser"].path)
-        self.app.input_action("b")
-        self.assertIsNone(self.app.overlay)
-        self.assertEqual((self.app.screen,self.app.focus),("media","media:files"))
-        self.app.task.assert_not_called();self.app.import_files.assert_not_called()
 
     def test_normal_library_bios_and_cover_selectors_use_the_controller_browser(self):
         self.app._save_preferences=Mock()

@@ -25,6 +25,8 @@ from .console_editors import ConsoleEditors
 from .console_media import ConsoleMedia
 from .console_controllers import ConsoleControllers
 from .console_pc_games import ConsolePCGames
+from .console_cards import ConsoleGameCards
+from .console_controller_test import ConsoleControllerTest
 from .console_ingame import ConsoleIngame
 from .console_browser import ConsoleFileBrowser
 from .console_windows import ConsoleWindows
@@ -47,7 +49,7 @@ def display_title(game):
 from .console_cores import ConsoleCores
 from .console_redux_controller import ConsoleReduxController
 
-class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsolePCGames,ConsoleScraper,ConsoleWindows,ConsoleFileBrowser,ConsoleIngame,ConsoleControllers,ConsoleMedia,ConsoleEditors,OverlayScreens,ReferenceLayout,SecondaryScreens,ToolsApp):
+class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleControllerTest,ConsolePCGames,ConsoleScraper,ConsoleWindows,ConsoleFileBrowser,ConsoleIngame,ConsoleControllers,ConsoleMedia,ConsoleEditors,OverlayScreens,ReferenceLayout,SecondaryScreens,ToolsApp):
     def __init__(self,root,library_root=None,*,activation=None):
         from .windows_activation import parse_activation
         from .windows_gaming import WindowsGamingExperience
@@ -79,7 +81,9 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsolePCGames,ConsoleScrap
         self.rows=[]
         self.all_games=[]
         self.selected_id=None
-        self.settings_section="general"
+        self.settings_section="storage"
+        # System opens on its horizontal menu; a chosen section shows its page until B returns here.
+        self.settings_menu=True
         self.overlay=None
         self.overlay_selection=0
         self.photos=[]
@@ -110,7 +114,7 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsolePCGames,ConsoleScrap
         self.body_font=self.display_font
         self.status_changed_at=0
         self.toast_timer=None
-        self.pages={"systems":0,"collections":0,"screenshots":0,"saves":0,"search":0}
+        self.pages={"systems":0,"collections":0,"screenshots":0,"saves":0,"search":0,"media":0}
         self.text_prompt=None
         self.close_after_task=False
         self.screenshot_selection=None
@@ -160,7 +164,8 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsolePCGames,ConsoleScrap
         self._configure_detected_backends()
         self._load_catalogue()
         self._start_media_watch()
-        if self.all_games:self.focus="hero:play"
+        self._start_card_watch()
+        self.focus="welcome:card"
         root.after(40,self._tick)
         root.after(500,self.first_core_setup)
 
@@ -413,13 +418,13 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsolePCGames,ConsoleScrap
             self.view="all"
         self.focus=f"nav:{screen}" if screen in {"home","library","collections","systems","settings"} else "details:play"
         self.refresh()
-        if screen=="home":self.focus="hero:play" if self.all_games else "add:tile"
+        if screen=="home":self.focus="welcome:card"
         elif screen=="library":
             self.focus=f"game:{self.rows[0]['id']}" if self.rows else "facet:system"
             if self.rows:self.selected_id=self.rows[0]["id"]
-        elif screen=="media":self.focus="media:files"
-        elif screen=="settings":self.focus=f"setting:{self.settings_section}"
-        elif screen=="collections":self.focus="collection:favorites"
+        elif screen=="media":self.focus="shot:0"
+        elif screen=="settings":self.settings_menu=True;self.focus="system:home"
+        elif screen=="collections":self.focus="collection:welcome"
         elif screen=="saves":self.focus="saves:create"
 
     def back(self):
@@ -438,6 +443,9 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsolePCGames,ConsoleScrap
             if resume:self._resume(resume)
             self.overlay=None;self.schedule_draw();return
         if self.screen=="text":self._cancel_text();return
+        if self.screen=="settings" and not getattr(self,"settings_menu",True):
+            # Leave a section's page for the System menu, not for the previous screen.
+            self.settings_menu=True;self.focus=f"system:{self.settings_section}";self.schedule_draw();return
         previous=self.history.pop()
         if previous:
             self.screen=previous["screen"];self.view=previous["view"];self.system_filter=previous["system"]
@@ -556,11 +564,12 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsolePCGames,ConsoleScrap
         self.pages[key]=max(0,self.pages.get(key,0)+delta);self.schedule_draw()
 
     def _open_collection_view(self,view):self.navigate("library",view=view,reset_scope=True)
+    def _open_collection_view_all(self):self.navigate("library",view="all",reset_scope=True)
     def _open_custom_collection(self,collection):
         self.navigate("library",view="all",collection=collection,reset_scope=True)
 
 
-    def _set_settings(self,section):self.settings_section=section;self.focus=f"setting:{section}";self.schedule_draw()
+    def _set_settings(self,section):self.settings_section=section;self.settings_menu=False;self.focus=f"setting:{section}";self.schedule_draw()
 
 
     def _type_key(self,key):
@@ -589,43 +598,10 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsolePCGames,ConsoleScrap
         self.focus="overlay:0"
         self.schedule_draw()
 
-    def add_files(self):
-        if self.busy:return
-        from .library import MEDIA_EXTENSIONS
-        self.open_file_browser("Add media",mode="files",on_select=self._add_selected_files,
-            extensions=MEDIA_EXTENSIONS,multiple=True,initialdir=self.preferences.get("media_source_dir"))
-
-    def _add_selected_files(self,files):
-        if self.busy or not files:return
-        files=[Path(path) for path in files]
-        self.preferences["media_source_dir"]=str(files[0].parent)
-        def work():
-            from .import_selection import prepare_media_selection
-            try:return prepare_media_selection(files,cancelled=self.cancelled)
-            except ImportCancelled:return None
-        def done(paths):
-            if paths is None:self.status.set("Media selection cancelled")
-            elif paths:self.import_files(paths)
-            else:self.notice("No supported media","Choose a supported game or disc-image entry file.")
-        self.task(work,done,"Preparing selected media…")
-
-    def scan_folder(self):
-        if self.busy:return
-        self.open_file_browser("Scan a folder",mode="folder",on_select=self._scan_selected_folder,
-            initialdir=self.preferences.get("media_source_dir"))
-
-    def _scan_selected_folder(self,folder):
-        if self.busy:return
-        folder=Path(folder);self.preferences["media_source_dir"]=str(folder)
-        def work():
-            try:return discover_media(folder,cancelled=self.cancelled)
-            except ImportCancelled:return None
-        def done(files):
-            if files is None:self.status.set("Folder scan cancelled")
-            elif files:self.import_files(files)
-            else:self.notice("No supported media", "This folder and its subfolders contain no supported game media.")
-        self.task(work,done,"Scanning selected folder and subfolders…")
-
+    # Games are never added by hand: discs come through the optical drive and everything else
+    # through a game card (see game_cards.py). The copy below serves those two routes.
+    add_files=None
+    scan_folder=None
 
     def choose_library(self):
         if self.embedded or self.playback.active():self.notice("A game is running","Stop the current game before changing libraries.");return
@@ -635,12 +611,11 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsolePCGames,ConsoleScrap
             self._save_preferences();self.refresh();self.status.set("Library opened")
         self.open_file_browser("Choose library storage",mode="folder",on_select=selected,initialdir=self.library.root)
 
-    def toggle_import_mode(self):self.linked.set(not self.linked.get());self._save_preferences();self.schedule_draw()
-
     def import_files(self,files,*,system="auto"):
+        """Copy disc images into the library (disc installs and mounted-image imports)."""
         files=[Path(path) for path in files]
         if not files:self.status.set("No supported media found");return
-        library=self.library;linked=self.linked.get();catalogue=self.catalogue
+        library=self.library;linked=False;catalogue=self.catalogue
         artwork_imports=[]
         def work():
             from .importing import import_identified
@@ -775,9 +750,9 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsolePCGames,ConsoleScrap
             cid=collection["id"]
             items.append((f"{'✓ ' if cid in memberships else '+ '}{collection['name']}",
                 lambda c=cid,existing=cid in memberships:self._membership(c,game["id"],existing)))
-        items.append(("Create a new collection",self.create_collection_dialog))
+        items.append(("Create a new playlist",self.create_collection_dialog))
         items.append(("Cancel",lambda:None))
-        self.menu("Add to collection",items)
+        self.menu("Add to playlist",items)
 
     def _membership(self,collection,game,remove):
         if remove:self.library.remove_from_collection(collection,game)
@@ -804,11 +779,24 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsolePCGames,ConsoleScrap
     def manage_collection(self):
         item=next((c for c in self.library.collections() if c["id"]==self.collection_id),None)
         if not item:return
-        self.menu(item["name"],[("Rename collection",lambda:self.text_input("Rename collection","Collection name",lambda name:self.library.rename_collection(item["id"],name),item["name"])),
-            ("Delete collection",lambda:self._confirm_collection_delete(item)),("Cancel",lambda:None)])
+        game=self.selected() if str(self.focus).startswith("game:") else None
+        items=[]
+        if game:
+            items+=[("Move game up",lambda:self._move_in_playlist(item["id"],game["id"],-1)),
+                    ("Move game down",lambda:self._move_in_playlist(item["id"],game["id"],1)),
+                    ("Remove game from playlist",lambda:self._remove_from_playlist(item["id"],game["id"]))]
+        items+=[("Rename playlist",lambda:self.text_input("Rename playlist","Playlist name",lambda name:self.library.rename_collection(item["id"],name),item["name"])),
+                ("Delete playlist",lambda:self._confirm_collection_delete(item)),("Cancel",lambda:None)]
+        self.menu(item["name"],items,message="Games play in the order shown. Move the focused game to change it.")
+
+    def _move_in_playlist(self,collection,game,delta):
+        self.library.move_in_collection(collection,game,delta);self.refresh();self.focus=f"game:{game}";self.schedule_draw()
+
+    def _remove_from_playlist(self,collection,game):
+        self.library.remove_from_collection(collection,game);self.refresh()
 
     def _confirm_collection_delete(self,item):
-        self.menu("Delete this collection?",[("Keep collection",lambda:None),("Delete collection",lambda:self._delete_collection(item["id"]))],message="All games and media files stay in the library.")
+        self.menu("Delete this playlist?",[("Keep playlist",lambda:None),("Delete playlist",lambda:self._delete_collection(item["id"]))],message="All games and media files stay in the library.")
 
     def _delete_collection(self,identity):
         self.library.delete_collection(identity);self.collection_id=None;self.navigate("collections",remember=False)
@@ -1096,6 +1084,7 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsolePCGames,ConsoleScrap
         if not getattr(session,"game",{}).get("transient_disc") or not getattr(session,"media_lease",None):return
         if getattr(session,"installed_game",None):self.game_menu();return
         session.pause()
+        session.install_destination=self.install_destination()
         copied=0
         def progress(count):
             nonlocal copied
@@ -1335,12 +1324,14 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsolePCGames,ConsoleScrap
         if self.closing:return
         try:
             self._poll_media()
+            self._poll_cards()
             previous_pads=self._controller_connections()
             controller_events=self.controller.poll() if self.controller else []
             disconnected=set(previous_pads)-set(self._controller_connections())
             if disconnected and (self.embedded or self.playback and self.playback.active()):
                 self.pending_controller_disconnect=min(previous_pads[device] for device in disconnected)
             if self.screen=="controller_setup":self._poll_controller_setup()
+            elif self.screen=="controller_test":self._poll_controller_test()
             elif self.controller and self.root.grab_current() is None:
                 self._route_controller_events(controller_events)
             if self.pending_controller_disconnect is not None and not self.busy:
@@ -1455,7 +1446,7 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsolePCGames,ConsoleScrap
 
     def disc_dialog(self):
         self.menu("Discs & images",[("Inspect / import mounted source",self.optical_dialog),
-            ("Acquire a data volume",self.acquire_volume),("Capture supported physical CD tracks",self.raw_disc_dialog),("Add existing image files",self.add_files),
+            ("Acquire a data volume",self.acquire_volume),("Capture supported physical CD tracks",self.raw_disc_dialog),
             ("Cancel",lambda:None)],message="Original mounted image files are preferred so raw tracks remain intact.")
 
     def raw_disc_dialog(self):
@@ -1578,7 +1569,7 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsolePCGames,ConsoleScrap
     def _close_now(self):
         registration=getattr(self,"windows_registration",None)
         if registration:registration.close();self.windows_registration=None
-        self._stop_media_watch()
+        self._stop_media_watch();self._stop_card_watch()
         if self.controller and hasattr(self.controller,"close"):self.controller.close()
         self._harvest_sessions()
         if self.playback:self.playback.close()
