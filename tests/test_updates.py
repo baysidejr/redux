@@ -102,7 +102,7 @@ class UpdatesRowTests(unittest.TestCase):
     def test_about_offers_the_updates_row_before_fullscreen(self):
         app = self.app()
         SecondaryScreens._settings(app)
-        self.assertEqual(app.targets, ["settings:updates", "settings:fullscreen"])
+        self.assertEqual(app.targets, ["settings:updates", "settings:sounds", "settings:fullscreen"])
         self.assertIn(f"Redux {__version__} · A checks GitHub for a newer release", app.texts)
 
     def test_checking_finds_the_latest_or_offers_the_newer_one(self):

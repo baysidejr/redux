@@ -40,3 +40,6 @@ tools/gamedb/
 # Game database art for systems other than Sega CD comes from the GitHub release, not git
 redux/database/*/art/
 !redux/database/sega_cd/art/
+
+# Menu sound generator (needs an ElevenLabs key); the chosen WAVs ship in redux/assets/sounds
+tools/sounds/

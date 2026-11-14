@@ -172,14 +172,15 @@ class SecondaryScreens:
             self.display(X+22,230,"REDUX",33,WHITE);self.text(X+24,276,f"VERSION {__version__}",12,ACCENT,"bold")
             self.text(R-23,244,"WINDOWS",11,MUTED,"bold",anchor="ne")
             facts=[("Collection",f"{len(self.all_games)} games"),("Library folder",str(self.library.root)),
-                   ("Firmware (BIOS) folder",str(self.firmware_directory())),("Media","Discs, game cards and optical drives"),
-                   ("Connection","Local library · no account required")]
+                   ("Firmware (BIOS) folder",str(self.firmware_directory()))]
             for index,(label,value) in enumerate(facts):
                 y=326+index*38;self.text(X,y,label,14,MUTED);self.text(R,y,self.fit_text(value,640,14),14,WHITE,anchor="ne")
                 if index<len(facts)-1:self.rect(X,y+29,W,1,LINE)
-            self._setting_row("settings:updates","Updates",self.updates_row_detail(),522,self.updates_menu,icon="info")
+            self._setting_row("settings:updates","Updates",self.updates_row_detail(),448,self.updates_menu,icon="info")
+            sounds=getattr(self,"sounds",None);sounds_on=bool(sounds and sounds.enabled)
+            self._setting_row("settings:sounds","Menu sounds","ON · soft cues when you move, select and go back" if sounds_on else "OFF · the menus are silent",528,self.toggle_menu_sounds,icon="volume",toggle=sounds_on)
             fullscreen=bool(self.root.attributes("-fullscreen"))
-            self._setting_row("settings:fullscreen","Fullscreen","ON · A switches to windowed mode" if fullscreen else "OFF · A fills the display",604,self.fullscreen,icon="systems",toggle=fullscreen)
+            self._setting_row("settings:fullscreen","Fullscreen","ON · A switches to windowed mode" if fullscreen else "OFF · A fills the display",608,self.fullscreen,icon="systems",toggle=fullscreen)
 
     def _collections(self):
         self._secondary_heading("Made for your collection","Playlists","Keep great games together.")

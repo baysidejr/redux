@@ -181,6 +181,8 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
         self.canvas.bind("<MouseWheel>",self._wheel)
         self.canvas.focus_set()
         self.art=Artwork(self.canvas,self.preferences.get("reference_assets"))
+        from .ui_sounds import MenuSounds
+        self.sounds=MenuSounds(enabled=self.preferences.get("menu_sounds",True))
         self.painter=Painter(self.canvas)
         self.status=tk.StringVar(value="Ready")
         # The inherited worker/import service uses these controls only to change
@@ -237,6 +239,24 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
     def select(self):self.schedule_draw()
     def _details(self,text):
         self.diagnostic_text=text
+        self.schedule_draw()
+
+    def play_cue(self,action):
+        """A menu sound for a navigation action; quiet while a game has the audio."""
+        sounds=getattr(self,"sounds",None)
+        if sounds is None:return False
+        from .ui_sounds import cue_for_action
+        cue=cue_for_action(action)
+        if cue is None:return False
+        playing=bool(self.embedded or (self.playback and self.playback.active()))
+        if cue=="select" and not self.overlay and self.focus=="nav:settings":cue="open"
+        return sounds.play(cue,silent=playing)
+
+    def toggle_menu_sounds(self):
+        self.sounds.enabled=not self.sounds.enabled
+        self.preferences["menu_sounds"]=self.sounds.enabled
+        self._save_preferences()
+        if self.sounds.enabled:self.sounds.play("select")
         self.schedule_draw()
 
     def _prewarm(self):
@@ -343,6 +363,7 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
             if action in {"back","b"} and getattr(self,"task_cancellable",True):
                 self.cancelled.set();self.status.set("Cancelling after the current read…")
             return
+        self.play_cue(action)
         if self.overlay and self.overlay.get("kind")=="file_browser":
             self.browser_input(action);return
         if action=="guide":
