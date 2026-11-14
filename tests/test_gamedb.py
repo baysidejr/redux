@@ -113,6 +113,28 @@ class ShippedDatabaseTests(unittest.TestCase):
         self.assertEqual(db.find("sega_cd", serial="T-93175", title="HOOK")["id"], "hook")
         self.assertTrue(db.art(db.game("sega_cd", "snatcher"), "boxart").is_file())
 
+    def test_every_shipped_system_is_consistent(self):
+        db = GameDatabase()
+        for info in db.systems():
+            if not info["available"]:
+                continue
+            with self.subTest(system=info["system"]):
+                games = db.games(info["system"])
+                self.assertTrue(games)
+                ids = [g["id"] for g in games]
+                self.assertEqual(len(ids), len(set(ids)), "game ids repeat")
+                for game in games:
+                    self.assertEqual(game["system"], info["system"])
+                    self.assertTrue(any(r.get("region") for r in game["releases"]), f"{game['id']} has no release region")
+                    for role, relative in (game.get("art") or {}).items():
+                        self.assertTrue((db.root / info["system"] / relative).is_file(), f"{game['id']} lists missing {role}")
+                # North American scope: every game has a USA, Canada or World pressing unless kept by hand.
+                overrides_path = db.root / info["system"] / "overrides.json"
+                kept = {k for k, v in (json.loads(overrides_path.read_text(encoding="utf-8")).items() if overrides_path.is_file() else []) if v.get("keep")}
+                for game in games:
+                    regions = {part.strip().casefold() for r in game["releases"] for part in (r.get("region") or "").split(",")}
+                    self.assertTrue(regions & {"usa", "canada", "world", "north america"} or game["id"] in kept, f"{game['id']} is not a North American release")
+
     def test_every_planned_system_is_listed_even_when_unbuilt(self):
         systems = GameDatabase().systems()
         self.assertEqual(systems[0]["label"], "Sega CD");self.assertTrue(systems[0]["available"])
@@ -208,6 +230,98 @@ class DatabasePagesTests(unittest.TestCase):
         self.assertEqual((app.screen, app.focus), ("gamedb", "gamedb:0"))
         app.back()
         self.assertEqual((app.screen, app.settings_menu, app.settings_section), ("settings", False, "database"))
+
+
+class ArtDownloadTests(unittest.TestCase):
+    """Art for the larger systems comes from the GitHub release: fetched, checked, unpacked into the data folder."""
+    def setUp(self):
+        import hashlib, io, zipfile
+        self.temporary = tempfile.TemporaryDirectory()
+        self.root = sample_database(self.temporary.name)
+        # Pretend Sega CD's art is a download rather than bundled: strip the bundled file, write a manifest.
+        (self.root / "sega_cd" / "art" / "sonic-cd" / "boxart.jpg").unlink()
+        (self.root / "sega_cd" / "art" / "sonic-cd").rmdir();(self.root / "sega_cd" / "art").rmdir()
+        buffer = io.BytesIO()
+        with zipfile.ZipFile(buffer, "w") as archive:
+            archive.writestr("art/sonic-cd/boxart.jpg", b"\xff\xd8\xff\xd9")
+            archive.writestr("art/sonic-cd/hero.jpg", b"\xff\xd8\xff\xd9")
+            archive.writestr("../escape.txt", b"nope")
+        self.payload = buffer.getvalue()
+        (self.root / "manifest.json").write_text(json.dumps({"version": 1, "release": "database", "systems": {
+            "sega_cd": {"asset": "gamedb-sega_cd-art.zip", "bytes": len(self.payload), "sha256": hashlib.sha256(self.payload).hexdigest()},
+            "psx": {"bundled": True}}}), encoding="utf-8")
+        self.downloads = Path(self.temporary.name) / "downloads"
+        self.db = GameDatabase(self.root, downloads=self.downloads)
+        self.urls = []
+
+    def tearDown(self):
+        self.temporary.cleanup()
+
+    def opener(self, payload):
+        import io
+        def open_url(url):
+            self.urls.append(url)
+            return io.BytesIO(payload)
+        return open_url
+
+    def test_status_download_verify_and_unpack(self):
+        import io
+        self.assertEqual(self.db.art_status("sega_cd"), "available");self.assertEqual(self.db.art_size("sega_cd"), len(self.payload))
+        self.assertEqual(self.db.art_status("psx"), "bundled");self.assertEqual(self.db.art_status("3do"), "none")
+        sonic = self.db.game("sega_cd", "sonic-cd")
+        self.assertIsNone(self.db.art(sonic, "boxart"))
+        seen = []
+        folder = self.db.download_art("sega_cd", progress=lambda done, total: seen.append((done, total)), opener=self.opener(self.payload))
+        self.assertEqual(self.urls, ["https://github.com/baysidejr/redux/releases/download/database/gamedb-sega_cd-art.zip"])
+        self.assertEqual(seen[-1], (len(self.payload), len(self.payload)))
+        self.assertEqual(folder, self.downloads / "sega_cd" / "art")
+        self.assertTrue((folder / "sonic-cd" / "hero.jpg").is_file());self.assertFalse((self.downloads / "escape.txt").exists())
+        self.assertEqual(self.db.art_status("sega_cd"), "installed")
+        self.assertEqual(self.db.art(sonic, "boxart"), folder / "sonic-cd" / "boxart.jpg")
+        self.assertFalse(list(self.downloads.glob("sega_cd/*.zip")), "the temporary zip is removed")
+        self.db.remove_art("sega_cd")
+        self.assertEqual(self.db.art_status("sega_cd"), "available");self.assertIsNone(self.db.art(sonic, "boxart"))
+
+    def test_a_tampered_or_unknown_download_is_refused(self):
+        from redux.gamedb import DownloadError
+        with self.assertRaises(DownloadError):
+            self.db.download_art("sega_cd", opener=self.opener(self.payload + b"x"))
+        self.assertEqual(self.db.art_status("sega_cd"), "available")
+        self.assertFalse(list(self.downloads.glob("sega_cd/*")), "nothing is kept after a checksum failure")
+        with self.assertRaises(DownloadError):
+            self.db.download_art("3do", opener=self.opener(b""))
+        import threading
+        stop = threading.Event();stop.set()
+        with self.assertRaises(DownloadError):
+            self.db.download_art("sega_cd", cancelled=stop, opener=self.opener(self.payload))
+
+
+class DatabaseDownloadPageTests(DatabasePagesTests):
+    def test_a_system_with_downloadable_art_offers_it_from_its_tile(self):
+        import hashlib
+        app = self.app()
+        (self.root / "manifest.json").write_text(json.dumps({"version": 1, "release": "database", "systems": {
+            "sega_cd": {"asset": "gamedb-sega_cd-art.zip", "bytes": 3 * 2**20, "sha256": "0" * 64}}}), encoding="utf-8")
+        import shutil;shutil.rmtree(self.root / "sega_cd" / "art")
+        app._game_database = GameDatabase(self.root, downloads=Path(self.temporary.name) / "dl")
+        app.menu = lambda title, items, message="": setattr(app, "overlay", {"title": title, "items": items})
+        app.task = lambda work, done, description, **k: app.calls.append(("task", description))
+        SecondaryScreens._settings(app)
+        self.assertIn("Art to download · 3 MB", app.texts)
+        app.callbacks["gamedb:system:sega_cd"]()
+        self.assertEqual([label for label, _ in app.overlay["items"]], ["Browse games", "Download art · 3 MB", "Cancel"])
+        dict(app.overlay["items"])["Download art · 3 MB"]()
+        self.assertEqual(app.calls[-1], ("task", "Downloading Sega CD art…"))
+        dict(app.overlay["items"])["Browse games"]()
+        self.assertEqual(app.screen, "gamedb")
+
+    def test_a_system_whose_art_is_included_opens_straight_away(self):
+        app = self.app()
+        app.menu = lambda *a, **k: app.calls.append("menu")
+        SecondaryScreens._settings(app)
+        self.assertIn("Art included", app.texts)
+        app.callbacks["gamedb:system:sega_cd"]()
+        self.assertEqual(app.screen, "gamedb");self.assertNotIn("menu", app.calls)
 
 
 if __name__ == "__main__":

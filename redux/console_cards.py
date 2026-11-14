@@ -51,6 +51,7 @@ class ConsoleGameCards:
             self.card_roots=cards
             for card in sorted(arrived):
                 if card not in self.card_pending:self.card_pending.append(card)
+            self._storage_cache=None
             if gone:
                 self.refresh()
                 if not self.busy and not self.embedded and not self.overlay:self.status.set("Game card removed • its games are offline until it returns")
@@ -68,8 +69,22 @@ class ConsoleGameCards:
         root=Path(value)
         return root if (root/MARKER).is_dir() and not self._storage_ignored(root) else None
 
-    def storage_drives(self):
-        """Every drive the Storage page lists, with what Redux knows about it."""
+    def storage_drives(self,*,max_age=3.0):
+        """Every drive the Storage page lists, with what Redux knows about it.
+
+        Drive labels and free space are Windows calls that take tens of
+        milliseconds each; the answer is kept for a few seconds so moving the
+        focus on the Storage page stays instant. Card events refresh it.
+        """
+        import os,time
+        cached=getattr(self,"_storage_cache",None)
+        if cached and time.monotonic()-cached[0]<max_age and cached[1]==(len(self.all_games),str(self.preferences.get("install_destination","")),tuple(self.preferences.get("storage_ignored",()) or ())):
+            return [dict(item) for item in cached[2]]
+        result=self._storage_drives_now()
+        self._storage_cache=(time.monotonic(),(len(self.all_games),str(self.preferences.get("install_destination","")),tuple(self.preferences.get("storage_ignored",()) or ())),[dict(item) for item in result])
+        return result
+
+    def _storage_drives_now(self):
         import os
         from .game_cards import MARKER, can_prepare, drive_kind, drive_label, drive_usage, list_drives
         destination=os.path.normcase(str(self.preferences.get("install_destination","") or ""))

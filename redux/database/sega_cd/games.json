@@ -255,7 +255,7 @@
    },
    "sources": {
     "information": "thegamesdb:31873",
-    "boxart": "thegamesdb:31873",
+    "boxart": "libretro-thumbnails:Bloodshot ~ Battle Frenzy (Europe) (En,Fr,De,Es)",
     "gameimage": "libretro-thumbnails:Battle Frenzy (USA)"
    },
    "year": 1994,
@@ -328,11 +328,13 @@
     }
    ],
    "art": {
-    "boxart": "art/battletech-gray-death-legion/boxart.jpg"
+    "boxart": "art/battletech-gray-death-legion/boxart.jpg",
+    "hero": "art/battletech-gray-death-legion/hero.jpg"
    },
    "sources": {
     "information": "thegamesdb:51998",
-    "boxart": "thegamesdb:51998"
+    "boxart": "thegamesdb:51998",
+    "hero": "steamgriddb:18402"
    },
    "year": null,
    "developer": null,
@@ -1986,7 +1988,7 @@
     "information": "thegamesdb:443",
     "boxart": "libretro-thumbnails:Flashback - The Quest for Identity (USA)",
     "gameimage": "libretro-thumbnails:Flashback - The Quest for Identity (USA)",
-    "hero": "thegamesdb:443"
+    "hero": "steamgriddb:32198"
    },
    "year": 1992,
    "developer": "Delphine Software International",

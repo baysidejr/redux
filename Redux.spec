@@ -1,11 +1,25 @@
 # -*- mode: python ; coding: utf-8 -*-
+# The game database ships its catalogs (small) and only Sega CD's art; the other
+# systems' art is downloaded from the GitHub release by System -> Database.
+import os
+def database_datas():
+    datas=[]
+    for root,dirs,files in os.walk('redux/database'):
+        parts=root.replace(os.sep,'/').split('/')
+        if 'art' in parts[2:] and parts[2]!='sega_cd':
+            dirs[:]=[];continue
+        for name in files:
+            source=os.path.join(root,name)
+            datas.append((source,os.path.dirname(source).replace('redux/database','database',1)))
+    return datas
+
 
 
 a = Analysis(
     ['run_app.py'],
     pathex=['.'],
     binaries=[],
-    datas=[('redux/assets', 'assets'), ('redux/database', 'database')],
+    datas=[('redux/assets', 'assets')] + database_datas(),
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

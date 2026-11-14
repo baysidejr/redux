@@ -17,6 +17,7 @@ redux/database/
     art/<game id>/boxart.jpg    front cover, portrait, up to 600x840
     art/<game id>/gameimage.png one in-game picture, native resolution
     art/<game id>/hero.jpg      wide banner shown behind the focused game, up to 1280x720
+  manifest.json                which art zips belong to this build (asset, bytes, sha256), written by the pack step
 ```
 
 `<system>` is Redux's system id: `sega_cd`, `psx`, `saturn`, `pce_cd`,
@@ -64,6 +65,16 @@ redux/database/
 * `art` lists only files that exist. Drop your own `boxart.jpg`,
   `gameimage.png` or `hero.jpg` into a game's folder and the next rebuild keeps
   it (the source is recorded as `local`).
+
+## Art that is downloaded
+
+Only Sega CD's art ships inside the installer. The other systems' `art/`
+folders are packed into one zip each (`gamedb-<system>-art.zip`) and attached
+to the GitHub release tagged `database`; `manifest.json` records each zip's
+size and SHA-256. System → Database offers the download per system; Redux
+checks the hash, unpacks into `%LOCALAPPDATA%\ReduxMediaLibrary\database\<system>\art`
+and reads art from there as well as from the bundle. The catalogs and facts
+work without any download. In git, `art/` is ignored for every system but Sega CD.
 
 ## Where it comes from
 

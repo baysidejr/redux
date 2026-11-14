@@ -1,0 +1,61 @@
+{
+ "version": 1,
+ "generated": "2026-11-14",
+ "release": "database",
+ "systems": {
+  "3do": {
+   "label": "3DO",
+   "games": 199,
+   "art_files": 446,
+   "asset": "gamedb-3do-art.zip",
+   "bytes": 62476737,
+   "sha256": "0976bb6e902d2cbeab3102fbe934b83b12ebad83ba68105c41c47730c71c247a"
+  },
+  "jaguar_cd": {
+   "label": "Jaguar CD",
+   "games": 22,
+   "art_files": 44,
+   "asset": "gamedb-jaguar_cd-art.zip",
+   "bytes": 5399723,
+   "sha256": "b6485c75ff34325fe64eee465122ad11a0ef3236e96c0eae19eb06de09c79b80"
+  },
+  "neo_geo_cd": {
+   "label": "Neo Geo CD",
+   "games": 30,
+   "art_files": 90,
+   "asset": "gamedb-neo_geo_cd-art.zip",
+   "bytes": 12994472,
+   "sha256": "e423a30efda28baa84651692dc6b97785d2b394850127ca110b71e35365d1381"
+  },
+  "pce_cd": {
+   "label": "PC Engine CD",
+   "games": 57,
+   "art_files": 136,
+   "asset": "gamedb-pce_cd-art.zip",
+   "bytes": 16794358,
+   "sha256": "889110b5c84a19c336bf96fc3b857636bfa0aaa00c3455008d7b5387e81c785d"
+  },
+  "psx": {
+   "label": "PlayStation",
+   "games": 1635,
+   "art_files": 3901,
+   "asset": "gamedb-psx-art.zip",
+   "bytes": 429888001,
+   "sha256": "d569d778531148f059cd60bc61fcf4aa3874462e87eac948420266df2ab2e5f4"
+  },
+  "saturn": {
+   "label": "Saturn",
+   "games": 264,
+   "art_files": 676,
+   "asset": "gamedb-saturn-art.zip",
+   "bytes": 115186740,
+   "sha256": "4093ca1a21f32b45a57fd732d14219f621d90b162c39a293309558cbbc8a8f71"
+  },
+  "sega_cd": {
+   "label": "Sega CD",
+   "games": 172,
+   "art_files": 444,
+   "bundled": true
+  }
+ }
+}

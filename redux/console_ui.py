@@ -28,6 +28,7 @@ from .console_pc_games import ConsolePCGames
 from .console_cards import ConsoleGameCards
 from .console_controller_test import ConsoleControllerTest
 from .console_gamedb import ConsoleGameDatabase
+from .console_updates import ConsoleUpdates
 from .console_ingame import ConsoleIngame
 from .console_browser import ConsoleFileBrowser
 from .console_windows import ConsoleWindows
@@ -50,7 +51,7 @@ def display_title(game):
 from .console_cores import ConsoleCores
 from .console_redux_controller import ConsoleReduxController
 
-class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleControllerTest,ConsoleGameDatabase,ConsolePCGames,ConsoleScraper,ConsoleWindows,ConsoleFileBrowser,ConsoleIngame,ConsoleControllers,ConsoleMedia,ConsoleEditors,OverlayScreens,ReferenceLayout,SecondaryScreens,ToolsApp):
+class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleControllerTest,ConsoleGameDatabase,ConsoleUpdates,ConsolePCGames,ConsoleScraper,ConsoleWindows,ConsoleFileBrowser,ConsoleIngame,ConsoleControllers,ConsoleMedia,ConsoleEditors,OverlayScreens,ReferenceLayout,SecondaryScreens,ToolsApp):
     def __init__(self,root,library_root=None,*,activation=None):
         from .windows_activation import parse_activation
         from .windows_gaming import WindowsGamingExperience
@@ -168,6 +169,7 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
         self._start_card_watch()
         self.focus="welcome:card"
         root.after(40,self._tick)
+        root.after(900,self._prewarm)
         root.after(500,self.first_core_setup)
 
     def _build(self):
@@ -210,8 +212,11 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
         if not hasattr(self,"library"):return
         self.all_games=self.library.games()
         view=self.view if self.screen not in {"systems","settings","collections","saves"} else "all"
-        self.rows=self.library.games(self.search_text if self.screen=="search" else "",self.system_filter,
-                                    view=view,collection_id=self.collection_id,sort=self.sort)
+        search=self.search_text if self.screen=="search" else ""
+        if not search and self.system_filter is None and view=="all" and self.collection_id is None and self.sort=="title":
+            self.rows=list(self.all_games)  # the same query twice was most of every screen change
+        else:
+            self.rows=self.library.games(search,self.system_filter,view=view,collection_id=self.collection_id,sort=self.sort)
         if self.screen=="library":
             for field,value in self.facet_filters.items():
                 self.rows=[game for game in self.rows if (self._rating(game) or 0)==value] if field=="rating" else [game for game in self.rows if game.get(field)==value]
@@ -233,6 +238,20 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
     def _details(self,text):
         self.diagnostic_text=text
         self.schedule_draw()
+
+    def _prewarm(self):
+        """Build what the first visit to each screen would otherwise build on the spot."""
+        if self.closing:return
+        try:
+            width,height=round(1280*self.scale),round(720*self.scale)
+            if width>32 and height>18:
+                for lane in (True,False):self.art.backdrop(width,height,lane)
+            for size in (11,12,13,14,15,16,17,18):self.fit_text("warm",100,size)
+            self.fit_text("warm",100,17,"bold")
+            # The Playlists page's welcome tile, at the exact sizes it draws them.
+            self.art.image(self.art.welcome("box"),round(128*self.scale),round(124*self.scale),False,mode="contain",radius=0)
+            self.art.image(self.art.welcome("hero"),round(744*self.scale),round(124*self.scale),True,mode="cover",radius=round(3*self.scale))
+        except (tk.TclError,AttributeError):pass
 
     def schedule_draw(self):
         if self.closing or self.redraw_id is not None:return

@@ -20,6 +20,10 @@ ART_ROLES = ("boxart", "gameimage", "hero")
 _ROMAN = {"ii": "2", "iii": "3", "iv": "4", "v": "5", "vi": "6", "vii": "7", "viii": "8", "ix": "9", "x": "10"}
 
 
+RELEASE_URL = "https://github.com/baysidejr/redux/releases/download/{release}/{asset}"
+MAX_ASSET_BYTES = 2 * 1024 ** 3
+
+
 def database_root():
     """The shipped database: inside the build bundle, or the source tree."""
     bundle = getattr(sys, "_MEIPASS", None)
@@ -29,6 +33,19 @@ def database_root():
         if root.is_dir():
             return root
     return roots[-1]
+
+
+def downloaded_root():
+    """Where downloaded art lives: the user's data folder, never Program Files."""
+    try:
+        from .windows_paths import redux_user_data
+        return redux_user_data() / "database"
+    except (ImportError, OSError):
+        return Path.home() / "ReduxMediaLibrary" / "database"
+
+
+class DownloadError(RuntimeError):
+    pass
 
 
 def title_key(value):
@@ -70,14 +87,120 @@ def players_text(value):
 class GameDatabase:
     """Lazy, read-only access to every system's catalog."""
 
-    def __init__(self, root=None):
+    def __init__(self, root=None, downloads=None):
         self.root = Path(root) if root else database_root()
+        self.downloads = Path(downloads) if downloads else downloaded_root()
         self._systems = {}
+        self._manifest = None
 
     # ------------------------------------------------------------------ loading
 
     def available(self, system):
         return (self.root / system / "games.json").is_file()
+
+    def manifest(self):
+        """What art the release holds for each system; empty when the build has no manifest."""
+        if self._manifest is None:
+            try:
+                self._manifest = json.loads((self.root / "manifest.json").read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                self._manifest = {}
+        return self._manifest
+
+    def art_status(self, system):
+        """'bundled', 'installed', 'available' (downloadable), or 'none'."""
+        entry = (self.manifest().get("systems") or {}).get(system, {})
+        if entry.get("bundled") or (self.root / system / "art").is_dir() and any((self.root / system / "art").iterdir()):
+            return "bundled"
+        marker = self.downloads / system / "art" / ".complete"
+        if marker.is_file():
+            return "installed" if marker.read_text(encoding="utf-8").strip() == str(entry.get("sha256", "")) else "available"
+        return "available" if entry.get("asset") else "none"
+
+    def art_size(self, system):
+        return int(((self.manifest().get("systems") or {}).get(system, {}) or {}).get("bytes") or 0)
+
+    def download_art(self, system, *, progress=None, cancelled=None, opener=None):
+        """Fetch a system's art zip from the GitHub release, check its hash, unpack it.
+
+        Everything lands in the downloads folder; the bundle is never written to.
+        ``progress(done_bytes, total_bytes)`` is called as data arrives.
+        """
+        import hashlib
+        import shutil
+        import tempfile
+        import zipfile
+        from urllib.request import Request, urlopen
+        entry = (self.manifest().get("systems") or {}).get(system)
+        if not entry or not entry.get("asset"):
+            raise DownloadError("This build has no art download for that system.")
+        url = RELEASE_URL.format(release=self.manifest().get("release", "database"), asset=entry["asset"])
+        expected = str(entry.get("sha256", ""))
+        total = int(entry.get("bytes") or 0)
+        if total > MAX_ASSET_BYTES:
+            raise DownloadError("The art download is larger than Redux accepts.")
+        target_root = self.downloads / system
+        target_root.mkdir(parents=True, exist_ok=True)
+        digest = hashlib.sha256()
+        done = 0
+        with tempfile.NamedTemporaryFile(prefix=f"{system}-art-", suffix=".zip", dir=target_root, delete=False) as temp:
+            temp_path = Path(temp.name)
+            try:
+                opener = opener or (lambda u: urlopen(Request(u, headers={"User-Agent": "Redux"}), timeout=60))
+                with opener(url) as response:
+                    while True:
+                        if cancelled is not None and cancelled.is_set():
+                            raise DownloadError("Download cancelled.")
+                        chunk = response.read(1 << 18)
+                        if not chunk:
+                            break
+                        done += len(chunk)
+                        if done > MAX_ASSET_BYTES:
+                            raise DownloadError("The art download is larger than Redux accepts.")
+                        digest.update(chunk)
+                        temp.write(chunk)
+                        if progress:
+                            progress(done, total)
+            except OSError as error:
+                temp_path.unlink(missing_ok=True)
+                raise DownloadError(f"The download failed: {error}") from error
+            except DownloadError:
+                temp.close()
+                temp_path.unlink(missing_ok=True)
+                raise
+        if expected and digest.hexdigest() != expected:
+            temp_path.unlink(missing_ok=True)
+            raise DownloadError("The downloaded file did not match the release's checksum, so it was discarded.")
+        art_root = target_root / "art"
+        staging = target_root / "art.new"
+        if staging.exists():
+            shutil.rmtree(staging)
+        try:
+            with zipfile.ZipFile(temp_path) as archive:
+                for member in archive.infolist():
+                    name = member.filename
+                    if member.is_dir() or not name.startswith("art/") or ".." in name.split("/") or name.startswith("/"):
+                        continue
+                    destination = staging / Path(name).relative_to("art")
+                    destination.parent.mkdir(parents=True, exist_ok=True)
+                    with archive.open(member) as source, destination.open("wb") as sink:
+                        shutil.copyfileobj(source, sink)
+        except (zipfile.BadZipFile, OSError) as error:
+            shutil.rmtree(staging, ignore_errors=True)
+            temp_path.unlink(missing_ok=True)
+            raise DownloadError(f"The art archive could not be unpacked: {error}") from error
+        temp_path.unlink(missing_ok=True)
+        if art_root.exists():
+            shutil.rmtree(art_root)
+        staging.rename(art_root)
+        (art_root / ".complete").write_text(expected, encoding="utf-8")
+        self._systems.pop(system, None)
+        return art_root
+
+    def remove_art(self, system):
+        import shutil
+        shutil.rmtree(self.downloads / system / "art", ignore_errors=True)
+        self._systems.pop(system, None)
 
     def _load(self, system):
         if system in self._systems:
@@ -133,8 +256,11 @@ class GameDatabase:
         relative = (game.get("art") or {}).get(role)
         if not relative or not game.get("system"):
             return None
-        path = self.root / game["system"] / relative
-        return path if path.is_file() else None
+        for base in (self.root, self.downloads):
+            path = base / game["system"] / relative
+            if path.is_file():
+                return path
+        return None
 
     def find(self, system, serial=None, title=None):
         """The database game for an identified disc: serial first, header title second.

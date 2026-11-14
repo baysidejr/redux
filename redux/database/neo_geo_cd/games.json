@@ -1,0 +1,1105 @@
+{
+ "system": "neo_geo_cd",
+ "label": "Neo Geo CD",
+ "version": 1,
+ "scope": "North American releases, plus games kept by hand",
+ "generated": "2026-11-14",
+ "catalog": "Redump via libretro-database (2026.10.07)",
+ "art_sources": [
+  "libretro-thumbnails",
+  "thegamesdb",
+  "steamgriddb"
+ ],
+ "games": [
+  {
+   "id": "3-count-bout",
+   "title": "3 Count Bout",
+   "system": "neo_geo_cd",
+   "releases": [
+    {
+     "name": "Fire Suplex ~ 3 Count Bout (World) (En,Ja)",
+     "region": "World",
+     "serials": [
+      "NGCD-043",
+      "NGCD-043E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/3-count-bout/boxart.jpg",
+    "gameimage": "art/3-count-bout/gameimage.png",
+    "hero": "art/3-count-bout/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:36593",
+    "boxart": "libretro-thumbnails:Fire Suplex ~ 3 Count Bout (Japan, USA) (En,Ja)",
+    "gameimage": "libretro-thumbnails:Fire Suplex ~ 3 Count Bout (Japan, USA) (En,Ja)",
+    "hero": "steamgriddb:5249345"
+   },
+   "year": 1995,
+   "developer": "SNK",
+   "publisher": "SNK",
+   "genres": [
+    "Fighting",
+    "Sports"
+   ],
+   "players": 2,
+   "rating": null,
+   "description": "The flames of battle dance in the ring! Choose from 10 wrestlers. Can you survive the ultimate battle?"
+  },
+  {
+   "id": "aero-fighters-2",
+   "title": "Aero Fighters 2",
+   "system": "neo_geo_cd",
+   "releases": [
+    {
+     "name": "Sonic Wings 2 ~ Aero Fighters 2 (World) (En,Ja)",
+     "region": "World",
+     "serials": [
+      "NGCD-075",
+      "NGCD-075E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/aero-fighters-2/boxart.jpg",
+    "gameimage": "art/aero-fighters-2/gameimage.png",
+    "hero": "art/aero-fighters-2/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:36594",
+    "boxart": "libretro-thumbnails:Aero Fighters 2 (World)",
+    "gameimage": "libretro-thumbnails:Aero Fighters 2 (World)",
+    "hero": "steamgriddb:5265723"
+   },
+   "year": 1995,
+   "developer": "Video System Co., Ltd.",
+   "publisher": "Video System Co., Ltd.",
+   "genres": [
+    "Shooter"
+   ],
+   "players": 2,
+   "rating": null,
+   "description": "Aero Fighters 2 (known as Sonic Wings 2 in Japan) is a vertical-scrolling shoot 'em up arcade game released in 1994 by Video System.\r\n\r\nThe game is played with two buttons, with the A button firing projectiles from the plane and the B button launching a special bomb attack which uses a bomb from a limited stock of bombs. Power projectiles can be obtained by destroying buildings and armored enemy planes. There are two types of Power projectiles: \"P\" Power projectiles, that increases the plane's firepower by one level, and \"F\" Power projectiles, that increases the plane's firepower to the maximum level instantly. The maximum level only lasts for a limited amount of shots.\r\n\r\nWhen certain ground enemies and buildings are destroyed, money bonuses appear which give a random amount of points each. When the player reaches the end of the stage, the player has to face a boss ship."
+  },
+  {
+   "id": "aggressors-of-dark-kombat",
+   "title": "Aggressors of Dark Kombat",
+   "system": "neo_geo_cd",
+   "releases": [
+    {
+     "name": "Tsuukai Gangan Koushinkyoku ~ Aggressors of Dark Kombat (World) (En,Ja)",
+     "region": "World",
+     "serials": [
+      "ADCD-008",
+      "ADCD-008E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/aggressors-of-dark-kombat/boxart.jpg",
+    "gameimage": "art/aggressors-of-dark-kombat/gameimage.png",
+    "hero": "art/aggressors-of-dark-kombat/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:36605",
+    "boxart": "libretro-thumbnails:Aggressors of Dark Kombat (World)",
+    "gameimage": "libretro-thumbnails:Aggressors of Dark Kombat (World)",
+    "hero": "steamgriddb:5248762"
+   },
+   "year": 1995,
+   "developer": "ADK",
+   "publisher": "Alpha Denshi Co., Ltd.",
+   "genres": [
+    "Fighting"
+   ],
+   "players": 2,
+   "rating": null,
+   "description": "Aggressors of Dark Kombat, known in Japan as Tsuukai GANGAN Koushinkyoku (痛快GANGAN行進曲 lit. Thrilling Intense March?) or simply GanGan (GANGAN is a Japanese onomatopoeia for the sound of a large bell or a scolding voice) is a 1994 one-on-one fighting arcade game developed by Alpha Denshi Corp. (ADK) and published by SNK. The English game title uses the same initials as the developer."
+  },
+  {
+   "id": "art-of-fighting",
+   "title": "Art of Fighting",
+   "system": "neo_geo_cd",
+   "releases": [
+    {
+     "name": "Ryuuko no Ken ~ Art of Fighting (World) (En,Ja,Es)",
+     "region": "World",
+     "serials": [
+      "NGCD-044",
+      "NGCD-044E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/art-of-fighting/boxart.jpg",
+    "gameimage": "art/art-of-fighting/gameimage.png",
+    "hero": "art/art-of-fighting/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:36607",
+    "boxart": "libretro-thumbnails:Ryuuko no Ken ~ Art of Fighting (Japan, USA) (En,Ja,Es)",
+    "gameimage": "libretro-thumbnails:Ryuuko no Ken ~ Art of Fighting (Japan, USA) (En,Ja,Es)",
+    "hero": "steamgriddb:34922"
+   },
+   "year": 1996,
+   "developer": "SNK",
+   "publisher": "SNK",
+   "genres": [
+    "Fighting"
+   ],
+   "players": 2,
+   "rating": null,
+   "description": "Being a great fighter takes more than strength and pain. You need wisdom and need to win at any cost. Ryo Sakazaki's sister has been kidnapped and it leads him and Robert, two of the greatest fighters of all time, on the most dangerous search of their lives. Their interrogations turn out to be more bloody than they like, but each answer leads them closer to the truth. Use their special skills to find Ryo's sister and discover the terrifying truth in the one-player Story mode. Or choose Versus mode and pick from any of the bosses and fight with any of the other characters. You'll discover magic techniques to master THE ART OF FIGHTING!"
+  },
+  {
+   "id": "art-of-fighting-2",
+   "title": "Art of Fighting 2",
+   "system": "neo_geo_cd",
+   "releases": [
+    {
+     "name": "Ryuuko no Ken 2 ~ Art of Fighting 2 (World) (En,Ja,Es)",
+     "region": "World",
+     "serials": [
+      "NGCD-056",
+      "NGCD-056E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/art-of-fighting-2/boxart.jpg",
+    "gameimage": "art/art-of-fighting-2/gameimage.png",
+    "hero": "art/art-of-fighting-2/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:36608",
+    "boxart": "libretro-thumbnails:Ryuuko no Ken 2 ~ Art of Fighting 2 (World) (En,Ja,Es)",
+    "gameimage": "libretro-thumbnails:Ryuuko no Ken 2 ~ Art of Fighting 2 (World) (En,Ja,Es)",
+    "hero": "steamgriddb:29890"
+   },
+   "year": 1994,
+   "developer": "SNK",
+   "publisher": "SNK",
+   "genres": [
+    "Fighting"
+   ],
+   "players": 2,
+   "rating": "Not Rated",
+   "description": null
+  },
+  {
+   "id": "fatal-fury-3-road-to-the-final-victory",
+   "title": "Fatal Fury 3 - Road to the Final Victory",
+   "system": "neo_geo_cd",
+   "releases": [
+    {
+     "name": "Garou Densetsu 3 - Road to the Final Victory ~ Fatal Fury 3 - Road to the Final Victory (World) (En,Ja,Es,Pt) (Rev 1)",
+     "region": "World",
+     "serials": [
+      "NGCD-069",
+      "NGCD-069E"
+     ]
+    },
+    {
+     "name": "Garou Densetsu 3 - Road to the Final Victory ~ Fatal Fury 3 - Road to the Final Victory (Japan) (En,Ja,Es,Pt)",
+     "region": "Japan",
+     "serials": [
+      "NGCD-069"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/fatal-fury-3-road-to-the-final-victory/boxart.jpg",
+    "gameimage": "art/fatal-fury-3-road-to-the-final-victory/gameimage.png",
+    "hero": "art/fatal-fury-3-road-to-the-final-victory/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:41224",
+    "boxart": "libretro-thumbnails:Fatal Fury 3 - Road to the Final Victory (World)",
+    "gameimage": "libretro-thumbnails:Fatal Fury 3 - Road to the Final Victory (World)",
+    "hero": "steamgriddb:38386"
+   },
+   "year": 1996,
+   "developer": "SNK",
+   "publisher": "SNK",
+   "genres": [
+    "Fighting"
+   ],
+   "players": 2,
+   "rating": "Not Rated",
+   "description": "The evolving legend sheds its veil!\r\n\r\nOnce again, Southtown, the city of destiny, calls together the hungry wolves. A brand new, completely redone Fatal Fury begins now!\r\n\r\n2 player versus and competitive battle. Dramatic opening! 10 selectable characters! A blazing new system! Strengthened special moves! Graphics not to be missed!"
+  },
+  {
+   "id": "fatal-fury-special",
+   "title": "Fatal Fury Special",
+   "system": "neo_geo_cd",
+   "releases": [
+    {
+     "name": "Garou Densetsu Special ~ Fatal Fury Special (World) (En,Ja) (Rev 1)",
+     "region": "World",
+     "serials": [
+      "NGCD-058",
+      "NGCD-058E"
+     ]
+    },
+    {
+     "name": "Garou Densetsu Special ~ Fatal Fury Special (Japan) (En,Ja)",
+     "region": "Japan",
+     "serials": [
+      "NGCD-058"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/fatal-fury-special/boxart.jpg",
+    "gameimage": "art/fatal-fury-special/gameimage.png",
+    "hero": "art/fatal-fury-special/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:41226",
+    "boxart": "libretro-thumbnails:Fatal Fury Special (World)",
+    "gameimage": "libretro-thumbnails:Fatal Fury Special (World)",
+    "hero": "steamgriddb:38295"
+   },
+   "year": 1994,
+   "developer": "SNK",
+   "publisher": "SNK",
+   "genres": [
+    "Fighting"
+   ],
+   "players": 2,
+   "rating": null,
+   "description": "The GRANDMOTHER of all battles! 15 of the FATAL FURY series' top stars gather in the match of the millenium! Use the resurrected Geese Howard and Wolfgang Krauser in a dazzling 3D arena! All you have ever wanted in a fighting game is here in FATAL FURY SPECIAL!"
+  },
+  {
+   "id": "ghost-pilots",
+   "title": "Ghost Pilots",
+   "system": "neo_geo_cd",
+   "releases": [
+    {
+     "name": "Ghost Pilots (World)",
+     "region": "World",
+     "serials": [
+      "NGCD-020",
+      "NGCD-020E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/ghost-pilots/boxart.jpg",
+    "gameimage": "art/ghost-pilots/gameimage.png",
+    "hero": "art/ghost-pilots/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:85179",
+    "boxart": "libretro-thumbnails:Ghost Pilots (World)",
+    "gameimage": "libretro-thumbnails:Ghost Pilots (World)",
+    "hero": "steamgriddb:5287760"
+   },
+   "year": 1991,
+   "developer": "SNK",
+   "publisher": "SNK",
+   "genres": [
+    "Shooter"
+   ],
+   "players": 1,
+   "rating": "Not Rated",
+   "description": "SHMUP"
+  },
+  {
+   "id": "karnovs-revenge",
+   "title": "Karnov's Revenge",
+   "system": "neo_geo_cd",
+   "releases": [
+    {
+     "name": "Fighter's History Dynamite ~ Karnov's Revenge (World) (En,Ja)",
+     "region": "World",
+     "serials": [
+      "DECD-003",
+      "DECD-003E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/karnovs-revenge/boxart.jpg",
+    "gameimage": "art/karnovs-revenge/gameimage.png",
+    "hero": "art/karnovs-revenge/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:54501",
+    "boxart": "libretro-thumbnails:Fighter's History Dynamite ~ Karnov's Revenge (Japan) (En,Ja)",
+    "gameimage": "libretro-thumbnails:Fighter's History Dynamite ~ Karnov's Revenge (Japan) (En,Ja)",
+    "hero": "steamgriddb:5249359"
+   },
+   "year": 1994,
+   "developer": "Data East Corporation",
+   "publisher": "Data East Corporation",
+   "genres": [
+    "Fighting"
+   ],
+   "players": 1,
+   "rating": "Not Rated",
+   "description": null
+  },
+  {
+   "id": "metal-slug-2",
+   "title": "Metal Slug 2",
+   "system": "neo_geo_cd",
+   "releases": [
+    {
+     "name": "Metal Slug 2 (World) (En,Ja)",
+     "region": "World",
+     "serials": [
+      "NGCD-2410",
+      "NGCD-2411"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/metal-slug-2/boxart.jpg",
+    "gameimage": "art/metal-slug-2/gameimage.png",
+    "hero": "art/metal-slug-2/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:79768",
+    "boxart": "libretro-thumbnails:Metal Slug 2 (World) (En,Ja)",
+    "gameimage": "libretro-thumbnails:Metal Slug 2 (World) (En,Ja)",
+    "hero": "steamgriddb:7488"
+   },
+   "year": 1998,
+   "developer": "SNK",
+   "publisher": "SNK",
+   "genres": [
+    "Action"
+   ],
+   "players": 1,
+   "rating": "Not Rated",
+   "description": null
+  },
+  {
+   "id": "puzzled",
+   "title": "Puzzled",
+   "system": "neo_geo_cd",
+   "releases": [
+    {
+     "name": "Joy Joy Kid ~ Puzzled (World) (En,Ja)",
+     "region": "World",
+     "serials": [
+      "NGCD-021",
+      "NGCD-021E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/puzzled/boxart.jpg",
+    "gameimage": "art/puzzled/gameimage.png",
+    "hero": "art/puzzled/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:82648",
+    "boxart": "libretro-thumbnails:Puzzled (World)",
+    "gameimage": "libretro-thumbnails:Puzzled (World)",
+    "hero": "steamgriddb:33221"
+   },
+   "year": 1994,
+   "developer": "SNK",
+   "publisher": "SNK",
+   "genres": [
+    "Puzzle"
+   ],
+   "players": 2,
+   "rating": "Not Rated",
+   "description": "Puzzled is a falling-block puzzle video game developed and published by SNK that was released for Neo Geo arcades in 1990, on the Neo Geo home console in 1991, and the Neo Geo CD in 1994. The game was ported to mobile phones in 2005, then was re-published by D4 Enterprise on the Wii Virtual Console in June 2011, and it is also one of the twenty games that came pre-loaded on the Neo Geo X console released in 2012. It was also ported in August 2017 to Nintendo Switch, Xbox One, and PlayStation 4 as part of Hamster Corporation's ACA Neo Geo series."
+  },
+  {
+   "id": "real-bout-fatal-fury",
+   "title": "Real Bout Fatal Fury",
+   "system": "neo_geo_cd",
+   "releases": [
+    {
+     "name": "Real Bout Garou Densetsu ~ Real Bout Fatal Fury (World) (En,Ja,Es,Pt)",
+     "region": "World",
+     "serials": [
+      "NGCD-095",
+      "NGCD-095E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/real-bout-fatal-fury/boxart.jpg",
+    "gameimage": "art/real-bout-fatal-fury/gameimage.png",
+    "hero": "art/real-bout-fatal-fury/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:54473",
+    "boxart": "libretro-thumbnails:Real Bout Fatal Fury (World)",
+    "gameimage": "libretro-thumbnails:Real Bout Fatal Fury (World)",
+    "hero": "steamgriddb:5248929"
+   },
+   "year": 1995,
+   "developer": "SNK",
+   "publisher": "SNK",
+   "genres": [
+    "Fighting"
+   ],
+   "players": 2,
+   "rating": "Not Rated",
+   "description": "The Final Battle: Geese Howard Must Go! The big name in fighting games reaches its fifth chapter. And this time, Geese is back in the final boss seat! The last battle between Geese and the brothers Bogard is about to begin!"
+  },
+  {
+   "id": "real-bout-fatal-fury-special",
+   "title": "Real Bout Fatal Fury Special",
+   "system": "neo_geo_cd",
+   "releases": [
+    {
+     "name": "Real Bout Garou Densetsu Special ~ Real Bout Fatal Fury Special (World) (En,Ja,Es,Pt)",
+     "region": "World",
+     "serials": [
+      "NGCD-2230",
+      "NGCD-223E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/real-bout-fatal-fury-special/boxart.jpg",
+    "gameimage": "art/real-bout-fatal-fury-special/gameimage.png",
+    "hero": "art/real-bout-fatal-fury-special/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:54475",
+    "boxart": "libretro-thumbnails:Real Bout Fatal Fury Special (World)",
+    "gameimage": "libretro-thumbnails:Real Bout Fatal Fury Special (World)",
+    "hero": "steamgriddb:5248931"
+   },
+   "year": 1997,
+   "developer": "SNK",
+   "publisher": "SNK",
+   "genres": [
+    "Fighting"
+   ],
+   "players": 1,
+   "rating": "Not Rated",
+   "description": null
+  },
+  {
+   "id": "samurai-shodown-ii",
+   "title": "Samurai Shodown II",
+   "system": "neo_geo_cd",
+   "releases": [
+    {
+     "name": "Shin Samurai Spirits - Haoumaru Jigokuhen ~ Samurai Shodown II (World) (En,Ja)",
+     "region": "World",
+     "serials": [
+      "NGCD-063",
+      "NGCD-063E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/samurai-shodown-ii/boxart.jpg",
+    "gameimage": "art/samurai-shodown-ii/gameimage.png",
+    "hero": "art/samurai-shodown-ii/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:41241",
+    "boxart": "libretro-thumbnails:Shin Samurai Spirits - Haoumaru Jigokuhen ~ Samurai Shodown II (Japan, USA) (En,Ja)",
+    "gameimage": "libretro-thumbnails:Shin Samurai Spirits - Haoumaru Jigokuhen ~ Samurai Shodown II (Japan, USA) (En,Ja)",
+    "hero": "steamgriddb:35355"
+   },
+   "year": 1994,
+   "developer": "SNK",
+   "publisher": "SNK",
+   "genres": [
+    "Fighting"
+   ],
+   "players": 2,
+   "rating": null,
+   "description": "To be or not to be? You'll soon find out the answer! They've licked their wounds, improved their techniques, and now they're back! The world's 15 fiercest warriors clang steel in a fast and furious fest of fencing festivities. Use new characters and new feints of Fury to hack, slice, dice, and Julien fry your way to victory!"
+  },
+  {
+   "id": "samurai-shodown-iii",
+   "title": "Samurai Shodown III",
+   "system": "neo_geo_cd",
+   "releases": [
+    {
+     "name": "Samurai Spirits - Zankurou Musouken ~ Samurai Shodown III (World) (En,Ja,Es,Pt)",
+     "region": "World",
+     "serials": [
+      "NGCD-087",
+      "NGCD-087E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/samurai-shodown-iii/boxart.jpg",
+    "gameimage": "art/samurai-shodown-iii/gameimage.png",
+    "hero": "art/samurai-shodown-iii/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:67783",
+    "boxart": "libretro-thumbnails:Samurai Spirits - Zankurou Musouken ~ Samurai Shodown III (World) (En,Ja,Es,Pt)",
+    "gameimage": "libretro-thumbnails:Samurai Spirits - Zankurou Musouken ~ Samurai Shodown III (World) (En,Ja,Es,Pt)",
+    "hero": "steamgriddb:5248934"
+   },
+   "year": 1995,
+   "developer": "SNK",
+   "publisher": "SNK",
+   "genres": [
+    "Fighting"
+   ],
+   "players": 2,
+   "rating": "T - Teen",
+   "description": "It is the third game in SNK's Samurai Shodown series of fighting games. While it is the third game in the main series, it is the first part of a two-chapter story that is chronologically set between the events of Samurai Shodown and Samurai Shodown II.\r\n\r\nThe game has a darker aesthetic compared to its predecessors. All characters consequently underwent a visual makeover to match this new tone. The humor that characterized the series made way for a more somber and gritty feel. Along with the aesthetic overhaul came significant changes in the gameplay with introduction of two selectable versions of each character: \"Slash\" (chivalry) and \"Bust\" (treachery). Each version comes with its own moves and fighting styles; Slash is closer to the first two games, while Bust is a more aggressive style that introduces new moves.\r\n\r\nControls were also updated; a new layout dedicates three of four buttons to weapon attacks and one for kicking attacks, as opposed to two buttons for weapons and kicks each. Tactical changes include priority for special moves as well as replacing the free movement system with a more restrained parry system."
+  },
+  {
+   "id": "samurai-shodown-iv-amakusas-revenge",
+   "title": "Samurai Shodown IV - Amakusa's Revenge",
+   "system": "neo_geo_cd",
+   "releases": [
+    {
+     "name": "Samurai Spirits - Amakusa Kourin ~ Samurai Shodown IV - Amakusa's Revenge (World) (En,Ja,Es,Pt)",
+     "region": "World",
+     "serials": [
+      "NGCD-222",
+      "NGCD-222E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/samurai-shodown-iv-amakusas-revenge/boxart.jpg",
+    "gameimage": "art/samurai-shodown-iv-amakusas-revenge/gameimage.png",
+    "hero": "art/samurai-shodown-iv-amakusas-revenge/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:90064",
+    "boxart": "libretro-thumbnails:Samurai Spirits - Amakusa Kourin ~ Samurai Shodown IV - Amakusa's Revenge (World) (En,Ja,Es,Pt)",
+    "gameimage": "libretro-thumbnails:Samurai Spirits - Amakusa Kourin ~ Samurai Shodown IV - Amakusa's Revenge (World) (En,Ja,Es,Pt)",
+    "hero": "steamgriddb:5248935"
+   },
+   "year": 1997,
+   "developer": "SNK",
+   "publisher": "SNK",
+   "genres": [
+    "Fighting"
+   ],
+   "players": 2,
+   "rating": "T - Teen",
+   "description": "Samurai Shodown IV: Amakusa's Revenge is the fourth in SNK's flagship Samurai Shodown series of fighting games. Chronologically, it is the second and final chapter of a story between Samurai Shodown and Samurai Shodown II, with Samurai Shodown III being the first chapter. Samurai Shodown! on the Neo Geo Pocket is a monochrome adaptation of this game, and it was followed by Samurai Shodown! 2 on the Neo Geo Pocket Color, which is a 2D adaptation of Samurai Shodown 64: Warriors Rage."
+  },
+  {
+   "id": "savage-reign",
+   "title": "Savage Reign",
+   "system": "neo_geo_cd",
+   "releases": [
+    {
+     "name": "Fuuun Mokushiroku - Kakutou Sousei ~ Savage Reign (World) (En,Ja,Es,Pt)",
+     "region": "World",
+     "serials": [
+      "NGCD-059",
+      "NGCD-059E"
+     ]
+    },
+    {
+     "name": "Fuuun Mokushiroku - Kakutou Sousei ~ Savage Reign (World) (En,Ja,Es,Pt) (Rev 1)",
+     "region": "World",
+     "serials": [
+      "NGCD-059",
+      "NGCD-059E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/savage-reign/boxart.jpg",
+    "gameimage": "art/savage-reign/gameimage.png",
+    "hero": "art/savage-reign/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:67785",
+    "boxart": "libretro-thumbnails:Savage Reign (World)",
+    "gameimage": "libretro-thumbnails:Fuuun Mokushiroku - Kakutou Sousei ~ Savage Reign (World) (En,Ja,Es,Pt)",
+    "hero": "steamgriddb:5249348"
+   },
+   "year": 1995,
+   "developer": "SNK",
+   "publisher": "SNK",
+   "genres": [
+    "Fighting"
+   ],
+   "players": 2,
+   "rating": "Not Rated",
+   "description": "Savage Reign is a 1995 futuristic-themed competitive fighting game released by SNK for their Neo Geo arcade and home platform. It was ported to the Neo Geo CD, as well as for the PlayStation 2 along with its sequel Kizuna Encounter in Japan only (as part of the Fūun Super Combo).\r\n\r\nThe game, much like Samurai Shodown, is a weapons fighter. However, Savage Reign has a few particular elements that makes it different from its predecessor:\r\n\r\n- The weapons can not only be used for close combat, but can also be thrown at an opponent from a distance for more ranged attacks. There are also two levels of playing field within the battles (the default lower one and the upper field, which both fighters can jump to with the push of a button).\r\n\r\n- The button layout was also slightly different at the time, resembling World Heroes somewhat: a button for punching, a button for kicking, a button for the weapon and a button for jumping between planes (holding down the punch or kick buttons results in a stronger attack, tapping them wields a light attack).\r\n\r\n- Much like Art of Fighting, the camera will zoom in on your character and the character they are fighting against if they are in close proximity to each other and like Fatal Fury, the characters can fight each other using a two line battle system."
+  },
+  {
+   "id": "soccer-brawl",
+   "title": "Soccer Brawl",
+   "system": "neo_geo_cd",
+   "releases": [
+    {
+     "name": "Soccer Brawl (World)",
+     "region": "World",
+     "serials": [
+      "NGCD-031",
+      "NGCD-031E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/soccer-brawl/boxart.jpg",
+    "gameimage": "art/soccer-brawl/gameimage.png",
+    "hero": "art/soccer-brawl/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:85025",
+    "boxart": "libretro-thumbnails:Soccer Brawl (World)",
+    "gameimage": "libretro-thumbnails:Soccer Brawl (World)",
+    "hero": "steamgriddb:5432029"
+   },
+   "year": 1992,
+   "developer": "SNK",
+   "publisher": "SNK",
+   "genres": [
+    "Sports"
+   ],
+   "players": 2,
+   "rating": "Not Rated",
+   "description": "Soccer Brawl[a] is a futuristic soccer game first released in arcades on February 14, 1992. It was available on the Neo Geo on March 13 the same year and later for the Neo Geo CD on March 31, 1995.[1]"
+  },
+  {
+   "id": "street-hoop",
+   "title": "Street Hoop",
+   "system": "neo_geo_cd",
+   "releases": [
+    {
+     "name": "Dunk Dream ~ Street Slam ~ Street Hoop (World)",
+     "region": "World",
+     "serials": [
+      "DECD-004",
+      "DECD-004E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/street-hoop/boxart.jpg",
+    "gameimage": "art/street-hoop/gameimage.png",
+    "hero": "art/street-hoop/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:1506",
+    "boxart": "libretro-thumbnails:Dunk Dream ~ Street Slam ~ Street Hoop (Japan, USA)",
+    "gameimage": "libretro-thumbnails:Dunk Dream ~ Street Slam ~ Street Hoop (Japan, USA)",
+    "hero": "steamgriddb:5253644"
+   },
+   "year": 1994,
+   "developer": "Data East Corporation",
+   "publisher": "SNK",
+   "genres": [
+    "Sports"
+   ],
+   "players": 2,
+   "rating": "Not Rated",
+   "description": "Street Hoop is a 3-on-3 street basketball game. One or two players can choose among 10 teams: France, Spain, U.S.A., Italy, Germany, Taiwan, United Kingdom, China, Japan and South Korea (in the European and Japanese versions. The U.S.A. version features local cities). The teams are rated in 1 to 9 points on four attributes (dunk, 3 point, speed and defense). Each game lasts two halves of 2 minutes each. The game ends if the player loses the first half, needing to spend a continue to play the second half."
+  },
+  {
+   "id": "super-sidekicks-3-the-next-glory",
+   "title": "Super Sidekicks 3 - The Next Glory",
+   "system": "neo_geo_cd",
+   "releases": [
+    {
+     "name": "Tokuten-ou 3 - Eikou e no Chousen ~ Super Sidekicks 3 - The Next Glory (World) (En,Ja,Fr,Es,It,Pt)",
+     "region": "World",
+     "serials": [
+      "NGCD-081",
+      "NGCD-081E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/super-sidekicks-3-the-next-glory/boxart.jpg",
+    "gameimage": "art/super-sidekicks-3-the-next-glory/gameimage.png",
+    "hero": "art/super-sidekicks-3-the-next-glory/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:41244",
+    "boxart": "libretro-thumbnails:Super Sidekicks 3 - The Next Glory (World)",
+    "gameimage": "libretro-thumbnails:Super Sidekicks 3 - The Next Glory (World)",
+    "hero": "steamgriddb:5285942"
+   },
+   "year": 1995,
+   "developer": "SNK",
+   "publisher": "SNK",
+   "genres": [
+    "Sports"
+   ],
+   "players": 2,
+   "rating": null,
+   "description": "Loaded with world class excitement! Features 6 competition modes like World Cup for 64 worldwide teams. Utilizes Digitized Trace Animation and 3D camera angled shots for a realistic on-the-fly action graphic explosion. With 8 different playing modes including options such as Speed and Stamina, you can mix and match 512 different team configurations. Accidents hinder or enhance a team's ability within head-to-head gameplay for the ultimate super-real soccer experience!"
+  },
+  {
+   "id": "the-king-of-fighters-94",
+   "title": "The King of Fighters '94",
+   "system": "neo_geo_cd",
+   "releases": [
+    {
+     "name": "King of Fighters '94, The (World) (En,Ja)",
+     "region": "World",
+     "serials": [
+      "NGCD-055",
+      "NGCD-055E"
+     ]
+    },
+    {
+     "name": "King of Fighters '94, The (World) (En,Ja) (Rev 1)",
+     "region": "World",
+     "serials": [
+      "NGCD-055",
+      "NGCD-055E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/the-king-of-fighters-94/boxart.jpg",
+    "gameimage": "art/the-king-of-fighters-94/gameimage.png",
+    "hero": "art/the-king-of-fighters-94/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:41228",
+    "boxart": "libretro-thumbnails:King of Fighters '94, The (World)",
+    "gameimage": "libretro-thumbnails:King of Fighters '94, The (World) (En,Ja)",
+    "hero": "steamgriddb:38646"
+   },
+   "year": 1994,
+   "developer": "SNK",
+   "publisher": "SNK",
+   "genres": [
+    "Fighting"
+   ],
+   "players": 2,
+   "rating": null,
+   "description": "Walk into battle with your head held high! In The King of Fighters, you'll never fight alone! Choose one of eight teams in this all-out battle spectacular. Teams from Fatal Fury, Art of Fighting, Ikari Warriors, and a few uncharted areas come together for the first time ever. Dodge attacks, tag-off with team members, use your special King Krusher Battle Moves and take the crown in The King of Fighters '94!"
+  },
+  {
+   "id": "the-king-of-fighters-95",
+   "title": "The King of Fighters '95",
+   "system": "neo_geo_cd",
+   "releases": [
+    {
+     "name": "King of Fighters '95, The (World) (En,Ja)",
+     "region": "World",
+     "serials": [
+      "NGCD-084",
+      "NGCD-084E"
+     ]
+    },
+    {
+     "name": "King of Fighters '95, The (Japan) (En,Ja) (Rev 1)",
+     "region": "Japan",
+     "serials": [
+      "NGCD-084"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/the-king-of-fighters-95/boxart.jpg",
+    "gameimage": "art/the-king-of-fighters-95/gameimage.png",
+    "hero": "art/the-king-of-fighters-95/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:41230",
+    "boxart": "libretro-thumbnails:King of Fighters '95, The (World)",
+    "gameimage": "libretro-thumbnails:King of Fighters '95, The (World) (En,Ja)",
+    "hero": "steamgriddb:36297"
+   },
+   "year": 1995,
+   "developer": "SNK",
+   "publisher": "SNK",
+   "genres": [
+    "Fighting"
+   ],
+   "players": 2,
+   "rating": "Not Rated",
+   "description": "Fighter's Armageddon - Team Battle '95! 24 of SNK's greatest fighting stars in the dream battle of all ages! Form up to 2,000 terrific teams! Guide history's supreme warriors in your own unique team. Also featuring a new Team Edit function."
+  },
+  {
+   "id": "the-king-of-fighters-96",
+   "title": "The King of Fighters '96",
+   "system": "neo_geo_cd",
+   "releases": [
+    {
+     "name": "King of Fighters '96, The (World) (En,Ja)",
+     "region": "World",
+     "serials": [
+      "NGCD-214",
+      "NGCD-214E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/the-king-of-fighters-96/boxart.jpg",
+    "gameimage": "art/the-king-of-fighters-96/gameimage.png",
+    "hero": "art/the-king-of-fighters-96/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:41236",
+    "boxart": "libretro-thumbnails:King of Fighters '96, The (World)",
+    "gameimage": "libretro-thumbnails:King of Fighters '96, The (World) (En,Ja)",
+    "hero": "steamgriddb:34261"
+   },
+   "year": 1996,
+   "developer": "SNK",
+   "publisher": "SNK",
+   "genres": [
+    "Fighting"
+   ],
+   "players": 2,
+   "rating": "M - Mature 17+",
+   "description": "The battle of the dream teams '96 - READY! 27 of SNK's top fighting heroes face off for fisticuffs! Only King of Fighters lets you combine your favorite characters in exciting teams. Try out endless combinations and bop your way to the top with the toughest team of all! Over 2,900 possible team combinations using the Team Edit Function. It's too much!"
+  },
+  {
+   "id": "the-king-of-fighters-99-millennium-battle",
+   "title": "The King of Fighters '99 - Millennium Battle",
+   "system": "neo_geo_cd",
+   "releases": [
+    {
+     "name": "King of Fighters '99, The ~ The King of Fighters '99 - Millennium Battle (World) (En,Ja,Es,Pt)",
+     "region": "World",
+     "serials": [
+      "NGCD-2510",
+      "NGCD-2511"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/the-king-of-fighters-99-millennium-battle/boxart.jpg",
+    "gameimage": "art/the-king-of-fighters-99-millennium-battle/gameimage.png",
+    "hero": "art/the-king-of-fighters-99-millennium-battle/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:77243",
+    "boxart": "libretro-thumbnails:King of Fighters '99, The ~ The King of Fighters '99 - Millennium Battle (World) (En,Ja,Es,Pt)",
+    "gameimage": "libretro-thumbnails:King of Fighters '99, The ~ The King of Fighters '99 - Millennium Battle (World) (En,Ja,Es,Pt)",
+    "hero": "steamgriddb:34142"
+   },
+   "year": 1999,
+   "developer": "SNK",
+   "publisher": "SNK",
+   "genres": [
+    "Fighting"
+   ],
+   "players": 2,
+   "rating": "M - Mature 17+",
+   "description": null
+  },
+  {
+   "id": "the-next-thing-king-of-the-monsters-2",
+   "title": "The Next Thing - King of the Monsters 2",
+   "system": "neo_geo_cd",
+   "releases": [
+    {
+     "name": "Next Thing, The - King of the Monsters 2 (World) (En,Ja)",
+     "region": "World",
+     "serials": [
+      "NGCD-039",
+      "NGCD-039E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/the-next-thing-king-of-the-monsters-2/boxart.jpg",
+    "gameimage": "art/the-next-thing-king-of-the-monsters-2/gameimage.png",
+    "hero": "art/the-next-thing-king-of-the-monsters-2/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:69189",
+    "boxart": "libretro-thumbnails:Next Thing, The - King of the Monsters 2 (World) (En,Ja)",
+    "gameimage": "libretro-thumbnails:Next Thing, The - King of the Monsters 2 (World) (En,Ja)",
+    "hero": "steamgriddb:35031"
+   },
+   "year": 1994,
+   "developer": "SNK, NOW Production",
+   "publisher": "SNK",
+   "genres": [
+    "Fighting"
+   ],
+   "players": 2,
+   "rating": "E10+ - Everyone 10+",
+   "description": "King of the Monsters 2 is a fighting/wrestling game released on May 5, 1992 by SNK. It is a sequel to the 1991 game King of the Monsters. In this game three of the previous game's surviving monsters return and battle across the Globe against giant alien monsters that threaten the Earth."
+  },
+  {
+   "id": "the-path-of-the-warrior-art-of-fighting-3",
+   "title": "The Path of the Warrior - Art of Fighting 3",
+   "system": "neo_geo_cd",
+   "releases": [
+    {
+     "name": "Art of Fighting - Ryuuko no Ken Gaiden ~ The Path of the Warrior - Art of Fighting 3 (World) (En,Ja,Es,Pt)",
+     "region": "World",
+     "serials": [
+      "NGCD-096",
+      "NGCD-0961",
+      "NGCD-096E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/the-path-of-the-warrior-art-of-fighting-3/boxart.jpg",
+    "gameimage": "art/the-path-of-the-warrior-art-of-fighting-3/gameimage.png",
+    "hero": "art/the-path-of-the-warrior-art-of-fighting-3/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:36607",
+    "boxart": "libretro-thumbnails:Art of Fighting - Ryuuko no Ken Gaiden ~ The Path of the Warrior - Art of Fighting 3 (World) (En,Ja,Es,Pt)",
+    "gameimage": "libretro-thumbnails:Art of Fighting - Ryuuko no Ken Gaiden ~ The Path of the Warrior - Art of Fighting 3 (World) (En,Ja,Es,Pt)",
+    "hero": "steamgriddb:5253622"
+   },
+   "year": 1996,
+   "developer": "SNK",
+   "publisher": "SNK",
+   "genres": [
+    "Fighting"
+   ],
+   "players": 2,
+   "rating": null,
+   "description": "Being a great fighter takes more than strength and pain. You need wisdom and need to win at any cost. Ryo Sakazaki's sister has been kidnapped and it leads him and Robert, two of the greatest fighters of all time, on the most dangerous search of their lives. Their interrogations turn out to be more bloody than they like, but each answer leads them closer to the truth. Use their special skills to find Ryo's sister and discover the terrifying truth in the one-player Story mode. Or choose Versus mode and pick from any of the bosses and fight with any of the other characters. You'll discover magic techniques to master THE ART OF FIGHTING!"
+  },
+  {
+   "id": "top-hunter-roddy-cathy",
+   "title": "Top Hunter - Roddy & Cathy",
+   "system": "neo_geo_cd",
+   "releases": [
+    {
+     "name": "Top Hunter - Roddy & Cathy (World) (En,Ja)",
+     "region": "World",
+     "serials": [
+      "NGCD-046",
+      "NGCD-046E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/top-hunter-roddy-cathy/boxart.jpg",
+    "gameimage": "art/top-hunter-roddy-cathy/gameimage.png",
+    "hero": "art/top-hunter-roddy-cathy/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:67780",
+    "boxart": "libretro-thumbnails:Top Hunter - Roddy & Cathy (Japan)",
+    "gameimage": "libretro-thumbnails:Top Hunter - Roddy _ Cathy (Japan) (En,Ja)",
+    "hero": "steamgriddb:5275716"
+   },
+   "year": 1994,
+   "developer": "SNK",
+   "publisher": "SNK",
+   "genres": [
+    "Action",
+    "Adventure"
+   ],
+   "players": 2,
+   "rating": "E10+ - Everyone 10+",
+   "description": "Clean up the Space Pirates! Time: The age of space colonialism. The dreaded Klaptons are on the loose, turning peaceful settlements into ghost towns. Searching for the price on the Klapton's heads come the cosmic bounty hunters RODDY and CATHY. Do these two have what it takes to save the universe? Can they work together without competing for the rewards themselves? Their fate, and the fate of the free universe is IN YOUR HANDS - the legendary team known as TOP HUNTER"
+  },
+  {
+   "id": "voltage-fighter-gowcaizer",
+   "title": "Voltage Fighter - Gowcaizer",
+   "system": "neo_geo_cd",
+   "releases": [
+    {
+     "name": "Choujin Gakuen - Gowcaizer ~ Voltage Fighter - Gowcaizer (World) (En,Ja)",
+     "region": "World",
+     "serials": [
+      "NGCD-094",
+      "NGCD-094E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/voltage-fighter-gowcaizer/boxart.jpg",
+    "gameimage": "art/voltage-fighter-gowcaizer/gameimage.png",
+    "hero": "art/voltage-fighter-gowcaizer/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:41245",
+    "boxart": "libretro-thumbnails:Voltage Fighter Gowcaizer (World)",
+    "gameimage": "libretro-thumbnails:Voltage Fighter Gowcaizer (World)",
+    "hero": "steamgriddb:5249355"
+   },
+   "year": 1995,
+   "developer": "Technos Japan Corp.",
+   "publisher": "SNK",
+   "genres": [
+    "Fighting"
+   ],
+   "players": 2,
+   "rating": "Not Rated",
+   "description": "The ultimate warriors are ready for battle! The Auto-Zoom feature draws you in to the red-hot action! Use the new \"Special Attack Tracing System\" to copy the special abilities of the foes you defeat and build your own warrior from over 100 combinations!"
+  },
+  {
+   "id": "world-heroes-perfect",
+   "title": "World Heroes Perfect",
+   "system": "neo_geo_cd",
+   "releases": [
+    {
+     "name": "World Heroes Perfect (World) (En,Ja)",
+     "region": "World",
+     "serials": [
+      "ADCD-009",
+      "ADCD-009E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/world-heroes-perfect/boxart.jpg",
+    "gameimage": "art/world-heroes-perfect/gameimage.png",
+    "hero": "art/world-heroes-perfect/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:82644",
+    "boxart": "libretro-thumbnails:World Heroes Perfect (World)",
+    "gameimage": "libretro-thumbnails:World Heroes Perfect (World)",
+    "hero": "steamgriddb:5249356"
+   },
+   "year": 1995,
+   "developer": "ADK",
+   "publisher": "SNK",
+   "genres": [
+    "Fighting"
+   ],
+   "players": 2,
+   "rating": "Not Rated",
+   "description": "World Heroes Perfect is a 1995 fighting arcade game developed and published by ADK with the assistance of SNK. It was originally released for the Neo Geo MVS arcade format on May 25, 1995. It is the fourth and final title of the World Heroes series."
+  },
+  {
+   "id": "xeno-crisis",
+   "title": "Xeno Crisis",
+   "system": "neo_geo_cd",
+   "releases": [
+    {
+     "name": "Xeno Crisis (World)",
+     "region": "World",
+     "serials": [
+      "NGCD-BB01",
+      "NGCD-BB01E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/xeno-crisis/boxart.jpg",
+    "gameimage": "art/xeno-crisis/gameimage.png",
+    "hero": "art/xeno-crisis/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:95766",
+    "boxart": "thegamesdb:95766",
+    "gameimage": "thegamesdb:95766",
+    "hero": "steamgriddb:5249018"
+   },
+   "year": 2021,
+   "developer": "Bitmap Bureau",
+   "publisher": null,
+   "genres": [
+    "Action"
+   ],
+   "players": 2,
+   "rating": "Not Rated",
+   "description": "Xeno Crisis is a 2019 homebrew twin-stick shooter developed by indie game studio Bitmap Bureau, ported to the Neo-Geo CD.\r\n\r\nXeno Crisis is an arena shooter that can be played solo or in local co-op mode. Take control of battle-hardened marines embarking on a deadly mission to confront an alien menace and get home alive! Run and gun your way through thousands of adversaries as you explore the devastated research outpost, searching for survivors, and ultimately facing the origin of the outpost's demise.\r\n\r\nOutpost 88 is divided into seven distinct areas, each being randomly generated with each play, meaning that your strategy must evolve on the fly if you're to succeed in your mission. Collect dog-tags from vanquished enemies to upgrade your equipment between areas and look out for special weapons which will give you a momentary advantage.\r\n\r\nThere are several weapons at your disposal, each with their own characteristics. Although your standard issue pulse rifle is perfectly capable of taking on the enemy, other weapons can give you advantages in certain situations, so picking them up is generally advisable - just don't run out of ammo!\r\n\r\nAs you progress through the colony you will come across many different enemies, each with their own traits and means of attack. Many of them can be gunned down without too much thought, but others will require the player to outflank them, attack them within a certain time window, or be avoided altogether!\r\n\r\nAt the end of each area you will be given the chance to exchange any dog-tags you've collected for upgrades ranging from extra health to weapon power-ups to extra continues. Which upgrades you go for will depend on your style of play."
+  }
+ ]
+}

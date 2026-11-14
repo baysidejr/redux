@@ -1,0 +1,634 @@
+{
+ "system": "jaguar_cd",
+ "label": "Jaguar CD",
+ "version": 1,
+ "scope": "North American releases, plus games kept by hand",
+ "generated": "2026-11-14",
+ "catalog": "Redump via libretro-database (2026.11.01)",
+ "art_sources": [
+  "libretro-thumbnails",
+  "thegamesdb",
+  "steamgriddb"
+ ],
+ "games": [
+  {
+   "id": "baldies",
+   "title": "Baldies",
+   "system": "jaguar_cd",
+   "releases": [
+    {
+     "name": "Baldies (USA) (Rev 1)",
+     "region": "USA",
+     "serials": [
+      "J9055E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/baldies/boxart.jpg",
+    "gameimage": "art/baldies/gameimage.png",
+    "hero": "art/baldies/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:5252",
+    "boxart": "thegamesdb:5252",
+    "gameimage": "libretro-thumbnails:Baldies (USA) (Rev 1)",
+    "hero": "steamgriddb:38673"
+   },
+   "year": 1995,
+   "developer": "Creative Edge Studios, Inc.",
+   "publisher": "Atari, Inc.",
+   "genres": [
+    "Strategy"
+   ],
+   "players": 1,
+   "rating": "E - Everyone",
+   "description": "Ever want to rule the world? With Baldies you have the resources, but do you have the strategy and skill? Build your own society complete with workers, builders, soldiers, and scientists, and use them to conquer enemy territory. When it comes to killing your foe, creativity is highly encouraged. You can skunk 'em, drown 'em, blow 'em up, and electrocute 'em. Plan your attack well. The enemy is trying to do the same to you!"
+  },
+  {
+   "id": "battle-morph",
+   "title": "Battle Morph",
+   "system": "jaguar_cd",
+   "releases": [
+    {
+     "name": "Battle Morph (USA)",
+     "region": "USA",
+     "serials": [
+      "J9017E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/battle-morph/boxart.jpg",
+    "gameimage": "art/battle-morph/gameimage.png",
+    "hero": "art/battle-morph/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:5254",
+    "boxart": "thegamesdb:5254",
+    "gameimage": "libretro-thumbnails:Battle Morph (USA)",
+    "hero": "steamgriddb:5284619"
+   },
+   "year": 1995,
+   "developer": "Attention to Detail Limited",
+   "publisher": "Atari, Inc.",
+   "genres": [
+    "Shooter"
+   ],
+   "players": 1,
+   "rating": "E - Everyone",
+   "description": "Battlemorph is the Jaguar CD sequel to the first Jaguar cartridge, Cybermorph. This game takes place 30 years after the original. The Pernitian empire, long thought to be extinct, is back with a vengeance. Your new War Griffon craft must travel to 8 different star clusters so that your star ship can find the plasma it needs to make it's way to the Pernish cluster. Once you take out the Pernish home world, the galaxy may be safe from the Pernitians once and for all."
+  },
+  {
+   "id": "battle-morph-songbird",
+   "title": "Battle Morph (Songbird)",
+   "system": "jaguar_cd",
+   "releases": [
+    {
+     "name": "Battle Morph (USA) (Songbird)",
+     "region": "USA",
+     "serials": [
+      "J9017E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/battle-morph-songbird/boxart.jpg",
+    "gameimage": "art/battle-morph-songbird/gameimage.png",
+    "hero": "art/battle-morph-songbird/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:5254",
+    "boxart": "thegamesdb:5254",
+    "gameimage": "thegamesdb:5254",
+    "hero": "steamgriddb:5284619"
+   },
+   "year": 1995,
+   "developer": "Attention to Detail Limited",
+   "publisher": "Atari, Inc.",
+   "genres": [
+    "Shooter"
+   ],
+   "players": 1,
+   "rating": "E - Everyone",
+   "description": "Battlemorph is the Jaguar CD sequel to the first Jaguar cartridge, Cybermorph. This game takes place 30 years after the original. The Pernitian empire, long thought to be extinct, is back with a vengeance. Your new War Griffon craft must travel to 8 different star clusters so that your star ship can find the plasma it needs to make it's way to the Pernish cluster. Once you take out the Pernish home world, the galaxy may be safe from the Pernitians once and for all."
+  },
+  {
+   "id": "blue-lightning",
+   "title": "Blue Lightning",
+   "system": "jaguar_cd",
+   "releases": [
+    {
+     "name": "Blue Lightning (USA)",
+     "region": "USA",
+     "serials": [
+      "J9016E"
+     ]
+    },
+    {
+     "name": "Blue Lightning (USA) (En,Fr,De)",
+     "region": "USA",
+     "serials": [
+      "J9016E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/blue-lightning/boxart.jpg",
+    "gameimage": "art/blue-lightning/gameimage.png"
+   },
+   "sources": {
+    "information": "thegamesdb:5256",
+    "boxart": "thegamesdb:5256",
+    "gameimage": "libretro-thumbnails:Blue Lightning (USA)"
+   },
+   "year": 1995,
+   "developer": "Epyx",
+   "publisher": "Atari, Inc.",
+   "genres": [
+    "Shooter"
+   ],
+   "players": 1,
+   "rating": "Not Rated",
+   "description": "A top U.N. General named Drako has gone renegade. As a member of the U.N's Blue Lightning squad, you must stop him from organizing a global crime empire and holding the world for ransom. Use a multi-national selection of deadly fighter and attack aircraft to stop Drako's military forces. Only you stand between Drako and world domination!"
+  },
+  {
+   "id": "braindead-13",
+   "title": "BrainDead 13",
+   "system": "jaguar_cd",
+   "releases": [
+    {
+     "name": "BrainDead 13 (USA)",
+     "region": "USA",
+     "serials": []
+    }
+   ],
+   "art": {
+    "boxart": "art/braindead-13/boxart.jpg",
+    "gameimage": "art/braindead-13/gameimage.png",
+    "hero": "art/braindead-13/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:5257",
+    "boxart": "thegamesdb:5257",
+    "gameimage": "libretro-thumbnails:BrainDead 13 (USA)",
+    "hero": "steamgriddb:36457"
+   },
+   "year": 1996,
+   "developer": "ReadySoft Incorporated",
+   "publisher": "ReadySoft Incorporated",
+   "genres": [
+    "Action"
+   ],
+   "players": 1,
+   "rating": "E - Everyone",
+   "description": "In Brain Dead 13, the player takes on the role of a young computer expert who one day is called to fix a computer at some scary castle and in no time flat, finds himself in trouble.\r\n\r\nIt is up to the player to use the complex moves of an interactive movie to escape from the castle. This animated adventure is basically based on the player's judgment on which direction you think the character might go, and if the player guesses wrong, death."
+  },
+  {
+   "id": "demolition-man-commander-blood-lost-video-footage-for-jaguar-64bit",
+   "title": "Demolition Man & Commander Blood - Lost Video Footage for Jaguar 64bit",
+   "system": "jaguar_cd",
+   "releases": [
+    {
+     "name": "Demolition Man & Commander Blood - Lost Video Footage for Jaguar 64bit (USA)",
+     "region": "USA",
+     "serials": []
+    }
+   ],
+   "art": {},
+   "sources": {}
+  },
+  {
+   "id": "dragons-lair",
+   "title": "Dragon's Lair",
+   "system": "jaguar_cd",
+   "releases": [
+    {
+     "name": "Dragon's Lair (USA)",
+     "region": "USA",
+     "serials": []
+    }
+   ],
+   "art": {
+    "boxart": "art/dragons-lair/boxart.jpg",
+    "gameimage": "art/dragons-lair/gameimage.png",
+    "hero": "art/dragons-lair/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:5259",
+    "boxart": "thegamesdb:5259",
+    "gameimage": "libretro-thumbnails:Dragon's Lair (USA)",
+    "hero": "steamgriddb:2444"
+   },
+   "year": 1995,
+   "developer": "ReadySoft Incorporated",
+   "publisher": "ReadySoft Incorporated",
+   "genres": [
+    "Action"
+   ],
+   "players": 1,
+   "rating": "E - Everyone",
+   "description": "Dragon's Lair features the hero, Dirk the Daring, attempting to rescue Princess Daphne from the evil dragon Singe, who has locked Princess Daphne in the foul wizard Mordroc's castle. The screen shows animated cutscenes, and the player executes an action by selecting a direction or pressing the sword button with correct timing, requiring the player to memorize each scenario in order to clear each quick time event. The comedy aspects of the game stemmed not only from the bizarre looking creatures and humorous death scenes, but also the fact that while Dirk was a skilled knight, he was somewhat clumsy in his efforts, as well as being a reluctant hero, prone to shrieking and reacting in horror to the various dangers he encounters."
+  },
+  {
+   "id": "frog-feast",
+   "title": "Frog Feast",
+   "system": "jaguar_cd",
+   "releases": [
+    {
+     "name": "Frog Feast (USA)",
+     "region": "USA",
+     "serials": []
+    }
+   ],
+   "art": {
+    "boxart": "art/frog-feast/boxart.jpg",
+    "gameimage": "art/frog-feast/gameimage.png"
+   },
+   "sources": {
+    "boxart": "libretro-thumbnails:Frog Feast (World)",
+    "gameimage": "libretro-thumbnails:Frog Feast (World)"
+   }
+  },
+  {
+   "id": "highlander-the-last-of-the-macleods",
+   "title": "Highlander - The Last of the MacLeods",
+   "system": "jaguar_cd",
+   "releases": [
+    {
+     "name": "Highlander - The Last of the MacLeods (USA)",
+     "region": "USA",
+     "serials": [
+      "J9031E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/highlander-the-last-of-the-macleods/boxart.jpg",
+    "gameimage": "art/highlander-the-last-of-the-macleods/gameimage.png",
+    "hero": "art/highlander-the-last-of-the-macleods/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:5260",
+    "boxart": "thegamesdb:5260",
+    "gameimage": "libretro-thumbnails:Highlander - The Last of the MacLeods (USA)",
+    "hero": "thegamesdb:5260"
+   },
+   "year": 1995,
+   "developer": "Atari",
+   "publisher": "Atari, Inc.",
+   "genres": [
+    "Adventure"
+   ],
+   "players": 1,
+   "rating": "E - Everyone",
+   "description": "Quentin McCloud must rescue clan members during a journey across his world in this game for the Jaguar CD. Quentin is portrayed in 3D, as are his enemies, but most of his world is in 2D (much like Alone in the Dark and Resident Evil). Unfortunately, the 3D polygon construction of the characters is hideous, though the backgrounds and cut scenes are well done. The first-person control scheme has promise, but suffers from multiple problems. If Quentin is attacked from behind, by the time he pivots, he's usually dead. Highlander is a mediocre game deserving of consideration from Highlander fans but, even considering the scarcity of Jaguar CD titles, probably best left alone by others."
+  },
+  {
+   "id": "hover-strike-unconquered-lands",
+   "title": "Hover Strike - Unconquered Lands",
+   "system": "jaguar_cd",
+   "releases": [
+    {
+     "name": "Hover Strike - Unconquered Lands (USA)",
+     "region": "USA",
+     "serials": [
+      "J9086E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/hover-strike-unconquered-lands/boxart.jpg",
+    "gameimage": "art/hover-strike-unconquered-lands/gameimage.png",
+    "hero": "art/hover-strike-unconquered-lands/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:5261",
+    "boxart": "thegamesdb:5261",
+    "gameimage": "libretro-thumbnails:Hover Strike - Unconquered Lands (USA)",
+    "hero": "steamgriddb:5462135"
+   },
+   "year": 1995,
+   "developer": "Atari",
+   "publisher": "Atari, Inc.",
+   "genres": [
+    "Shooter"
+   ],
+   "players": 1,
+   "rating": "E - Everyone",
+   "description": "Hover Strike is a futuristic 3D action game where you pilot a lone hovercraft in a series of missions against overwhelming enemy forces. You must use your speed, firepower, and displays to outfight and outwit the enemy. The game presents a series of missions which must be completed before you can advance. Goals include destroying a certain number or type of enemy units. The missions take place in a variety of different planetary environments."
+  },
+  {
+   "id": "iron-soldier-2-songbird",
+   "title": "Iron Soldier 2 (Songbird)",
+   "system": "jaguar_cd",
+   "releases": [
+    {
+     "name": "Iron Soldier 2 (USA) (Songbird)",
+     "region": "USA",
+     "serials": [
+      "JA910"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/iron-soldier-2-songbird/boxart.jpg",
+    "gameimage": "art/iron-soldier-2-songbird/gameimage.png",
+    "hero": "art/iron-soldier-2-songbird/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:5262",
+    "boxart": "thegamesdb:5262",
+    "gameimage": "thegamesdb:5262",
+    "hero": "steamgriddb:5448054"
+   },
+   "year": 1997,
+   "developer": null,
+   "publisher": "Telegames, Inc.",
+   "genres": [
+    "Action"
+   ],
+   "players": 1,
+   "rating": "Not Rated",
+   "description": "Iron Soldier 2 is a first-person 3D giant mech game. Players must pilot their building-sized robots in a variety of missions ranging from search-and-destroy to surgical attacks to defending objectives. Starting with a limited set of weapons, players can collect more armaments throughout the game. Each weapon can be mounted on a certain part of the robot's body, but once mounted, no other weapons can be placed there. So, while there is a wide range of weapon configurations, not every weapon can be combined with others. Players can destroy buildings in levels to find crates containing new weapons and extra ammunition for current weapons."
+  },
+  {
+   "id": "myst",
+   "title": "Myst",
+   "system": "jaguar_cd",
+   "releases": [
+    {
+     "name": "Myst (USA)",
+     "region": "USA",
+     "serials": [
+      "J9069E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/myst/boxart.jpg",
+    "gameimage": "art/myst/gameimage.png",
+    "hero": "art/myst/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:5263",
+    "boxart": "thegamesdb:5263",
+    "gameimage": "libretro-thumbnails:Myst (USA)",
+    "hero": "steamgriddb:5274246"
+   },
+   "year": 1995,
+   "developer": "Cyan",
+   "publisher": "SUNSOFT",
+   "genres": [
+    "Adventure"
+   ],
+   "players": null,
+   "rating": null,
+   "description": "You have just stumbled upon a most intriguing book, a book titled Myst. You have no idea where it came from, who wrote it, or how old it is. Reading through its pages provides you with only a description of an island world. But it's just a book, isn't it? As you reach the end of the book, you lay your hand on a page. Suddenly your own world dissolves into blackness, replaced with the island world the pages described. Now you're here, wherever here is, with no option but to explore.\r\n\r\nMyst is a first-person point-and-click adventure where the player controls a character known as The Stranger. Magically transported into the world described in the book, he needs to explore Myst Island and solve its mysteries. The game is presented as a series of static scenes where the player acts with the environment by clicking and manipulating objects. There are no enemies and it is not possible to die. Through Myst Island, the game is further divided into mini-worlds set in different ages accessed through different books. \r\n\r\nThe game's interface is reduced to a single cursor for navigation and interaction. Rather than collecting items and using them to solve puzzles, the player must gather subtly placed clues and manipulate complex mechanical devices in order to advance in the game. The world of Myst is mostly uninhabited, and the game has very few live-action scenes with characters and dialogue."
+  },
+  {
+   "id": "primal-rage",
+   "title": "Primal Rage",
+   "system": "jaguar_cd",
+   "releases": [
+    {
+     "name": "Primal Rage (USA)",
+     "region": "USA",
+     "serials": [
+      "301108-0182"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/primal-rage/boxart.jpg",
+    "gameimage": "art/primal-rage/gameimage.png",
+    "hero": "art/primal-rage/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:5265",
+    "boxart": "thegamesdb:5265",
+    "gameimage": "libretro-thumbnails:Primal Rage (USA)",
+    "hero": "steamgriddb:34317"
+   },
+   "year": 1995,
+   "developer": "Atari",
+   "publisher": "Time Warner Interactive, Inc.",
+   "genres": [
+    "Fighting"
+   ],
+   "players": 2,
+   "rating": "T - Teen",
+   "description": "Primal Rage is a one-on-one fighting game featuring dinosaurs and giant apes as the fighters. The graphics are done with digitized stop-motion animation. Gameplay is similar to Mortal Kombat in that it is viewed from a side perspective, and features deadly finishing moves at the end of the match."
+  },
+  {
+   "id": "robinsons-requiem",
+   "title": "Robinson's Requiem",
+   "system": "jaguar_cd",
+   "releases": [
+    {
+     "name": "Robinson's Requiem (USA)",
+     "region": "USA",
+     "serials": [
+      "CF3007"
+     ]
+    }
+   ],
+   "art": {
+    "hero": "art/robinsons-requiem/hero.jpg"
+   },
+   "sources": {
+    "hero": "steamgriddb:5307033"
+   }
+  },
+  {
+   "id": "saucer-wars",
+   "title": "Saucer Wars",
+   "system": "jaguar_cd",
+   "releases": [
+    {
+     "name": "Saucer Wars (USA)",
+     "region": "USA",
+     "serials": []
+    }
+   ],
+   "art": {},
+   "sources": {}
+  },
+  {
+   "id": "simone",
+   "title": "Simone",
+   "system": "jaguar_cd",
+   "releases": [
+    {
+     "name": "Simone (USA)",
+     "region": "USA",
+     "serials": []
+    }
+   ],
+   "art": {},
+   "sources": {}
+  },
+  {
+   "id": "space-ace",
+   "title": "Space Ace",
+   "system": "jaguar_cd",
+   "releases": [
+    {
+     "name": "Space Ace (USA)",
+     "region": "USA",
+     "serials": []
+    }
+   ],
+   "art": {
+    "boxart": "art/space-ace/boxart.jpg",
+    "gameimage": "art/space-ace/gameimage.png",
+    "hero": "art/space-ace/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:5267",
+    "boxart": "thegamesdb:5267",
+    "gameimage": "libretro-thumbnails:Space Ace (USA)",
+    "hero": "steamgriddb:2741"
+   },
+   "year": 1996,
+   "developer": "ReadySoft Incorporated",
+   "publisher": "ReadySoft Incorporated",
+   "genres": [
+    "Action"
+   ],
+   "players": 1,
+   "rating": "E - Everyone",
+   "description": "The evil Commander Borf has kidnapped Ace's girlfriend, the beautiful Kimberly, and is plotting to enslave Earth using his dreaded \"Infanto Ray\", a weapon that changes everyone it blasts into a helpless baby. Armed with only a laser gun, Ace must find and destroy the Infanto Ray, rescue Kimberly and save Earth. All in a day's work for a superhero, right? Featuring full screen animation and crisp, powerful sound from the original laser disc arcade classic, Space Ace delivers arcade action at its most addictive!\r\n\r\nSpace Ace is something like an interactive cartoon. You don't control each and every action of your character, but you control his reactions to the events taking place around him. As you watch each of the more than 40 animated sequences play out, you must decide in which direction Ace should go and when. You must choose at what points he should wield his laser staff and fire his laser gun, and when he should jump, duck, or run."
+  },
+  {
+   "id": "varunas-forces-introduction",
+   "title": "Varuna's Forces (Introduction)",
+   "system": "jaguar_cd",
+   "releases": [
+    {
+     "name": "Varuna's Forces (USA) (Disc 1) (Introduction)",
+     "region": "USA",
+     "serials": []
+    }
+   ],
+   "art": {},
+   "sources": {}
+  },
+  {
+   "id": "varunas-forces-team-bios-interviews-station-recon-demo",
+   "title": "Varuna's Forces (Team Bio's, Interviews & Station Recon Demo)",
+   "system": "jaguar_cd",
+   "releases": [
+    {
+     "name": "Varuna's Forces (USA) (Disc 2) (Team Bio's, Interviews & Station Recon Demo)",
+     "region": "USA",
+     "serials": []
+    }
+   ],
+   "art": {},
+   "sources": {}
+  },
+  {
+   "id": "vid-grid",
+   "title": "Vid Grid",
+   "system": "jaguar_cd",
+   "releases": [
+    {
+     "name": "Vid Grid (USA)",
+     "region": "USA",
+     "serials": [
+      "J9078E"
+     ]
+    },
+    {
+     "name": "Vid Grid (USA) (Rev 1)",
+     "region": "USA",
+     "serials": [
+      "J9078E"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/vid-grid/boxart.jpg",
+    "gameimage": "art/vid-grid/gameimage.png"
+   },
+   "sources": {
+    "information": "thegamesdb:61120",
+    "boxart": "thegamesdb:61120",
+    "gameimage": "libretro-thumbnails:Vid Grid (USA)"
+   },
+   "year": 1995,
+   "developer": "High Voltage Software",
+   "publisher": "Atari, Inc.",
+   "genres": [
+    "Puzzle",
+    "Music"
+   ],
+   "players": 1,
+   "rating": "E - Everyone",
+   "description": "Vid Grid is a tile-matching full motion video puzzle game originally developed and published by Jasmine Multimedia Publishing for Windows in 1994. It was later ported to the Atari Jaguar CD by High Voltage Software in 1995, where it was included alongside with Blue Lightning as one of the pack-in games for the peripheral when it launched."
+  },
+  {
+   "id": "world-tour-racing",
+   "title": "World Tour Racing",
+   "system": "jaguar_cd",
+   "releases": [
+    {
+     "name": "World Tour Racing (USA)",
+     "region": "USA",
+     "serials": []
+    }
+   ],
+   "art": {
+    "boxart": "art/world-tour-racing/boxart.jpg",
+    "gameimage": "art/world-tour-racing/gameimage.png"
+   },
+   "sources": {
+    "information": "thegamesdb:5268",
+    "boxart": "thegamesdb:5268",
+    "gameimage": "libretro-thumbnails:World Tour Racing (USA)"
+   },
+   "year": 1997,
+   "developer": "Teque London",
+   "publisher": "Telegames, Inc.",
+   "genres": [
+    "Racing"
+   ],
+   "players": 2,
+   "rating": null,
+   "description": "World Tour Racing was the first racer available for the Atari Jaguar CD. Earlier cartridge games, like Super Burnout and Checkered Flag were received with mixed reviews, which created some excitement for the release of WTR. Gameplay includes customizable cars, seven different racing views, and surprisingly intelligent AI. World Tour Racing also features a damage system -- too many mid-race collisions will force drivers to the pits."
+  },
+  {
+   "id": "world-tour-racing-songbird",
+   "title": "World Tour Racing (Songbird)",
+   "system": "jaguar_cd",
+   "releases": [
+    {
+     "name": "World Tour Racing (USA) (Songbird)",
+     "region": "USA",
+     "serials": [
+      "JA152"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/world-tour-racing-songbird/boxart.jpg",
+    "gameimage": "art/world-tour-racing-songbird/gameimage.png"
+   },
+   "sources": {
+    "information": "thegamesdb:5268",
+    "boxart": "thegamesdb:5268",
+    "gameimage": "libretro-thumbnails:World Tour Racing (USA) (Songbird)"
+   },
+   "year": 1997,
+   "developer": "Teque London",
+   "publisher": "Telegames, Inc.",
+   "genres": [
+    "Racing"
+   ],
+   "players": 2,
+   "rating": null,
+   "description": "World Tour Racing was the first racer available for the Atari Jaguar CD. Earlier cartridge games, like Super Burnout and Checkered Flag were received with mixed reviews, which created some excitement for the release of WTR. Gameplay includes customizable cars, seven different racing views, and surprisingly intelligent AI. World Tour Racing also features a damage system -- too many mid-race collisions will force drivers to the pits."
+  }
+ ]
+}

@@ -168,17 +168,18 @@ class SecondaryScreens:
         elif section=="windows":self._windows_settings()
         else:
             from . import __version__
-            self.panel(X,218,W,110,PANEL,3)
-            self.display(X+22,234,"REDUX",33,WHITE);self.text(X+24,280,f"VERSION {__version__}",12,ACCENT,"bold")
-            self.text(R-23,252,"WINDOWS",11,MUTED,"bold",anchor="ne")
+            self.panel(X,218,W,90,PANEL,3)
+            self.display(X+22,230,"REDUX",33,WHITE);self.text(X+24,276,f"VERSION {__version__}",12,ACCENT,"bold")
+            self.text(R-23,244,"WINDOWS",11,MUTED,"bold",anchor="ne")
             facts=[("Collection",f"{len(self.all_games)} games"),("Library folder",str(self.library.root)),
                    ("Firmware (BIOS) folder",str(self.firmware_directory())),("Media","Discs, game cards and optical drives"),
                    ("Connection","Local library · no account required")]
             for index,(label,value) in enumerate(facts):
-                y=352+index*44;self.text(X,y,label,14,MUTED);self.text(R,y,self.fit_text(value,640,14),14,WHITE,anchor="ne")
-                if index<len(facts)-1:self.rect(X,y+31,W,1,LINE)
+                y=326+index*38;self.text(X,y,label,14,MUTED);self.text(R,y,self.fit_text(value,640,14),14,WHITE,anchor="ne")
+                if index<len(facts)-1:self.rect(X,y+29,W,1,LINE)
+            self._setting_row("settings:updates","Updates",self.updates_row_detail(),522,self.updates_menu,icon="info")
             fullscreen=bool(self.root.attributes("-fullscreen"))
-            self._setting_row("settings:fullscreen","Fullscreen","ON · A switches to windowed mode" if fullscreen else "OFF · A fills the display",584,self.fullscreen,icon="systems",toggle=fullscreen)
+            self._setting_row("settings:fullscreen","Fullscreen","ON · A switches to windowed mode" if fullscreen else "OFF · A fills the display",604,self.fullscreen,icon="systems",toggle=fullscreen)
 
     def _collections(self):
         self._secondary_heading("Made for your collection","Playlists","Keep great games together.")

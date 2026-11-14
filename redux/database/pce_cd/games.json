@@ -1,0 +1,1989 @@
+{
+ "system": "pce_cd",
+ "label": "PC Engine CD",
+ "version": 1,
+ "scope": "North American releases, plus games kept by hand",
+ "generated": "2026-11-14",
+ "catalog": "Redump via libretro-database (2026.10.07)",
+ "art_sources": [
+  "libretro-thumbnails",
+  "thegamesdb",
+  "steamgriddb"
+ ],
+ "games": [
+  {
+   "id": "beyond-shadowgate",
+   "title": "Beyond Shadowgate",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Beyond Shadowgate (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1048"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/beyond-shadowgate/boxart.jpg",
+    "gameimage": "art/beyond-shadowgate/gameimage.png",
+    "hero": "art/beyond-shadowgate/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:5656",
+    "boxart": "libretro-thumbnails:Beyond Shadowgate (USA)",
+    "gameimage": "libretro-thumbnails:Beyond Shadowgate (USA)",
+    "hero": "steamgriddb:5349707"
+   },
+   "year": 1993,
+   "developer": "ICOM Simulations, Inc.",
+   "publisher": "Turbo Technologies, Inc.",
+   "genres": [
+    "Adventure"
+   ],
+   "players": 1,
+   "rating": null,
+   "description": "As the last descendant in the \"Line of Kings\", Prince Erik is summoned home to regain his rightful place on his father's throne. But alas, Prince Erik is accused of his father's murder by the evil Royal Advisor Belezaar, and is thrown into the dungeon to be executed at dawn. Your mission and destiny are intertwined. Escape the dungeon and start your long journey toward the land deep within Castle Shadowgate. Your quest is to free the kingdom from the evil grips of the Warlock Lord. You will need to make good use of all the resources you can find throughout your journey. Evil abounds, and creatures great and small will try to defeat you! Use the good that comes of it because the Legend of Shadowgate rests in your hands!"
+  },
+  {
+   "id": "bikini-girls",
+   "title": "Bikini Girls",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Bikini Girls (USA)",
+     "region": "USA",
+     "serials": []
+    }
+   ],
+   "art": {
+    "gameimage": "art/bikini-girls/gameimage.png"
+   },
+   "sources": {
+    "gameimage": "libretro-thumbnails:Bikini Girls (USA)"
+   }
+  },
+  {
+   "id": "bonk-iii-bonks-big-adventure",
+   "title": "Bonk III - Bonk's Big Adventure",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Bonk III - Bonk's Big Adventure (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1052"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/bonk-iii-bonks-big-adventure/boxart.jpg",
+    "gameimage": "art/bonk-iii-bonks-big-adventure/gameimage.png",
+    "hero": "art/bonk-iii-bonks-big-adventure/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:13876",
+    "boxart": "libretro-thumbnails:Bonk III - Bonk's Big Adventure (USA)",
+    "gameimage": "libretro-thumbnails:Bonk III - Bonk's Big Adventure (USA)",
+    "hero": "steamgriddb:5256382"
+   },
+   "year": 1994,
+   "developer": null,
+   "publisher": null,
+   "genres": [
+    "Platform"
+   ],
+   "players": 2,
+   "rating": null,
+   "description": "Aaagh! What's that Evil King drool doing back in the Dinosaur Kingdom?! Didn't Bonk get rid of him last time? Guess not, huh? Now it's up to our skull-splitting, head-butting, rock-smashing, monster-bashing prehistoric hero Bonk to put an end to Drool's dastardly deeds once and for all! Watch Bonk grown into huge fire-breathing Bonk or shrink into the Mini-Size Bonk and take on tons of cool new enemies like RocketMan, Robo Turtle and Crazy Lady. Or how about smashing up a few Booga Boogas or Snippies along the way. It's the ultimate bash-o-rama!"
+  },
+  {
+   "id": "buster-bros",
+   "title": "Buster Bros.",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Buster Bros. (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1031"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/buster-bros/boxart.jpg",
+    "gameimage": "art/buster-bros/gameimage.png",
+    "hero": "art/buster-bros/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:9987",
+    "boxart": "libretro-thumbnails:Buster Bros. (USA)",
+    "gameimage": "libretro-thumbnails:Buster Bros. (USA)",
+    "hero": "steamgriddb:36022"
+   },
+   "year": 1993,
+   "developer": "Hudson Entertainment, Inc.",
+   "publisher": "Hudson Entertainment, Inc.",
+   "genres": [
+    "Action",
+    "Platform"
+   ],
+   "players": 2,
+   "rating": "Not Rated",
+   "description": "Your goal is to destroy the balloons which bounce around the playfield. To accomplish this, you can shoot hooks which travel upwards, and blow up any balloon they touch. Depending on their size, they either split on two smaller ones, or evaporate if they're at their minimum size. Apart from balloons, some levels also have barriers that have to be destroyed with your hooks, since they often block your access to balloons. There are also some barriers which cannot ever be destroyed. Your character has the ability to climb ladders, but cannot jump."
+  },
+  {
+   "id": "camp-california",
+   "title": "Camp California",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Camp California (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1013"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/camp-california/boxart.jpg",
+    "gameimage": "art/camp-california/gameimage.png"
+   },
+   "sources": {
+    "information": "thegamesdb:26651",
+    "boxart": "libretro-thumbnails:Camp California (USA)",
+    "gameimage": "libretro-thumbnails:Camp California (USA)"
+   },
+   "year": 1993,
+   "developer": "ICOM Simulations, Inc.",
+   "publisher": "Turbo Technologies, Inc.",
+   "genres": [
+    "Platform"
+   ],
+   "players": 1,
+   "rating": "Not Rated",
+   "description": "Byron the surfing bear must rescue his lil' bro and their three friends and stop a crew of rats from destroying their beach and preventing a big rock n' roll concert. Featuring music from the Beach Boys, this radical adventure is cleans up the streets and hits the beach!"
+  },
+  {
+   "id": "cosmic-fantasy-2",
+   "title": "Cosmic Fantasy 2",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Cosmic Fantasy 2 (USA)",
+     "region": "USA",
+     "serials": [
+      "WTG990301"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/cosmic-fantasy-2/boxart.jpg",
+    "gameimage": "art/cosmic-fantasy-2/gameimage.png",
+    "hero": "art/cosmic-fantasy-2/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:35689",
+    "boxart": "libretro-thumbnails:Cosmic Fantasy 2 (USA)",
+    "gameimage": "libretro-thumbnails:Cosmic Fantasy 2 (USA)",
+    "hero": "steamgriddb:5325783"
+   },
+   "year": 1992,
+   "developer": "Telenet Japan",
+   "publisher": "Working Designs",
+   "genres": [
+    "Role-Playing"
+   ],
+   "players": 1,
+   "rating": "Not Rated",
+   "description": "Turn your imagination over to a Cosmic Fantasy of epic proportions! Laura has been kidnapped, and you must reach her before it's too late! Cut a swath of destruction through the throng of monsters blocking the path to Galam's hideout to save her. Along the way, make friends, solve puzzles, and learn magic while incing your way toward a confrontation that will shake the cosmos! Interactive fantasy role playing takes on a whole new dimension with the addition of animated intermissions that will get you involved in the story! And what's more, the true RPG-style combat interface will put you right in the action. What are you waiting for?"
+  },
+  {
+   "id": "dragon-slayer-the-legend-of-heroes",
+   "title": "Dragon Slayer - The Legend of Heroes",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Dragon Slayer - The Legend of Heroes (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1029"
+     ]
+    },
+    {
+     "name": "Dragon Slayer - The Legend of Heroes (Japan)",
+     "region": "Japan",
+     "serials": [
+      "HCD1020"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/dragon-slayer-the-legend-of-heroes/boxart.jpg",
+    "gameimage": "art/dragon-slayer-the-legend-of-heroes/gameimage.png",
+    "hero": "art/dragon-slayer-the-legend-of-heroes/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:5665",
+    "boxart": "libretro-thumbnails:Dragon Slayer - The Legend of Heroes (USA)",
+    "gameimage": "libretro-thumbnails:Dragon Slayer - The Legend of Heroes (USA)",
+    "hero": "steamgriddb:5253694"
+   },
+   "year": 1991,
+   "developer": "Nihon Falcom Corp.",
+   "publisher": "Turbo Technologies, Inc.",
+   "genres": [
+    "Role-Playing"
+   ],
+   "players": 1,
+   "rating": null,
+   "description": "In this epic role-playing game, you must guide Prince Logan all accross the beautiful and dngerious world of Isrenasa in the quest to regain his throne. This game features a huge world to explore and many companions to join you on your journey. This game features one of the largest quests and most advanced interface of any role-playing game for the TurboDuo system."
+  },
+  {
+   "id": "dungeon-explorer-ii",
+   "title": "Dungeon Explorer II",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Dungeon Explorer II (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1034"
+     ]
+    },
+    {
+     "name": "Dungeon Explorer II (Japan)",
+     "region": "Japan",
+     "serials": [
+      "HCD3034"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/dungeon-explorer-ii/boxart.jpg",
+    "gameimage": "art/dungeon-explorer-ii/gameimage.png",
+    "hero": "art/dungeon-explorer-ii/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:39306",
+    "boxart": "libretro-thumbnails:Dungeon Explorer II (USA)",
+    "gameimage": "libretro-thumbnails:Dungeon Explorer II (USA)",
+    "hero": "steamgriddb:5252907"
+   },
+   "year": 1993,
+   "developer": null,
+   "publisher": null,
+   "genres": [
+    "Action",
+    "Role-Playing"
+   ],
+   "players": 4,
+   "rating": "Not Rated",
+   "description": "This CD sequel to Dungeon Explorer plays exactly the same as the first game. You chose your character from a variety of fantasy stereotypes and set forth in a Gauntlet-esque adventure. The CD format allows a greater quantity and variety of levels to compliment the storyline, with new areas and characters becoming open to you as you progress."
+  },
+  {
+   "id": "dungeon-master-therons-quest",
+   "title": "Dungeon Master - Theron's Quest",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Dungeon Master - Theron's Quest (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1041"
+     ]
+    },
+    {
+     "name": "Dungeon Master - Theron's Quest (Japan)",
+     "region": "Japan",
+     "serials": [
+      "JCCD2010"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/dungeon-master-therons-quest/boxart.jpg",
+    "gameimage": "art/dungeon-master-therons-quest/gameimage.png",
+    "hero": "art/dungeon-master-therons-quest/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:9990",
+    "boxart": "libretro-thumbnails:Dungeon Master - Theron's Quest (USA)",
+    "gameimage": "libretro-thumbnails:Dungeon Master - Theron's Quest (USA)",
+    "hero": "steamgriddb:5442595"
+   },
+   "year": 1993,
+   "developer": "Victor Entertainment",
+   "publisher": "Turbo Technologies, Inc.",
+   "genres": [
+    "Role-Playing"
+   ],
+   "players": 1,
+   "rating": null,
+   "description": "Terrifyingly brutal beasts! Monstrous mazes! Treacherous pits of evil! The adventure of a lifetime is here....Theron's Quest!!\r\n\r\nThe Monastery at Ya-Brodin has fallen to the Cult of Deaths and the Brotherhood of Enlightenment, the true keepers of Magic, have been slaughtered. The Seven Great Treasures now lie in the hands of foul beings who will stop at nothing to hold onto their massive powers. But Theron, with a courage beyond belief, has decided to seek out the Cult of Deaths and win back the Treasures. If he succeeds, he will become a High Lord. If not, the land will see eternal darkness."
+  },
+  {
+   "id": "exile",
+   "title": "Exile",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Exile (USA)",
+     "region": "USA",
+     "serials": [
+      "WTG990101"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/exile/boxart.jpg",
+    "gameimage": "art/exile/gameimage.png",
+    "hero": "art/exile/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:42984",
+    "boxart": "libretro-thumbnails:Exile (USA)",
+    "gameimage": "libretro-thumbnails:Exile (USA)",
+    "hero": "steamgriddb:5363170"
+   },
+   "year": 1991,
+   "developer": "Telenet Japan",
+   "publisher": "Working Designs",
+   "genres": [
+    "Action",
+    "Role-Playing"
+   ],
+   "players": 1,
+   "rating": null,
+   "description": "Become Sadler the desert warrior as he travels the known world in search of the precious Holimax!  Join forces with Rumi, Kindi, and Fakhyle to piece together the puzzle that will allow you to find the Holimax and use it to overthrow the ruthless Klispin Crusaders!  But keep your cool!  In this quest, you’ll have to jump through haunted forests, plan a jailbreak, slink thought creepy towers, and defeat terrifying monsters if you’re going to get anywhere!  Hurry!  There is only one Holimax, and the enemy forces are closing in!"
+  },
+  {
+   "id": "exile-wicked-phenomenon",
+   "title": "Exile - Wicked Phenomenon",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Exile - Wicked Phenomenon (USA)",
+     "region": "USA",
+     "serials": [
+      "WTG990102"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/exile-wicked-phenomenon/boxart.jpg",
+    "gameimage": "art/exile-wicked-phenomenon/gameimage.png",
+    "hero": "art/exile-wicked-phenomenon/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:37464",
+    "boxart": "libretro-thumbnails:Exile - Wicked Phenomenon (USA)",
+    "gameimage": "libretro-thumbnails:Exile - Wicked Phenomenon (USA)",
+    "hero": "steamgriddb:5363170"
+   },
+   "year": 1993,
+   "developer": "Alfa System, Telnet Japan",
+   "publisher": "Working Designs",
+   "genres": [
+    "Role-Playing"
+   ],
+   "players": 1,
+   "rating": null,
+   "description": "The Age of Chaos is upon the Chaltar world! The source of this chaos is rumored to be at the heart of an ancient tower. Join Sadler, Rumi, Kindi, and Fakhyle as they begin a new quest: To learn the secret of the ancient tower and stop the madness spreading over the land. Choose from five different characters as you hack, slash, and bash your way through foreign lands, putrid pyramids, and deadly dungeons while enjoying intense cinema sequences along the way. Will Sadler be able to unlock the secret of the ancient tower and stop the insanity that is spreading throughout the land? Only you can decide that as you guide Sadler through this heart-stopping Action/RPG!"
+  },
+  {
+   "id": "fantastic-night-dreams-cotton",
+   "title": "Fantastic Night Dreams - Cotton",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Fantastic Night Dreams - Cotton (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1038"
+     ]
+    },
+    {
+     "name": "Fantastic Night Dreams - Cotton (Japan) (En,Ja,Zh)",
+     "region": "Japan",
+     "serials": [
+      "HCD3043"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/fantastic-night-dreams-cotton/boxart.jpg",
+    "gameimage": "art/fantastic-night-dreams-cotton/gameimage.png",
+    "hero": "art/fantastic-night-dreams-cotton/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:9989",
+    "boxart": "libretro-thumbnails:Fantastic Night Dreams - Cotton (USA)",
+    "gameimage": "libretro-thumbnails:Fantastic Night Dreams - Cotton (USA)",
+    "hero": "steamgriddb:5252875"
+   },
+   "year": 1993,
+   "developer": "Hudson Entertainment, Inc.",
+   "publisher": "Success Corp.",
+   "genres": [
+    "Shooter"
+   ],
+   "players": 1,
+   "rating": null,
+   "description": "The young witch Cotton sets out on her magical broom on a quest to get her favorite candy. Fortunately for us her obsession gets her in the way of several world-threatening terrors that she must destroy in standard shooter fare."
+  },
+  {
+   "id": "fighting-street",
+   "title": "Fighting Street",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Fighting Street (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1001"
+     ]
+    },
+    {
+     "name": "Fighting Street (Japan) (Rev 4)",
+     "region": "Japan",
+     "serials": [
+      "HCD8002"
+     ]
+    },
+    {
+     "name": "Fighting Street (Japan) (Rev 5)",
+     "region": "Japan",
+     "serials": [
+      "HCD8002"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/fighting-street/boxart.jpg",
+    "gameimage": "art/fighting-street/gameimage.png",
+    "hero": "art/fighting-street/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:26639",
+    "boxart": "libretro-thumbnails:Fighting Street (USA)",
+    "gameimage": "libretro-thumbnails:Fighting Street (USA)",
+    "hero": "steamgriddb:5472990"
+   },
+   "year": 1988,
+   "developer": "Hudson Entertainment, Inc.",
+   "publisher": "NEC Home Electronics, Ltd.",
+   "genres": [
+    "Fighting"
+   ],
+   "players": 2,
+   "rating": null,
+   "description": "Deep inside you there lurks a warrior. Let him loose! And test him against the martial arts champions of 5 nations. Grit your teeth, pump up and take after Retsu and Geki from Japan. Most worthy opponents! But watch out for the baddest - Adon and Sagat, a couple of Thai's. Mike and Joe (USA), Birdi and Eagle (UK), Lee and Gen (China) all have their own special \"tricks.\" Be quick and strong, or be gone!"
+  },
+  {
+   "id": "final-zone-ii",
+   "title": "Final Zone II",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Final Zone II (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1008"
+     ]
+    },
+    {
+     "name": "Final Zone II (Japan)",
+     "region": "Japan",
+     "serials": [
+      "TJCD0006"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/final-zone-ii/boxart.jpg",
+    "gameimage": "art/final-zone-ii/gameimage.png"
+   },
+   "sources": {
+    "information": "thegamesdb:9993",
+    "boxart": "libretro-thumbnails:Final Zone II (USA)",
+    "gameimage": "libretro-thumbnails:Final Zone II (USA)"
+   },
+   "year": 1990,
+   "developer": "Telenet Japan",
+   "publisher": "NEC Home Electronics, Ltd.",
+   "genres": [
+    "Action"
+   ],
+   "players": 1,
+   "rating": null,
+   "description": "You swore bloody vengence when ZOD blew your satellite crew to shreds. Now it's payback time! Your New Age Power Suits turn each member of your elite force into a walking arsenal of destruction, each with it's own awesome fighting power. But you're just five against a renegade weapons society responsible for killing billions! Choose the fighter best armed to face ZOD's devastating forces in each level of combat as you fight battle after furious battle for the final zone!"
+  },
+  {
+   "id": "forgotten-worlds",
+   "title": "Forgotten Worlds",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Forgotten Worlds (USA) (En,Ja)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1030"
+     ]
+    },
+    {
+     "name": "Forgotten Worlds (Japan)",
+     "region": "Japan",
+     "serials": [
+      "NAPR-1025"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/forgotten-worlds/boxart.jpg",
+    "gameimage": "art/forgotten-worlds/gameimage.png",
+    "hero": "art/forgotten-worlds/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:41294",
+    "boxart": "libretro-thumbnails:Forgotten Worlds (USA)",
+    "gameimage": "libretro-thumbnails:Forgotten Worlds (USA)",
+    "hero": "steamgriddb:5273730"
+   },
+   "year": 1992,
+   "developer": "NEC",
+   "publisher": "NEC Home Electronics, Ltd.",
+   "genres": [
+    "Shooter"
+   ],
+   "players": 1,
+   "rating": "Not Rated",
+   "description": "The Turbografx-16 version of the arcade smash.\r\n\r\nIt was released as a Super CD-ROM² title which supported a specialized 3-button controller that NEC released only in Japan. An American version for the TurboGrafx 16 was released by Turbo Technologies Inc. as well. With the 3-button controller, the player can control their character as they would in the Mega Drive version, with two buttons to rotate the character and one to shoot. \r\n\r\nWith the standard TurboGrafx-16 controller, the Run button is used in the place of the third button to rotate the character to the left. The TurboGrafx-16 is one-player only, but allows the player to select between either of the two Unknown Soldiers at the start of the game (with their respective abilities from the arcade version retained)."
+  },
+  {
+   "id": "fx-unit-yuki-the-henshin-engine",
+   "title": "FX Unit Yuki - The Henshin Engine",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "FX Unit Yuki - The Henshin Engine (USA)",
+     "region": "USA",
+     "serials": []
+    }
+   ],
+   "art": {
+    "boxart": "art/fx-unit-yuki-the-henshin-engine/boxart.jpg",
+    "hero": "art/fx-unit-yuki-the-henshin-engine/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:55040",
+    "boxart": "thegamesdb:55040",
+    "hero": "steamgriddb:5264604"
+   },
+   "year": 2018,
+   "developer": "SaruPro",
+   "publisher": "SaruPro",
+   "genres": [
+    "Action",
+    "Shooter",
+    "Platform",
+    "Unofficial"
+   ],
+   "players": 1,
+   "rating": "Not Rated",
+   "description": "Take control of Yuki and set off on a digital journey of pixel proportions! Get Ready For FX-UNIT YUKI !!!\r\n\r\n8 levels of hardcore retro action with Power-Ups, Varying Stage Types and Multiple Endings accompanied by an Amazing Sound Design."
+  },
+  {
+   "id": "gate-of-thunder-bonks-adventure-bonks-revenge",
+   "title": "Gate of Thunder + Bonk's Adventure + Bonk's Revenge",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Gate of Thunder + Bonk's Adventure + Bonk's Revenge (USA)",
+     "region": "USA",
+     "serials": [
+      "HCD2008T"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/gate-of-thunder-bonks-adventure-bonks-revenge/boxart.jpg",
+    "gameimage": "art/gate-of-thunder-bonks-adventure-bonks-revenge/gameimage.png"
+   },
+   "sources": {
+    "information": "thegamesdb:100067",
+    "boxart": "libretro-thumbnails:Gate of Thunder + Bonk's Adventure + Bonk's Revenge (USA)",
+    "gameimage": "libretro-thumbnails:Gate of Thunder + Bonk's Adventure + Bonk's Revenge (USA)"
+   },
+   "year": 1992,
+   "developer": null,
+   "publisher": "NEC Technologies, Inc.",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Shooter"
+   ],
+   "players": 1,
+   "rating": "E - Everyone",
+   "description": "3-in-1 Gate of Thunder / Bonk's Adventure / Bonk's Revenge (TurboGrafx CD)"
+  },
+  {
+   "id": "godzilla",
+   "title": "Godzilla",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Godzilla (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1051"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/godzilla/boxart.jpg",
+    "gameimage": "art/godzilla/gameimage.png",
+    "hero": "art/godzilla/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:18848",
+    "boxart": "libretro-thumbnails:Godzilla (USA)",
+    "gameimage": "libretro-thumbnails:Godzilla (USA)",
+    "hero": "steamgriddb:38668"
+   },
+   "year": 1993,
+   "developer": "Alfa System",
+   "publisher": "Hudson Entertainment, Inc.",
+   "genres": [
+    "Fighting"
+   ],
+   "players": 2,
+   "rating": "E - Everyone",
+   "description": "The great Godzilla battles his famous arch-enemies in this one-on-one fight to the finish. It's a 16-beast brawl in Japan, and the master of mayhem himself is the main fighting force -- Godzilla is back, he's bad, and he's mad!"
+  },
+  {
+   "id": "hawiian-island-girls",
+   "title": "Hawiian Island Girls",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Hawiian Island Girls (USA)",
+     "region": "USA",
+     "serials": []
+    }
+   ],
+   "art": {
+    "gameimage": "art/hawiian-island-girls/gameimage.png"
+   },
+   "sources": {
+    "gameimage": "libretro-thumbnails:Hawiian Island Girls (USA)"
+   }
+  },
+  {
+   "id": "hypernova-blast",
+   "title": "Hypernova Blast",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Hypernova Blast (USA)",
+     "region": "USA",
+     "serials": [
+      "BTCD1403"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/hypernova-blast/boxart.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:82994",
+    "boxart": "thegamesdb:82994"
+   },
+   "year": 2014,
+   "developer": "MindRec",
+   "publisher": "MindRec",
+   "genres": [
+    "Shooter"
+   ],
+   "players": 5,
+   "rating": "Not Rated",
+   "description": null
+  },
+  {
+   "id": "implode",
+   "title": "Implode",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Implode (USA)",
+     "region": "USA",
+     "serials": [
+      "BTCD0201"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/implode/boxart.jpg",
+    "gameimage": "art/implode/gameimage.png"
+   },
+   "sources": {
+    "information": "thegamesdb:51571",
+    "boxart": "thegamesdb:51571",
+    "gameimage": "libretro-thumbnails:Implode (USA)"
+   },
+   "year": 2002,
+   "developer": "MindRec",
+   "publisher": "MindRec",
+   "genres": [
+    "Puzzle"
+   ],
+   "players": 1,
+   "rating": "Not Rated",
+   "description": "Implode is a homebrew puzzle game. It plays like a falling block puzzle in all respects, with the exception of the fact that the blocks appear from below instead of falling. All the blocks have the same shape and are only distinguished by their color. The player must selects groups of three or more identically colored blocks in order to make them disappear. The goal is to not let the blocks stack up and pass the upper border of the screen. Bombs would sometimes appear and clear out adjacent blocks if the player selects them. The game gradually advances to higher difficulty levels, with more colors and faster speed.\r\n\r\nAlso included on the CD are two games previously only released in downloadable emulation format: Crash and Humpball. The first is a single-screen overhead arcade racing game. Two cars race automatically on a maze-like screen in circular movement. Players must press directional buttons to switch between the tracks. The goal is to move over all the dots scattered in the stage while avoiding crashing into the other car.\r\n\r\nHumpball can be described as a cross between Pong and a volleyball game. Two hump-like creatures are positioning on either side of a pole, tossing a ball towards the opponent's side by moving to the sides and jumping. The goal is to make the ball touch the opponent's floor, which results in scoring a point. Power-ups that move the pole to left or right, change the speed of the ball, gravity rules, etc., appear randomly and are activated when touched by the ball."
+  },
+  {
+   "id": "insanity",
+   "title": "Insanity",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Insanity (USA)",
+     "region": "USA",
+     "serials": []
+    }
+   ],
+   "art": {
+    "boxart": "art/insanity/boxart.jpg",
+    "gameimage": "art/insanity/gameimage.png"
+   },
+   "sources": {
+    "information": "thegamesdb:64064",
+    "boxart": "thegamesdb:64064",
+    "gameimage": "thegamesdb:64064"
+   },
+   "year": 2009,
+   "developer": "Aetherbyte",
+   "publisher": "Aetherbyte Team",
+   "genres": [
+    "Action",
+    "Unofficial"
+   ],
+   "players": 1,
+   "rating": "E - Everyone",
+   "description": "You've been imprisoned by robots and their evil master. Now, in order to survive, you must traverse their maze of a space station. Be warned - the walls are electrified and the robots are programmed to do one thing: Destroy the humanoid!"
+  },
+  {
+   "id": "it-came-from-the-desert",
+   "title": "It Came from the Desert",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "It Came from the Desert (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1010"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/it-came-from-the-desert/boxart.jpg",
+    "gameimage": "art/it-came-from-the-desert/gameimage.png",
+    "hero": "art/it-came-from-the-desert/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:42985",
+    "boxart": "libretro-thumbnails:It Came from the Desert (USA)",
+    "gameimage": "libretro-thumbnails:It Came From The Desert (USA)",
+    "hero": "steamgriddb:5274793"
+   },
+   "year": 1991,
+   "developer": "Cinemaware",
+   "publisher": "Cinemaware",
+   "genres": [
+    "Action",
+    "Adventure"
+   ],
+   "players": 1,
+   "rating": null,
+   "description": "It Came from the Desert is a remake of the the original 1989 Amiga game of the same name, but with a vast amount of changes and improvements. The basic setting was kept identical. It is a mix of action and adventure elements, largely inspired from cult-horror B-Movies of the 50's and 60's, and the 1954 film Them in particular. The player plays the part of Dr. Greg Bradley, a geologist and the newest resident in town. Eager to satisfy his scientific mind, Bradley sets out to examine the crash-site of a mysterious meteor, but what he finds is not at all what he had been looking for."
+  },
+  {
+   "id": "j-b-harold-murder-club",
+   "title": "J. B. Harold Murder Club",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "J. B. Harold Murder Club (USA) (En,Ja)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1012"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/j-b-harold-murder-club/boxart.jpg",
+    "gameimage": "art/j-b-harold-murder-club/gameimage.png"
+   },
+   "sources": {
+    "information": "thegamesdb:9996",
+    "boxart": "libretro-thumbnails:J. B. Harold Murder Club (USA)",
+    "gameimage": "libretro-thumbnails:J. B. Harold Murder Club (USA)"
+   },
+   "year": 1991,
+   "developer": "Riverhill Soft Inc.",
+   "publisher": "Hudson Entertainment, Inc.",
+   "genres": [
+    "Adventure"
+   ],
+   "players": 1,
+   "rating": null,
+   "description": "A horrible murder has taken place in the sleepy little town of Liberty. Bill Robbins, a wealthy man known for his wild womanizing ways is the victim and, list of possible suspects keeps growing. As J.B. Harold you must figure out the who, what, where and why of the case. To solve the mystery you will need to travel to various locations, interview people and search for clues.\r\n\r\nThe game is laid out over a grid map that displays various locations, though other than that, the game is mainly presented in the form of still photos."
+  },
+  {
+   "id": "jack-nicklaus-turbo-golf",
+   "title": "Jack Nicklaus Turbo Golf",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Jack Nicklaus Turbo Golf (USA)",
+     "region": "USA",
+     "serials": [
+      "ATGXCDJTTC"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/jack-nicklaus-turbo-golf/boxart.jpg",
+    "gameimage": "art/jack-nicklaus-turbo-golf/gameimage.png"
+   },
+   "sources": {
+    "information": "thegamesdb:42986",
+    "boxart": "libretro-thumbnails:Jack Nicklaus Turbo Golf (USA)",
+    "gameimage": "libretro-thumbnails:Jack Nicklaus Turbo Golf (USA)"
+   },
+   "year": 1990,
+   "developer": "Victor Musical Industries",
+   "publisher": "Accolade, Inc.",
+   "genres": [
+    "Sports"
+   ],
+   "players": 1,
+   "rating": "Not Rated",
+   "description": "\"I designed my golf game with one goal in mind-to create the most realistic simulation of championship golf in the world. Tee to green, it offers the most breathtaking scenery available. And I've made sure that there's variety and challenge built into every hole. It's my kind of golf-uncompromising. And I know you'll enjoy it as much as I do.\""
+  },
+  {
+   "id": "jessie-jaeger-in-cleopatras-curse",
+   "title": "Jessie Jaeger in Cleopatra's Curse",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Jessie Jaeger in Cleopatra's Curse (World)",
+     "region": "World",
+     "serials": []
+    }
+   ],
+   "art": {
+    "boxart": "art/jessie-jaeger-in-cleopatras-curse/boxart.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:115224",
+    "boxart": "thegamesdb:115224"
+   },
+   "year": 2020,
+   "developer": null,
+   "publisher": "Bold Games",
+   "genres": [
+    "Action",
+    "Platform"
+   ],
+   "players": 1,
+   "rating": "E - Everyone",
+   "description": "Jessie Jaeger in Cleopatra's Curse is a new metroidvania-style game for the Sega Genesis, Turbografx-16 and Turbografx Super CD! Explore Cleopatra's Crypt to find the pieces of her sarcophagus, and save your grandpa from her curse! It features: 480 rooms to explore! 6 Unique boss fights! Two different endings! Three different weapons! Many items to collect and secrets to find!"
+  },
+  {
+   "id": "jim-power-in-mutant-planet",
+   "title": "Jim Power in Mutant Planet",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Jim Power in Mutant Planet (USA)",
+     "region": "USA",
+     "serials": []
+    },
+    {
+     "name": "Jim Power in Mutant Planet (Japan)",
+     "region": "Japan",
+     "serials": [
+      "MWCD2006"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/jim-power-in-mutant-planet/boxart.jpg",
+    "gameimage": "art/jim-power-in-mutant-planet/gameimage.png",
+    "hero": "art/jim-power-in-mutant-planet/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:26640",
+    "boxart": "libretro-thumbnails:Jim Power in Mutant Planet (Japan)",
+    "gameimage": "libretro-thumbnails:Jim Power - In Mutant Planet (Japan)",
+    "hero": "steamgriddb:35802"
+   },
+   "year": 1993,
+   "developer": "Loriciel",
+   "publisher": "Micro World",
+   "genres": [
+    "Action"
+   ],
+   "players": 1,
+   "rating": "Not Rated",
+   "description": "Jim Power is the chief of the Special Warfare Unit in charge of the President's security. He is an unrivalled sharpshooter and is gifted with an incredible aptitude for detective work. Jim, urgently implored, accepts the mission of his life - to rescue the kidnapped President's daughter from the Mutant Planet, a terrifying world infested with evil beings. If you become Jim Power, you will face a challenge you never dreamed of, with the lives of millions of people in your hands. Combat evil, fight for justice and defy the Mutant Planet!"
+  },
+  {
+   "id": "john-madden-duo-cd-football",
+   "title": "John Madden Duo CD Football",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "John Madden Duo CD Football (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1045"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/john-madden-duo-cd-football/boxart.jpg",
+    "gameimage": "art/john-madden-duo-cd-football/gameimage.png"
+   },
+   "sources": {
+    "information": "thegamesdb:9997",
+    "boxart": "libretro-thumbnails:John Madden Duo CD Football (USA)",
+    "gameimage": "libretro-thumbnails:John Madden Duo CD Football (USA)"
+   },
+   "year": 1993,
+   "developer": null,
+   "publisher": "Hudson Entertainment, Inc.",
+   "genres": [
+    "Sports"
+   ],
+   "players": null,
+   "rating": null,
+   "description": "Huddle up sports fans. John Madden comes alive with Duo CD Football.\r\n\r\nTTI gives you the latest in full-motion video technology, so real you won't need to watch the pros again. Get right into the action with shoe-string catches, side stepping jukes and high-flying tackles. All your favorite Madden action is included plus so much more with the miracle media of CD."
+  },
+  {
+   "id": "last-alert",
+   "title": "Last Alert",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Last Alert (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1007"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/last-alert/boxart.jpg",
+    "gameimage": "art/last-alert/gameimage.png"
+   },
+   "sources": {
+    "information": "thegamesdb:9998",
+    "boxart": "libretro-thumbnails:Last Alert (USA)",
+    "gameimage": "libretro-thumbnails:Last Alert (USA)"
+   },
+   "year": 1990,
+   "developer": "Telenet Japan",
+   "publisher": "NEC Interchannel, Ltd.",
+   "genres": [
+    "Action"
+   ],
+   "players": 1,
+   "rating": "Not Rated",
+   "description": "Only a relentless commando assault can stop this international arms syndicate's threat to humanity. That's why we picked you. You'll need rocket launchers. hyper pineapples, and super napalm to blast through their high tech fortress... past tank brigades, bazookas, and then far into space. Confront the renegade military lunatic sworn to your destruction. Listen up for your orders, Commando. You'll be facing one suicide mission after another along the way. It'll make a great story... if you live to tell it!"
+  },
+  {
+   "id": "loom",
+   "title": "Loom",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Loom (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1017"
+     ]
+    },
+    {
+     "name": "Loom (Japan)",
+     "region": "Japan",
+     "serials": [
+      "JCCD2009"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/loom/boxart.jpg",
+    "gameimage": "art/loom/gameimage.png",
+    "hero": "art/loom/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:9999",
+    "boxart": "libretro-thumbnails:Loom (USA)",
+    "gameimage": "libretro-thumbnails:Loom (USA)",
+    "hero": "steamgriddb:5474"
+   },
+   "year": 1992,
+   "developer": "Realtime Associates, Inc.",
+   "publisher": "Lucasfilm Games LLC",
+   "genres": [
+    "Adventure"
+   ],
+   "players": 1,
+   "rating": null,
+   "description": "Loom is based on a serious and complex fantasy story. With its experimental interface, it eschewed the traditional paradigm of graphical adventures, where puzzles usually involve interactions between the game character, the environment, and multiple items the character can take into their possession. Loom's game-play centers instead around magical four-note tunes (drafts) that the protagonist, Bobbin Threadbare, can play on his distaff. Each draft is a spell that has an effect of a certain type, such as \"Opening\" or \"Night Vision\". Drafts can be learned by observing an object that possess the qualities of the relevant draft; for example, examining a blade while it is being sharpened gives the player the \"Sharpening\" draft."
+  },
+  {
+   "id": "lords-of-the-rising-sun",
+   "title": "Lords of the Rising Sun",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Lords of the Rising Sun (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1014"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/lords-of-the-rising-sun/boxart.jpg",
+    "gameimage": "art/lords-of-the-rising-sun/gameimage.png",
+    "hero": "art/lords-of-the-rising-sun/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:42987",
+    "boxart": "libretro-thumbnails:Lords of the Rising Sun (USA)",
+    "gameimage": "libretro-thumbnails:Lords of the Rising Sun (USA)",
+    "hero": "steamgriddb:5417274"
+   },
+   "year": 1992,
+   "developer": "Cinemaware",
+   "publisher": "Cinemaware",
+   "genres": [
+    "Strategy"
+   ],
+   "players": 1,
+   "rating": "Not Rated",
+   "description": "Combat the epic Gempei war of ancient Japan in a game that offers a unique blend of military strategy, engaging action sequences and role-playing games. In a heroic quest to become a Shogun and redeem the honor of the family, players must command vast armies of samurai warriors, defend against ninja assassins, besiege powerful strongholds, negotiate alliances and face enemies in personal combat."
+  },
+  {
+   "id": "lords-of-thunder",
+   "title": "Lords of Thunder",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Lords of Thunder (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD-1033"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/lords-of-thunder/boxart.jpg",
+    "gameimage": "art/lords-of-thunder/gameimage.png",
+    "hero": "art/lords-of-thunder/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:10001",
+    "boxart": "libretro-thumbnails:Lords of Thunder (USA)",
+    "gameimage": "libretro-thumbnails:Lords of Thunder (USA)",
+    "hero": "steamgriddb:5252905"
+   },
+   "year": 1993,
+   "developer": "Red Entertainment Corporation",
+   "publisher": "Turbo Technologies, Inc.",
+   "genres": [
+    "Shooter"
+   ],
+   "players": 1,
+   "rating": "E - Everyone",
+   "description": "In the once peaceful land of Mistral, legend holds of a brave knight named Drak who has sealed an evil god named Deoric beneath the six continents of the land. However, peace never lasts. The Garuda Empire has invaded the lands of Mistral, and the six Dark Generals, led by Sornbul, have conquered the continents. Sornbul's ambition is nothing less than to resurrect Deoric and plunge the land into chaos.\r\n\r\nDuran, descendant of Drak, is the only one who can stop the Garuda Empire's mad plan, and with the power of Drak's mystic armors, he heads off to stop Sornbul at any cost."
+  },
+  {
+   "id": "magical-dinosaur-tour",
+   "title": "Magical Dinosaur Tour",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Magical Dinosaur Tour (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1005"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/magical-dinosaur-tour/boxart.jpg",
+    "gameimage": "art/magical-dinosaur-tour/gameimage.png"
+   },
+   "sources": {
+    "information": "thegamesdb:34132",
+    "boxart": "libretro-thumbnails:Magical Dinosaur Tour (USA)",
+    "gameimage": "libretro-thumbnails:Magical Dinosaur Tour (USA)"
+   },
+   "year": 1990,
+   "developer": "Victor Entertainment",
+   "publisher": "NEC Home Electronics, Ltd.",
+   "genres": [
+    "Education"
+   ],
+   "players": 1,
+   "rating": "E - Everyone",
+   "description": "You're exploring a primeval forest over 100 million years ago. Suddenly, the mighty Tyrannosaurus appears! With a push of a button, you bring him to life! The magic of TurboGrafx-CD brings the exciting world of dinosaurs into your home. Move through 20 prehistoric panoramas and watch creatures spring into action as they search for food and struggle for survival. Sort through hundreds of the mighty beasts and see what may have led to their ultimate extinction."
+  },
+  {
+   "id": "meteor-blaster-dx",
+   "title": "Meteor Blaster DX",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Meteor Blaster DX (USA)",
+     "region": "USA",
+     "serials": [
+      "BTCD0402"
+     ]
+    },
+    {
+     "name": "Meteor Blaster DX (USA) (Rerelease)",
+     "region": "USA",
+     "serials": [
+      "BTCD0402"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/meteor-blaster-dx/boxart.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:62088",
+    "boxart": "thegamesdb:62088"
+   },
+   "year": 2003,
+   "developer": "MindRec",
+   "publisher": "MindRec",
+   "genres": [
+    "Shooter"
+   ],
+   "players": 1,
+   "rating": "Not Rated",
+   "description": "Asteroids style shooting game available as a free ROM, or as Meteor Blaster DX, an enhanced CD-Rom version from MindRec."
+  },
+  {
+   "id": "might-and-magic-iii-isles-of-terra",
+   "title": "Might and Magic III - Isles of Terra",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Might and Magic III - Isles of Terra (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1047"
+     ]
+    },
+    {
+     "name": "Might and Magic III - Isles of Terra (Japan)",
+     "region": "Japan",
+     "serials": [
+      "HCD3050"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/might-and-magic-iii-isles-of-terra/boxart.jpg",
+    "gameimage": "art/might-and-magic-iii-isles-of-terra/gameimage.png",
+    "hero": "art/might-and-magic-iii-isles-of-terra/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:10002",
+    "boxart": "libretro-thumbnails:Might and Magic III - Isles of Terra (USA)",
+    "gameimage": "libretro-thumbnails:Might and Magic III - Isles of Terra (USA)",
+    "hero": "steamgriddb:35110"
+   },
+   "year": 1993,
+   "developer": "New World Computing, Inc.",
+   "publisher": "Hudson Entertainment, Inc.",
+   "genres": [
+    "Role-Playing"
+   ],
+   "players": 1,
+   "rating": null,
+   "description": "Emerging from the depths of the nebulous void, there came four lords. To each lord, a dominion: fire, water, air, and earth. But each lord lusted for more - to be the ultimate ruler of the void. The four lords of the elements descended into a hideous conflict that unleashed a raging storm."
+  },
+  {
+   "id": "monster-lair",
+   "title": "Monster Lair",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Monster Lair (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1003"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/monster-lair/boxart.jpg",
+    "gameimage": "art/monster-lair/gameimage.png"
+   },
+   "sources": {
+    "information": "thegamesdb:108365",
+    "boxart": "libretro-thumbnails:Monster Lair (USA)",
+    "gameimage": "libretro-thumbnails:Monster Lair (USA)"
+   },
+   "year": 1989,
+   "developer": "Alfa System",
+   "publisher": "NEC Home Electronics, Ltd.",
+   "genres": [
+    "Action",
+    "Shooter",
+    "Platform"
+   ],
+   "players": 1,
+   "rating": "E - Everyone",
+   "description": "The once quiet town of Xenobia is under attack by fierce and gruesome monsters, and no one can stop them. As Leo, it is up to you to save Xenobia and the world from danger as you navigate through a series of worlds in a race against time to reach your goal. Battle your foes with your sword and jumping abilities. Look out for power-ups that will increase your health and add to the amount of time you have to complete your missions."
+  },
+  {
+   "id": "mysterious-song",
+   "title": "Mysterious Song",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Mysterious Song (USA) (En,Fr,Es)",
+     "region": "USA",
+     "serials": [
+      "FCD0001"
+     ]
+    },
+    {
+     "name": "Mysterious Song (USA) (En,Fr,Es) (Rerelease)",
+     "region": "USA",
+     "serials": [
+      "FCD0001"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/mysterious-song/boxart.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:55927",
+    "boxart": "thegamesdb:55927"
+   },
+   "year": 2012,
+   "developer": null,
+   "publisher": null,
+   "genres": [
+    "Role-Playing",
+    "Unofficial"
+   ],
+   "players": 1,
+   "rating": "E10+ - Everyone 10+",
+   "description": "Mysterious Song is a TurboGrafx CD homebrew RPG developed by Frozen Utopia which was given a physical release on August 27, 2012. The game is a remake of a freeware RPG that was programmed in QuickBasic by Darkness Ethereal for the PC in 1999. The remake features new graphics, cut-scenes with voiced dialogue, and CD quality music. Along with the improved version of the original game the remake of Mysterious Song also features an \"EX Game\" that introduces an alternative storyline as well as new enemies, areas, and items."
+  },
+  {
+   "id": "prince-of-persia",
+   "title": "Prince of Persia",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Prince of Persia (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1027"
+     ]
+    },
+    {
+     "name": "Prince of Persia (Japan)",
+     "region": "Japan",
+     "serials": [
+      "RHCD-1002"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/prince-of-persia/boxart.jpg",
+    "gameimage": "art/prince-of-persia/gameimage.png",
+    "hero": "art/prince-of-persia/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:10003",
+    "boxart": "libretro-thumbnails:Prince of Persia (USA)",
+    "gameimage": "libretro-thumbnails:Prince of Persia (USA)",
+    "hero": "steamgriddb:38972"
+   },
+   "year": 1991,
+   "developer": "Riverhill Soft Inc.",
+   "publisher": "Hudson Entertainment, Inc.",
+   "genres": [
+    "Adventure"
+   ],
+   "players": 1,
+   "rating": "E - Everyone",
+   "description": "The Final Count Down of Love and Justice.\r\n\r\nAwaiting enemies and constant attacks. Getting through traps here and here and more. The list of tasks continues. Will you be able to find your beloved princess within 60 minutes? Inshaallah-only God knows..."
+  },
+  {
+   "id": "pyramid-plunder",
+   "title": "Pyramid Plunder",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Pyramid Plunder (USA)",
+     "region": "USA",
+     "serials": [
+      "AB002"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/pyramid-plunder/boxart.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:64063",
+    "boxart": "thegamesdb:64063"
+   },
+   "year": 2013,
+   "developer": "Aetherbyte",
+   "publisher": "Aetherbyte Team",
+   "genres": [
+    "Action"
+   ],
+   "players": 1,
+   "rating": "E - Everyone",
+   "description": "Lootin’ Larry is on a quest to get rich from the pyramids of ancient Egypt. The creatures lurking within these pyramids are not too happy with Larry, and don’t intend to let their rare artifacts be stolen so easily! Will Larry succeed in plundering the pyramids of all of their valuables? Or will he become as lost as the civilizations that left these relics behind?"
+  },
+  {
+   "id": "revival-chase",
+   "title": "Revival Chase",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Revival Chase (USA) (En,Fr)",
+     "region": "USA",
+     "serials": [
+      "VOC3628"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/revival-chase/boxart.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:81503",
+    "boxart": "thegamesdb:81503"
+   },
+   "year": 2013,
+   "developer": "Revival",
+   "publisher": "Revival Studios",
+   "genres": [
+    "Action",
+    "Puzzle"
+   ],
+   "players": 5,
+   "rating": "Not Rated",
+   "description": "ReVIVAL CHASE is a Lock 'n Chase style game with 5-Player Turbo-Tap support PLUS two (2) additional SHMUP* shoot-em-up games: the new RT2A and the classic Ozma Wars!"
+  },
+  {
+   "id": "riot-zone",
+   "title": "Riot Zone",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Riot Zone (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1035"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/riot-zone/boxart.jpg",
+    "gameimage": "art/riot-zone/gameimage.png",
+    "hero": "art/riot-zone/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:10004",
+    "boxart": "libretro-thumbnails:Riot Zone (USA)",
+    "gameimage": "libretro-thumbnails:Riot Zone (USA)",
+    "hero": "steamgriddb:5454335"
+   },
+   "year": 1992,
+   "developer": "Agenda, Hudson Entertainment, Inc.",
+   "publisher": "Turbo Technologies, Inc.",
+   "genres": [
+    "Action"
+   ],
+   "players": 1,
+   "rating": "E10+ - Everyone 10+",
+   "description": "Riot Zone is a side-scrolling fighting game that follows two heroes as they fight to take down an evil organization. The crime syndicate Dragon Zone has kidnapped Hawk's girlfriend and it's up to him and his partner detective, Tony, to get her back. Join them as they jump \"fists first\" into the grim Kowloon district."
+  },
+  {
+   "id": "shadow-of-the-beast",
+   "title": "Shadow of the Beast",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Shadow of the Beast (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1018"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/shadow-of-the-beast/boxart.jpg",
+    "gameimage": "art/shadow-of-the-beast/gameimage.png",
+    "hero": "art/shadow-of-the-beast/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:5681",
+    "boxart": "libretro-thumbnails:Shadow of the Beast (USA)",
+    "gameimage": "libretro-thumbnails:Shadow of the Beast (USA)",
+    "hero": "steamgriddb:35228"
+   },
+   "year": 1992,
+   "developer": "Psygnosis Limited",
+   "publisher": "NEC Home Electronics, Ltd.",
+   "genres": [
+    "Platform"
+   ],
+   "players": 1,
+   "rating": null,
+   "description": "Kidnapped as a child by the evil Beast-Mages, you have been transformed into a creature of fearsome power, agility and strength. In this guise you faithfully serve the Beast and its cohorts for many years as their warrior-messenger. Until one day you discover an awful secret - the truth about your past... a truth that drives you wild with anger and sends you on a trail of bloody revenge against your master. Now the time has come to enter the Shadow of the Beast!\r\n\r\nYour task is to fight your way through several different regions in order to reach the heart of the enemy's stronghold, where you will face your ultimate adversary. Along the way you will encounter an awesome array of monsters and traps. Be ruthless, be quick...for only the strongest and toughest can hope to survive.\r\n\r\nPrepare to live by your wits, relying on split-second reactions and ingenuity. Combat the diabolical creatures. Dodge the deadly plantlife. Overcome the devious traps. Find and use the long-lost artifacts. Feel the adrenalin pumping as the tension becomes almost unbearable...Prepare to enter the Shadow of the Beast!"
+  },
+  {
+   "id": "shape-shifter",
+   "title": "Shape Shifter",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Shape Shifter (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1021"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/shape-shifter/boxart.jpg",
+    "gameimage": "art/shape-shifter/gameimage.png",
+    "hero": "art/shape-shifter/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:28978",
+    "boxart": "libretro-thumbnails:Shape Shifter (USA)",
+    "gameimage": "libretro-thumbnails:Shape Shifter (USA)",
+    "hero": "steamgriddb:12728"
+   },
+   "year": 1992,
+   "developer": "ICOM Simulations, Inc.",
+   "publisher": "Turbo Technologies, Inc.",
+   "genres": [
+    "Action"
+   ],
+   "players": 1,
+   "rating": null,
+   "description": "Far below the three moons that hang in the midnight sky lies the land of Krelion. And the people of this land live in an age of perfect peace and prosperity known as the Age of Light, a time by a band of powerful wizards known as the Ring of Five. \r\n\r\nBut, on the 11th moon of the Age of Light, a dark wave of evil has begun to sweep across the land, leaving a wide path of destructing in its wake. And the Ring of Five, which has protected Krelion for centuries untold has suddenly vanished from the land. Their fate is left in the unholy hands of three evil beings from the shadow realm known as the Dark Ones. \r\n\r\nNow the mid-summer equinox is almost at hand. And with this event, the Dark Ones will shatter the barrier that lies between Krelion and the shadow realm. But there is a single light in the darkness. His name is Lykas and he has the power to change his shape at will. Hopefully, he can save Krelion before it is too late ... before the land is plunged into a dark, eternal nightmare... never to awaken..."
+  },
+  {
+   "id": "sherlock-holmes-consulting-detective",
+   "title": "Sherlock Holmes - Consulting Detective",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Sherlock Holmes - Consulting Detective (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1011"
+     ]
+    },
+    {
+     "name": "Sherlock Holmes - Consulting Detective (Japan)",
+     "region": "Japan",
+     "serials": [
+      "JCCD1004"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/sherlock-holmes-consulting-detective/boxart.jpg",
+    "gameimage": "art/sherlock-holmes-consulting-detective/gameimage.png"
+   },
+   "sources": {
+    "information": "thegamesdb:42989",
+    "boxart": "libretro-thumbnails:Sherlock Holmes - Consulting Detective (USA)",
+    "gameimage": "libretro-thumbnails:Sherlock Holmes - Consulting Detective (USA)"
+   },
+   "year": 1991,
+   "developer": "ICOM Simulations, Inc.",
+   "publisher": "NEC Technologies, Inc.",
+   "genres": [
+    "Adventure"
+   ],
+   "players": 1,
+   "rating": "E - Everyone",
+   "description": "Match wits with Sherlock Holmes in the first live action video game ever! Now, the amazing technology of TurboGrafx-CD takes you to the streets of London to join Holmes, Watson, and a live cast of colorful characters in 3 live action video mysteries unlike anything you've ever seen! You don't merely observe the action, you direct it in your search for clues! Call on suspects, witnesses, and Homes' own street informants. Gather your facts and your wits about you and take the murderer to trial. Quickly, now...the game's afoot!\r\n\r\n\"Sherlock Holmes is a totally unique game...phenomenal...promises to be a big hit.\" - Electronic Gaming Monthly, April, 1991"
+  },
+  {
+   "id": "sherlock-holmes-consulting-detective-vol-ii",
+   "title": "Sherlock Holmes - Consulting Detective - Vol. II",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Sherlock Holmes - Consulting Detective - Vol. II (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1039"
+     ]
+    },
+    {
+     "name": "Sherlock Holmes - Consulting Detective - Vol. II (Japan)",
+     "region": "Japan",
+     "serials": [
+      "JCCD3012"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/sherlock-holmes-consulting-detective-vol-ii/boxart.jpg",
+    "gameimage": "art/sherlock-holmes-consulting-detective-vol-ii/gameimage.png"
+   },
+   "sources": {
+    "boxart": "libretro-thumbnails:Sherlock Holmes Consulting Detective Vol 2 (USA)",
+    "gameimage": "libretro-thumbnails:Sherlock Holmes Consulting Detective Vol 2 (USA)"
+   }
+  },
+  {
+   "id": "simearth-the-living-planet",
+   "title": "SimEarth - The Living Planet",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "SimEarth - The Living Planet (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1036"
+     ]
+    },
+    {
+     "name": "SimEarth - The Living Planet (Japan)",
+     "region": "Japan",
+     "serials": [
+      "HCD2040"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/simearth-the-living-planet/boxart.jpg",
+    "gameimage": "art/simearth-the-living-planet/gameimage.png",
+    "hero": "art/simearth-the-living-planet/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:42991",
+    "boxart": "libretro-thumbnails:Sim Earth - The Living Planet (USA)",
+    "gameimage": "libretro-thumbnails:Sim Earth - The Living Planet (USA)",
+    "hero": "steamgriddb:34002"
+   },
+   "year": 1993,
+   "developer": "Maxis Software",
+   "publisher": "Hudson Entertainment, Inc.",
+   "genres": [
+    "Strategy"
+   ],
+   "players": 1,
+   "rating": null,
+   "description": "Talk about power! You control a whole planet right from its birth to its last day. That means nursing single-celled life-forms into high-tech civilizations which can blast off to the stars. **Based on James Lovelock's GAIA theory, SimEarth simulates the Earth as one living organism."
+  },
+  {
+   "id": "splash-lake",
+   "title": "Splash Lake",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Splash Lake (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1025"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/splash-lake/boxart.jpg",
+    "gameimage": "art/splash-lake/gameimage.png"
+   },
+   "sources": {
+    "information": "thegamesdb:10008",
+    "boxart": "libretro-thumbnails:Splash Lake (USA)",
+    "gameimage": "libretro-thumbnails:Splash Lake (USA)"
+   },
+   "year": 1991,
+   "developer": "Bits Laboratory",
+   "publisher": "Turbo Technologies, Inc.",
+   "genres": [
+    "Action",
+    "Strategy"
+   ],
+   "players": 2,
+   "rating": null,
+   "description": "Splash Lake is an action-puzzle game for the TurboGrafx-CD and PC Engine CD-ROM. The player is an ostrich named Ozzie and must walk around a grid, pecking at certain lynchpin areas of the ground in order to collapse parts of the level into the ocean. The goal is to remove all enemies by dropping the ground they're walking on. It is structurally similar to Dig Dug 2.\r\n\r\nThe game has a multiplayer mode, which allows two players to try to outmaneuver and out-think each other."
+  },
+  {
+   "id": "super-air-zonk-rockabilly-paradise",
+   "title": "Super Air Zonk - Rockabilly-Paradise",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Super Air Zonk - Rockabilly-Paradise (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1042"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/super-air-zonk-rockabilly-paradise/boxart.jpg",
+    "gameimage": "art/super-air-zonk-rockabilly-paradise/gameimage.png",
+    "hero": "art/super-air-zonk-rockabilly-paradise/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:10009",
+    "boxart": "libretro-thumbnails:Super Air Zonk - Rockabilly-Paradise (USA)",
+    "gameimage": "libretro-thumbnails:Super Air Zonk - Rockabilly-Paradise (USA)",
+    "hero": "steamgriddb:5282234"
+   },
+   "year": 1993,
+   "developer": "Dual",
+   "publisher": "Hudson Entertainment, Inc.",
+   "genres": [
+    "Shooter"
+   ],
+   "players": null,
+   "rating": null,
+   "description": "Zonk is back in Super Air Zonk!!\r\n\r\nNow moving to a rockabilly beat and able to transform into nine different characters, Zonk lets loose through seven action-packed stages in another battle against his arch nemesis, Sandro Vitch. Power up Zonk with the classic Meat item, eventually turning him into the champion of justice, Ultra Zonk, or the fearsome Tyrano Zonk in the latter stages of the game.\r\nRead More>>\r\n\r\nAfter rescuing his friends from enemies, Zonk can also morph with them to combine powers. Fight enemies with killer tunes belted out from a trusty microphone. Hurl freshly made sushi at them. With its variety of wacky attacks, Super Air Zonk has a sense of humor all its own."
+  },
+  {
+   "id": "sydmeads-terraforming",
+   "title": "SydMead's TerraForming",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "SydMead's TerraForming (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1040"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/sydmeads-terraforming/boxart.jpg",
+    "gameimage": "art/sydmeads-terraforming/gameimage.png"
+   },
+   "sources": {
+    "information": "thegamesdb:13877",
+    "boxart": "libretro-thumbnails:Syd Mead's Terra Forming (USA)",
+    "gameimage": "libretro-thumbnails:Syd Mead's Terra Forming (USA)"
+   },
+   "year": 1993,
+   "developer": null,
+   "publisher": "Turbo Technologies, Inc.",
+   "genres": [
+    "Shooter"
+   ],
+   "players": 1,
+   "rating": null,
+   "description": "Super shooting game developed by Syd Mead, world-renowned master of graphic design!!\r\n\r\nThe design genius, Syd Mead, has worked on several of the most outstanding special effects movies ever to be made. Celebrated as a visual futurist, Mead has gone beyond the confines of special effects cinema teaming up with Right Stuff to create the super-realistic shooting game SYDMEAD'S TerraForming."
+  },
+  {
+   "id": "the-addams-family",
+   "title": "The Addams Family",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Addams Family, The (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1019"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/the-addams-family/boxart.jpg",
+    "gameimage": "art/the-addams-family/gameimage.png",
+    "hero": "art/the-addams-family/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:9986",
+    "boxart": "libretro-thumbnails:Addams Family, The (USA)",
+    "gameimage": "libretro-thumbnails:Addams Family, The (USA)",
+    "hero": "steamgriddb:38437"
+   },
+   "year": 1991,
+   "developer": "ICOM Simulations, Inc.",
+   "publisher": "NEC Home Electronics, Ltd.",
+   "genres": [
+    "Action",
+    "Platform"
+   ],
+   "players": 1,
+   "rating": "Not Rated",
+   "description": "The Addams Family Ocean games were preceded by a TurboGrafx-CD gamedeveloped by ICOM Simulations and published by NEC in 1991,[6] though in this version the protagonist is the Addams's lawyer, Tully Alford, despite being an antagonist in the movie. The game also follows the plot of the movie but plays from the perspective of Tully Alford. The player controls Alford through several side-scrolling stages on a quest to locate, and steal, the Addams' vast wealth. Alford's main weapon is his umbrella, which can shoot fireballs, or he can transform into a wolf man."
+  },
+  {
+   "id": "the-dynastic-hero",
+   "title": "The Dynastic Hero",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Dynastic Hero, The (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1053"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/the-dynastic-hero/boxart.jpg",
+    "gameimage": "art/the-dynastic-hero/gameimage.png",
+    "hero": "art/the-dynastic-hero/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:18852",
+    "boxart": "libretro-thumbnails:Dynastic Hero, The (USA)",
+    "gameimage": "libretro-thumbnails:Dynastic Hero, The (USA)",
+    "hero": "steamgriddb:5518528"
+   },
+   "year": 1994,
+   "developer": "Hudson Entertainment, Inc.",
+   "publisher": "Hudson Entertainment, Inc.",
+   "genres": [
+    "Adventure"
+   ],
+   "players": 1,
+   "rating": "E - Everyone",
+   "description": "The land of Tarron is under siege and you must save it from the wicked Drillkor Empire. A beautiful guide will help you along the way as only you, The Dynastic Hero, can deliver the goods!"
+  },
+  {
+   "id": "the-local-girls-of-hawaii",
+   "title": "The Local Girls of Hawaii",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Local Girls of Hawaii, The (USA)",
+     "region": "USA",
+     "serials": []
+    }
+   ],
+   "art": {
+    "gameimage": "art/the-local-girls-of-hawaii/gameimage.png"
+   },
+   "sources": {
+    "gameimage": "libretro-thumbnails:The Local Girls of Hawaii (USA)"
+   }
+  },
+  {
+   "id": "valis-ii",
+   "title": "Valis II",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Valis II (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1006"
+     ]
+    },
+    {
+     "name": "Valis II (Japan)",
+     "region": "Japan",
+     "serials": [
+      "TJCD9001"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/valis-ii/boxart.jpg",
+    "gameimage": "art/valis-ii/gameimage.png",
+    "hero": "art/valis-ii/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:10010",
+    "boxart": "libretro-thumbnails:Valis II (USA)",
+    "gameimage": "libretro-thumbnails:Valis II (USA)",
+    "hero": "steamgriddb:5349950"
+   },
+   "year": 1989,
+   "developer": "Telenet Japan",
+   "publisher": "NEC Home Electronics, Ltd.",
+   "genres": [
+    "Action",
+    "Platform"
+   ],
+   "players": 1,
+   "rating": "Not Rated",
+   "description": "Time passes, and Vecanti is set to rule under its next emperor after Rogles, his brother Megas, who wishes to stamp out any trace of the former tyrant, to the point of murdering any supporters Rogles might have had. Furthermore, his bloodthirsty tendencies recognize Yuko and the Valis sword as viable threats to his claim of the throne, and he orders his minions to eliminate her first before she has the chance to thwart him."
+  },
+  {
+   "id": "valis-iii",
+   "title": "Valis III",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Valis III (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1024"
+     ]
+    },
+    {
+     "name": "Valis III (Japan)",
+     "region": "Japan",
+     "serials": [
+      "TJCD0009"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/valis-iii/boxart.jpg",
+    "gameimage": "art/valis-iii/gameimage.png",
+    "hero": "art/valis-iii/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:10011",
+    "boxart": "libretro-thumbnails:Valis III (USA)",
+    "gameimage": "libretro-thumbnails:Valis III (USA)",
+    "hero": "steamgriddb:34234"
+   },
+   "year": 1990,
+   "developer": "Laser Soft",
+   "publisher": "Telenet Japan Co., Ltd.",
+   "genres": [
+    "Action",
+    "Platform"
+   ],
+   "players": 1,
+   "rating": "Not Rated",
+   "description": "King Glames leads denizens of the Dark World to destroy both Earth and Vecanti. Against this common foe, Yuko Asou finds help in her new girlfriend, a Vecanti warrior-maiden named Cham, who was born in the Dark World and uses a deadly whip, and her own sister Valna Asou, who grew up within Vecanti and became strong in the ways of magic. Furthermore, the Valis sword is shown to be capable of more than what Yuko has accomplished with it thus far."
+  },
+  {
+   "id": "vasteel",
+   "title": "Vasteel",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Vasteel (USA)",
+     "region": "USA",
+     "serials": [
+      "WTG990801"
+     ]
+    },
+    {
+     "name": "Vasteel (Japan)",
+     "region": "Japan",
+     "serials": [
+      "HMCD-0001"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/vasteel/boxart.jpg",
+    "gameimage": "art/vasteel/gameimage.png"
+   },
+   "sources": {
+    "information": "thegamesdb:42992",
+    "boxart": "libretro-thumbnails:Vasteel (USA)",
+    "gameimage": "libretro-thumbnails:Vasteel (USA)"
+   },
+   "year": 1993,
+   "developer": "Human",
+   "publisher": "Working Designs",
+   "genres": [
+    "Strategy"
+   ],
+   "players": 2,
+   "rating": null,
+   "description": "The emperor is dead. Now begins the bloodiest chapter in the history of the Vasteel solar system! Jump right into the action as you choose to play either Faliall, the newly crowned emperor, or his brother Stefan, leader of the rebel army. In addition to a first-of-it's-kind on-line guide that actually speaks to aid you in your weapon's choice, there are over 70 types of armored robots and transports to lead you to victory. Set up the battles on the overhead strategy map, then go in and duke out the actual fight arcade style! Vasteel also offers the option of a 2 play VS mode where you can match wits and arcade skill with a friend (TurboTap required for this option). Regardless of how you play it, the complexity and arcade action in Vasteel will transfix you!"
+  },
+  {
+   "id": "ys-book-i-ii",
+   "title": "Ys Book I & II",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Ys Book I & II (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1002",
+      "8490072"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/ys-book-i-ii/boxart.jpg",
+    "gameimage": "art/ys-book-i-ii/gameimage.png",
+    "hero": "art/ys-book-i-ii/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:5686",
+    "boxart": "libretro-thumbnails:Ys Book I _ II (USA)",
+    "gameimage": "libretro-thumbnails:Ys Book I _ II (USA)",
+    "hero": "steamgriddb:35947"
+   },
+   "year": 1989,
+   "developer": "Nihon Falcom Corp.",
+   "publisher": "Hudson Entertainment, Inc.",
+   "genres": [
+    "Role-Playing"
+   ],
+   "players": 1,
+   "rating": null,
+   "description": "Journey through the Ancient Land of Ys, a once peaceful and prosperous country suddenly thrust deep into an empty abyss of isolation. The secret to restoring peace rests in the six books of the wise priests. 700 years have passed, and now you have a chance to unlock the mystery. Stunning graphics, intense stereo sound and profound gameplay make this a CD adventure you'll never forget ... and may never return from."
+  },
+  {
+   "id": "ys-iii-wanderers-from-ys",
+   "title": "Ys III - Wanderers from Ys",
+   "system": "pce_cd",
+   "releases": [
+    {
+     "name": "Ys III - Wanderers from Ys (USA)",
+     "region": "USA",
+     "serials": [
+      "TGXCD1015"
+     ]
+    }
+   ],
+   "art": {
+    "boxart": "art/ys-iii-wanderers-from-ys/boxart.jpg",
+    "gameimage": "art/ys-iii-wanderers-from-ys/gameimage.png",
+    "hero": "art/ys-iii-wanderers-from-ys/hero.jpg"
+   },
+   "sources": {
+    "information": "thegamesdb:5687",
+    "boxart": "libretro-thumbnails:Ys III - Wanderers from Ys (USA)",
+    "gameimage": "libretro-thumbnails:Ys III - Wanderers from Ys (USA)",
+    "hero": "steamgriddb:1271"
+   },
+   "year": 1991,
+   "developer": "Nihon Falcom Corp.",
+   "publisher": "Hudson Entertainment, Inc.",
+   "genres": [
+    "Role-Playing"
+   ],
+   "players": 1,
+   "rating": null,
+   "description": "As Adol, hero of Ys Book I & II, your most fearsome new adventure is about to begin! The curse of the monster Demanicus terrorizes your friend Dogi's homeland. Chaos rules as blood-thirsty creatures threaten innocent lives. Only you have the courage and strength to defeat them! Gather your fiercest swords and deadly amulet to battle these horrific creatures with a thrilling new action view. Survive the fiery depths of Alcaino. Conquer the terrifying Nekevil. But stay alert, brave Adol! The fury of Demanicus awaits your final epic struggle!"
+  }
+ ]
+}

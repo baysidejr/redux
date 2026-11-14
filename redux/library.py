@@ -368,13 +368,17 @@ class Library:
             with self.connect() as db:
                 file_rows = db.execute("SELECT relative_path FROM media_files WHERE game_id=?",(game["id"],)).fetchall()
         base = self.media / game["bundle_hash"] if game["storage"]=="managed" else Path(game["source_path"]).parent
+        # Containment is checked lexically (no '..' escapes); one stat per file is the only disk work.
+        # Resolving every path through the filesystem cost more than the whole render did.
+        root = os.path.normcase(os.path.normpath(str(base)))
         present = 0
         for file_row in file_rows:
             try:
-                path=(base/file_row["relative_path"]).resolve()
-                if path.is_relative_to(base.resolve()) and path.is_file():
+                candidate = os.path.normpath(os.path.join(str(base), file_row["relative_path"]))
+                inside = os.path.normcase(candidate)
+                if (inside == root or inside.startswith(root.rstrip(chr(92)+"/") + os.sep)) and os.path.isfile(candidate):
                     present += 1
-            except (OSError,ValueError):
+            except (OSError,ValueError,TypeError):
                 pass
         game["file_count"] = len(file_rows)
         game["available_file_count"] = present
@@ -440,8 +444,10 @@ class Library:
                 raise ValueError("PC game path leaves portable storage")
             return resolved
         if game["storage"] == "managed":
-            resolved = (self.root / path).resolve()
-            if not resolved.is_relative_to(self.media.resolve()):
+            # self.root was resolved once at start-up; a lexical normpath keeps '..' out without
+            # a filesystem resolve for every game on every screen change.
+            resolved = Path(os.path.normpath(self.root / path))
+            if not resolved.is_relative_to(self.media):
                 raise ValueError("Managed path leaves library media directory")
             return resolved
         return path

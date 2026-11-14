@@ -31,6 +31,41 @@ class ConsoleGameDatabase:
         self.gamedb_game_id = game_id
         self.navigate("gamedb_game")
 
+    def gamedb_system_menu(self, system):
+        """A on a system tile: browse it, and fetch or drop its art when that applies."""
+        status = self.gamedb.art_status(system)
+        label = LABELS.get(system, system)
+        items = [("Browse games", lambda: self.open_gamedb(system))]
+        if status == "available":
+            size = self.gamedb.art_size(system)
+            items.append((f"Download art · {size / 2**20:.0f} MB" if size else "Download art", lambda: self.download_gamedb_art(system)))
+        elif status == "installed":
+            items.append(("Remove downloaded art", lambda: (self.gamedb.remove_art(system), self.refresh())))
+        if len(items) == 1:
+            self.open_gamedb(system)
+            return
+        items.append(("Cancel", lambda: None))
+        self.menu(label, items, message="Art comes from the Redux release on GitHub and is kept in your data folder." if status == "available" else "")
+
+    def download_gamedb_art(self, system):
+        """Fetch the system's art zip in the background task runner, with progress on the status line."""
+        import time
+        database = self.gamedb
+        label = LABELS.get(system, system)
+        def work():
+            last = [0.0]
+            def progress(done, total):
+                now = time.monotonic()
+                if now - last[0] > 0.2 or done == total:
+                    last[0] = now
+                    text = f"Downloading {label} art • {done / 2**20:.0f} of {total / 2**20:.0f} MB" if total else f"Downloading {label} art • {done / 2**20:.0f} MB"
+                    self.events.put(("status", text))
+            return database.download_art(system, progress=progress, cancelled=self.cancelled)
+        def done(_):
+            self.status.set(f"{label} art installed")
+            self.refresh()
+        self.task(work, done, f"Downloading {label} art…")
+
     def _gamedb_owned(self, game):
         """The library game that is this database entry, if the player has it."""
         wanted = title_key(game["title"])
@@ -59,30 +94,40 @@ class ConsoleGameDatabase:
     def _database_section(self, X, W, R):
         """One tile per system Redux covers, with what the database holds for it."""
         systems = self.gamedb.systems()
-        tile_w, gap = 238, 16
+        tile_w, tile_h, gap = 238, 168, 16
         for index, info in enumerate(systems):
             x = X + (index % 4) * (tile_w + gap)
-            y = 156 + (index // 4) * 168
+            y = 150 + (index // 4) * (tile_h + 14)
             key = f"gamedb:system:{info['system']}"
             focused = self.focus == key
-            self.panel(x, y, tile_w, 152, "#2c232a" if focused else PANEL, 3, WHITE if focused else None)
+            self.panel(x, y, tile_w, tile_h, "#2c232a" if focused else PANEL, 3, WHITE if focused else None)
             if not self.picture(self.art.path(info["system"], "tile"), x + 4, y + 4, tile_w - 8, 86):
                 self.rect(x + 4, y + 4, tile_w - 8, 86, "#101013")
                 self.icon("disc", x + tile_w // 2 - 16, y + 30, 32, ACCENT if info["available"] else "#46464c")
             self.text(x + 12, y + 98, self.fit_text(info["label"], tile_w - 60, 14), 14, WHITE, "bold")
             if info["available"]:
                 self.text(x + 12, y + 120, f"{info['games']} games · {info['boxart']} covers · {info['hero']} banners", 11, MUTED)
+                status = self.gamedb.art_status(info["system"])
+                if status == "available":
+                    size = self.gamedb.art_size(info["system"])
+                    self.text(x + 12, y + 140, f"Art to download · {size / 2**20:.0f} MB" if size else "Art to download", 11, ACCENT, "bold")
+                elif status == "installed":
+                    self.text(x + 12, y + 140, "Art downloaded", 11, "#5bb974", "bold")
+                elif status == "bundled":
+                    self.text(x + 12, y + 140, "Art included", 11, "#5bb974", "bold")
+                else:
+                    self.text(x + 12, y + 140, "Facts only", 11, "#6a6a72")
                 self.icon("chevron", x + tile_w - 26, y + 100, 14, ACCENT if focused else FAINT)
-                self.target(key, (x, y, x + tile_w, y + 152), lambda s=info["system"]: self.open_gamedb(s), info["label"])
+                self.target(key, (x, y, x + tile_w, y + tile_h), lambda s=info["system"]: self.gamedb_system_menu(s), info["label"])
             else:
                 self.text(x + 12, y + 120, "Not built yet", 11, "#6a6a72")
         built = [info for info in systems if info["available"]]
         total = sum(info["games"] for info in built)
-        self.panel(X, 500, W, 112, PANEL, 3)
-        self.icon("info", X + 21, 524, 25, ACCENT)
-        self.text(X + 66, 523, f"{total} games across {len(built)} system{'' if len(built) == 1 else 's'}, ready before you insert a disc", 16, WHITE, "bold")
-        self.text(X + 66, 556, "Redux recognises a disc by the serial in its header, then shows the database's box art, banner "
-                  "and game information. Everything lives in redux/database, open to modding.", 13, MUTED, width=W - 100)
+        self.panel(X, 524, W, 104, PANEL, 3)
+        self.icon("info", X + 21, 546, 25, ACCENT)
+        self.text(X + 66, 545, f"{total} North American releases across {len(built)} system{'' if len(built) == 1 else 's'}, ready before you insert a disc", 16, WHITE, "bold")
+        self.text(X + 66, 576, "Redux recognises a disc by the serial in its header, then shows the database's box art, banner and game "
+                  "information. Covers and banners for the larger systems download from the Redux release on GitHub; A on a system offers it.", 13, MUTED, width=W - 100)
 
     # ------------------------------------------------------------------ a system's games
 
@@ -141,7 +186,9 @@ class ConsoleGameDatabase:
         self.rect(99, 366, 248, 244, "#171719")
         if not self.picture(art(game, "boxart"), 99, 366, 248, 244, mode="contain"):
             if not self.picture(art(game, "gameimage"), 99, 366, 248, 244, mode="contain"):
-                self.picture(self.art.path(system, "tile"), 99, 366, 248, 244)
+                if not self.picture(self.art.path(system, "tile"), 99, 366, 248, 244) and self.gamedb.art_status(system) == "available":
+                    self.text(223, 470, "Art not downloaded yet", 13, MUTED, anchor="center")
+                    self.text(223, 492, "System → Database → A on the system", 11, "#6a6a72", anchor="center")
         self.display(403, 400, self.fit_text(game["title"], 800, 30, "bold"), 30, WHITE, "bold")
         badge = self._badge(system, 404, 462)
         if game.get("year"):

@@ -36,3 +36,7 @@ tools/ReduxReceiver/
 
 # Game database fetch script, its caches and reports: developer-only, not shipped
 tools/gamedb/
+
+# Game database art for systems other than Sega CD comes from the GitHub release, not git
+redux/database/*/art/
+!redux/database/sega_cd/art/
