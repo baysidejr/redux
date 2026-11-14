@@ -113,9 +113,9 @@ class ReferenceLayout:
         self.panel(64,47,64,64,"#853398",radius=12,outline=WHITE if self.focus==search else None)
         self.icon("search",82,65,28)
         self.target(search,(64,47,128,111),self.search_screen,"Search")
-        entries=[("home","Now Playing",266),("library","Collection",342),("collections","Playlists",416),
-            ("media","Media",490),("settings","System",564)]
-        current="library" if self.screen=="systems" else "settings" if self.screen in {"saves","text"} else self.screen
+        # My Collection is home; a system's grid is a sub page it opens, not a lane entry.
+        entries=[("home","My Collection",266),("collections","Playlists",342),("media","Media",416),("settings","System",490)]
+        current="home" if self.screen in {"systems","library"} else "settings" if self.screen in {"saves","text"} else self.screen
         for screen,label,y in entries:
             key=f"nav:{screen}";focused=self.focus==key;active=current==screen
             if focused:self.rect(49,y-9,271,50,"#454547")
@@ -209,7 +209,7 @@ class ReferenceLayout:
         self.target("hero:play",(x+2,2,1278,h-2),self.inserted_disc_options if disc else self._open_media if welcome else self.play,"Disc options" if disc else "Storage" if welcome else "Play selected game")
         self.target("hero:details",(1174 if disc else 1158,strip_y,1279,h),self.inserted_disc_information if disc else (lambda:self.open_game(game["id"])) if game else self._open_media,"Disc information" if disc else "Manage game")
         if self.focus in {"hero:play","hero:details"}:self.rect(x+1,1,w-3,h-2,"",WHITE,2)
-        self.display(360,315,"Collection",21,"#a2a2a4")
+        self.display(360,315,"Systems",21,"#a2a2a4")
         systems=[s for s in SYSTEMS if s!="unknown" and any(g["system"]==s for g in self.all_games)]
         if not systems:
             self._empty_home();return
@@ -291,7 +291,7 @@ class ReferenceLayout:
     def _library(self):
         game_system=self.system_filter
         collection=next((c["name"] for c in self.library.collections() if c["id"]==self.collection_id),None)
-        heading=collection or SYSTEMS.get(game_system,"Collection")
+        heading=collection or SYSTEMS.get(game_system,"My Collection")
         if self.view!="all":heading={"favorites":"Favorites","continue":"Continue Playing","wishlist":"Wishlist","completed":"Completed Games"}.get(self.view,heading)
         focused_game=self.selected() if str(self.focus).startswith("game:") else None
         if focused_game:heading=title(focused_game).upper()
@@ -324,7 +324,7 @@ class ReferenceLayout:
         self.display(1200,661,f"{start+1}–{end} / {len(self.rows)}",15,"#8b8b91",anchor="ne")
 
     def library_views(self):
-        self.menu("Collection",[(label,lambda value=view:self._filter(value)) for view,label in
+        self.menu("Show",[(label,lambda value=view:self._filter(value)) for view,label in
             [("all","All Games"),("continue","Continue Playing"),("favorites","Favorites"),("wishlist","Wishlist"),("completed","Completed Games")]])
 
     def facet_menu(self,kind):

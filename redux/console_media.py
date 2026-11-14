@@ -85,7 +85,7 @@ class ConsoleMedia:
     def _disc_current(self,drive,fingerprint):
         disc=self.inserted_disc()
         if disc and (disc.drive,disc.fingerprint)==(drive,fingerprint):return disc
-        self.notice("Disc changed","The selected disc is no longer active. Choose the current disc from Now Playing.")
+        self.notice("Disc changed","The selected disc is no longer active. Choose the current disc from My Collection.")
         return None
 
     def inserted_disc_options(self):

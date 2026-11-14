@@ -60,7 +60,7 @@ class SecondaryScreens:
 
     # The System menu: one horizontal row of icons over the dimmed screen, like a console's
     # system bar. The focused item names itself above the row; A opens it, B leaves.
-    SYSTEM_ITEMS=(("home","Home","home","Return to Now Playing"),
+    SYSTEM_ITEMS=(("home","Home","home","Return to My Collection"),
                   ("storage","Storage","storage","Where Redux and your games live."),
                   ("input","Controllers","controller","Made to feel at home in your hands."),
                   ("saves","Saves","storage","Keep your progress close."),
