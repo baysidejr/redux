@@ -33,3 +33,6 @@ tools/homebrew/*.nes
 
 # Redux Controller receiver (phone companion), installed beside the emulators
 tools/ReduxReceiver/
+
+# Game database fetch script, its caches and reports: developer-only, not shipped
+tools/gamedb/
