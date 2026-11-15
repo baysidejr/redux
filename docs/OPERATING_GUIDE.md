@@ -112,7 +112,7 @@ For the local PCSX-Redux keyboard defaults, Return is Start; X is Cross; D is Ci
 
 ### Integrated playback
 
-With optional core DLLs present, playback stays inside Redux and shares its menu. NES uses Mesen; PSX uses software Beetle PSX; SNES uses Supafaust; Saturn uses Beetle Saturn; PC Engine/CD/SuperGrafx uses full Beetle PCE. Sega profiles use qualified Genesis Plus GX or PicoDrive replacements. Game Boy/Color uses Gambatte. Presence and initialization do not establish compatibility with every game. Diablo has boot/menu/state acceptance through integrated PSX; Saturn still needs compatible firmware and game acceptance.
+With optional core DLLs present, playback stays inside Redux and shares its menu. NES uses Mesen; PSX uses software Beetle PSX; SNES uses Supafaust; Saturn uses Beetle Saturn; PC Engine/CD/SuperGrafx uses full Beetle PCE. Nintendo 64 uses Mupen64Plus-Next with the Angrylion software renderer and CXD4 RSP. Sega profiles use qualified Genesis Plus GX or PicoDrive replacements. Game Boy/Color uses Gambatte. Presence and initialization do not establish compatibility with every game. Diablo has boot/menu/state acceptance through integrated PSX; Saturn still needs compatible firmware and game acceptance.
 
 The host accepts software video, digital joypads, both analog sticks and trigger buttons. Requested profile options are validated against the installed core's declarations before use. GPU-context cores, lightgun/mouse controls, rumble and an integrated disc-swap interface remain unimplemented. External backends remain available for requirements outside that subset.
 
