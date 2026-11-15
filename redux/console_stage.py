@@ -122,6 +122,8 @@ class ConsoleStage:
         carousel = self.banner_carousel()
         if carousel and kind == "load":
             carousel.start(time.monotonic())
+        if kind == "load":
+            self._play_stage_sound(system)
         draw = getattr(self, "schedule_draw", None)
         if draw:
             draw()
@@ -190,9 +192,26 @@ class ConsoleStage:
             start()
         root.after(HOLD_POLL_MS, poll)
 
+    def _play_stage_sound(self, system):
+        """The disc tray opening and the disc spinning up, for a CD console, with the loader's intro.
+
+        Follows the Menu sounds setting; a cartridge console loads in silence for now."""
+        from .game_cards import CD_SYSTEMS
+        sounds = getattr(self, "stage_sounds", None)
+        menu = getattr(self, "sounds", None)
+        if not sounds or (menu is not None and not getattr(menu, "enabled", True)):
+            return False
+        if system not in CD_SYSTEMS:
+            sounds.stop()
+            return False
+        return sounds.play()
+
     def clear_stage(self):
         self.stage_animation = None
         self._stage_hold = None
+        sounds = getattr(self, "stage_sounds", None)
+        if sounds:
+            sounds.stop()
         carousel = self.banner_carousel()
         if carousel:
             carousel.hold(time.monotonic())

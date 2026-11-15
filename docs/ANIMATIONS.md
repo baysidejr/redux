@@ -7,6 +7,10 @@ carousel scrolls across the top quarter and brakes to a stop with the loading co
 pennant centred under the gold marker, and that console's loader animation plays below
 with the game's name and the progress. The pennants only move during a load.
 
+A CD console's load also plays the disc sound (`redux/assets/sounds/disc-load.mp3`, the tray
+opening and the disc spinning up) from the start of the intro; it stops if the load is
+cancelled and follows the Menu sounds setting. Cartridge consoles load in silence.
+
 A game appears **fifteen seconds** after its load began, however fast the core starts: the
 banner has settled (at most 6.8 s), the loader has played its intro and several loops,
 and the outro fills the last second. An install that takes longer simply runs its

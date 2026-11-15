@@ -186,6 +186,8 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleSta
         self.art=Artwork(self.canvas,self.preferences.get("reference_assets"))
         from .ui_sounds import MenuSounds
         self.sounds=MenuSounds(enabled=self.preferences.get("menu_sounds",True))
+        from .stage_sounds import StageSounds
+        self.stage_sounds=StageSounds()
         self.painter=Painter(self.canvas)
         self.status=tk.StringVar(value="Ready")
         # The inherited worker/import service uses these controls only to change
@@ -1546,6 +1548,7 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleSta
         registration=getattr(self,"windows_registration",None)
         if registration:registration.close();self.windows_registration=None
         self._stop_media_watch();self._stop_card_watch()
+        if getattr(self,"stage_sounds",None):self.stage_sounds.stop()
         if self.controller and hasattr(self.controller,"close"):self.controller.close()
         self._harvest_sessions()
         if self.playback:self.playback.close()
