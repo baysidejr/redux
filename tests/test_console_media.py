@@ -180,13 +180,13 @@ class ConsoleMediaTests(unittest.TestCase):
         stale = Mock(side_effect=AssertionError("Stale Diablo callback ran before redraw"))
         app.callbacks = {"hero:play": stale, "hero:details": stale}
         self.deliver(app, event("inserted", identity()))
-        app.inserted_disc_options = Mock()
+        app.play_disc = Mock()
         app.inserted_disc_information = Mock()
         app.focus = "hero:play"
         app.activate()
         app.focus = "hero:details"
         app.activate()
-        app.inserted_disc_options.assert_called_once()
+        app.play_disc.assert_called_once()
         app.inserted_disc_information.assert_called_once()
         stale.assert_not_called()
 
@@ -226,15 +226,17 @@ class ConsoleMediaTests(unittest.TestCase):
         app._system_tile = Mock()
         app._card = Mock()
         app.fit_text = lambda value, *_: value
-        app.inserted_disc_options = Mock()
+        app.play_disc = Mock()
         app.inserted_disc_information = Mock()
+        app.installed_disc_game = Mock(return_value=None)
         app.play = Mock(side_effect=AssertionError("Hero must not play Diablo"))
         app._home()
         self.assertEqual(app.picture.call_args_list[0].args[0], "saturn-game.png")
         self.assertTrue(any("WORLD SERIES BASEBALL 2" in str(call) for call in app.display.call_args_list))
+        self.assertTrue(any("Not installed" in str(call) for call in app.display.call_args_list))
         app.callbacks["hero:play"]()
         app.callbacks["hero:details"]()
-        app.inserted_disc_options.assert_called_once()
+        app.play_disc.assert_called_once()
         app.inserted_disc_information.assert_called_once()
         app.play.assert_not_called()
 
@@ -247,12 +249,14 @@ class ConsoleMediaTests(unittest.TestCase):
             captured.update(items=dict(items))
             app.overlay = {"title": title, "items": items}
         app.menu = menu
-        app.install_inserted_disc = Mock()
+        app.play_disc = Mock()
+        app.installed_disc_game = Mock(return_value=None)
         app.inserted_disc_options()
+        self.assertEqual(list(captured["items"]), ["Play", "Game information", "Configure playback", "Back"])
         replacement = identity(fingerprint="replacement", title="Another disc")
         self.deliver(app, event("changed", replacement, at=101))
-        captured["items"]["Install disc to library"]()
-        app.install_inserted_disc.assert_not_called()
+        captured["items"]["Play"]()
+        app.play_disc.assert_not_called()
         app.notice.assert_called_once()
 
 

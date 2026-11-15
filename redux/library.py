@@ -49,6 +49,11 @@ ARTWORK_FIELDS = {"cover": "artwork_path", "tile": "tile_path", "hero": "hero_pa
                   "screenshot": "screenshot_path", "logo": "logo_path"}
 
 
+def loose_title(value):
+    """Letters and digits only, case folded: enough to tell a disc's header title from an installed one."""
+    return "".join(ch for ch in str(value or "").casefold() if ch.isalnum())
+
+
 class ImportCancelled(Exception):
     pass
 
@@ -319,6 +324,8 @@ class Library:
                 "pc_working_directory": "TEXT NOT NULL DEFAULT ''",
                 # The store's own id for a game: a GOG product id for a PC game from a GOG cartridge.
                 "store_id": "TEXT NOT NULL DEFAULT ''",
+                # The physical disc a game was installed from (disc_identity fingerprint): Play asks for it.
+                "disc_fingerprint": "TEXT NOT NULL DEFAULT ''",
             }
             for name, declaration in additions.items():
                 if name not in columns:
@@ -510,6 +517,29 @@ class Library:
         with self.connect() as db:
             db.execute("UPDATE games SET pc_arguments=?,pc_working_directory=? WHERE id=?",
                 (json.dumps(arguments),stored,game_id))
+
+    def set_disc_fingerprint(self,game_id,fingerprint):
+        """Remember which disc a game was installed from; Play then asks for that disc."""
+        value=str(fingerprint or "").strip().casefold()
+        if not re.fullmatch(r"[a-f0-9]{64}",value):raise ValueError("A disc fingerprint is a 64-character hash")
+        with self.connect() as db:db.execute("UPDATE games SET disc_fingerprint=? WHERE id=?",(value,game_id))
+        return self.game(game_id)
+
+    def find_disc_game(self,fingerprint,*,system=None,title=None):
+        """The installed game for an inserted disc: (game, exact).
+
+        Exact is a fingerprint match. Otherwise a managed game of the same system and title
+        is taken for an install from before fingerprints were kept, so the caller can record
+        the fingerprint now. Games on cards are never matched this way."""
+        value=str(fingerprint or "").strip().casefold()
+        with self.connect() as db:
+            row=db.execute("SELECT id FROM games WHERE disc_fingerprint=? AND disc_fingerprint!=''",(value,)).fetchone() if value else None
+            if row:return self.game(row["id"]),True
+            if system and title:
+                wanted=loose_title(title)
+                for candidate in db.execute("SELECT id,title FROM games WHERE system=? AND storage='managed' AND disc_fingerprint='' ORDER BY id",(system,)).fetchall():
+                    if loose_title(candidate["title"])==wanted:return self.game(candidate["id"]),False
+        return None,False
 
     def pc_game_config(self,game):
         from .pc_games import validate_arguments

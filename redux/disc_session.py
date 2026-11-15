@@ -1,8 +1,8 @@
-"""Read-only game identities and host-lifetime ownership for disc leases.
+"""Read-only game identities for disc leases.
 
-Transient playback never imports a database row or copies media into the
-library. Full bundle hashes share the ordinary import/save namespace, while
-the linked playback path remains owned by a lease until the native core stops.
+A buffered disc is prepared into a game record without importing a database row;
+its bundle hash shares the ordinary import namespace, so an already installed disc
+is recognised after capture. Playback happens only from the installed copy.
 """
 from __future__ import annotations
 
@@ -10,7 +10,6 @@ import hashlib
 import json
 from pathlib import Path
 
-from .embedded import EmbeddedGame
 from .library import ImportCancelled, SYSTEMS, _hash_file, inspect_bundle
 
 
@@ -112,118 +111,3 @@ def prepare_disc_game(library, lease, metadata=None, cancelled=None, progress=No
         if metadata is not None and metadata.get(field) is not None:
             game[field] = metadata[field]
     return game
-
-
-class DiscEmbeddedGame(EmbeddedGame):
-    """An embedded session that releases a disc lease after native shutdown.
-
-    A failed ``stop`` retains its files. A cleanup refusal also retains ownership
-    and is exposed by ``lease_retained`` / ``lease_cleanup_error``; calling stop
-    again can retry. This class never recursively removes media itself.
-    """
-
-    def __init__(self, library, game, core, *, media_lease, **kwargs):
-        if media_lease is None or getattr(media_lease, "closed", False):
-            raise ValueError("Disc playback requires an open media lease")
-        if not callable(getattr(media_lease, "close", None)):
-            raise TypeError("A media lease must support close()")
-        if Path(library.path_for(game)).resolve() != Path(media_lease.entry_path).resolve():
-            raise ValueError("Disc playback path does not belong to its media lease")
-        self.media_lease = media_lease
-        self._lease_cleanup_error = None
-        self._install_library = library
-        self.installed_game = None
-        self._save_handoff = None
-        super().__init__(library, game, core, **kwargs)
-
-    @property
-    def lease_retained(self):
-        return not bool(getattr(self.media_lease, "closed", False))
-
-    @property
-    def lease_cleanup_error(self):
-        return self._lease_cleanup_error or getattr(self.media_lease, "cleanup_error", None)
-
-    def _native_worker_alive(self):
-        thread = getattr(self.host, "_thread", None)
-        return thread is not None and thread.is_alive()
-
-    def _release_lease(self):
-        if self._native_worker_alive():
-            raise RuntimeError("The native core worker is still alive; disc files remain retained")
-        if not self.lease_retained:
-            return
-        if self.installed_game is not None:
-            if self._save_handoff is None:
-                from .buffer_install import BufferSaveHandoff
-                self._save_handoff = BufferSaveHandoff(self._install_library, self.game, self.installed_game)
-            self._save_handoff.sync()
-        try:
-            closed = self.media_lease.close()
-            if closed is False or self.lease_retained:
-                self._lease_cleanup_error = (getattr(self.media_lease, "cleanup_error", None) or
-                    "The media lease declined cleanup; disc files remain retained")
-            else:
-                self._lease_cleanup_error = None
-        except Exception as error:
-            self._lease_cleanup_error = str(error) or type(error).__name__
-
-    def install_to_library(self, cancelled=None, progress=None):
-        """Install the existing buffer while paused, without retargeting the core.
-
-        Native SRAM is flushed before the initial snapshot. Final user data is
-        synchronized after successful host.stop(), then the lease may close.
-        A post-publication snapshot failure still exposes ``installed_game``;
-        its handoff and source namespace are retained for a safe retry.
-        """
-        with self._lock:
-            if self.started is None or self.finished_seconds is not None or self.paused_at is None:
-                raise RuntimeError("Pause the running disc game before installing it")
-            flush = getattr(self.host, "flush_saves", None)
-            if not callable(flush):
-                raise RuntimeError("The embedded host cannot flush its current battery saves")
-            flush()
-            from .buffer_install import install_buffered_disc
-            try:
-                return install_buffered_disc(self._install_library, self.media_lease, self.game,
-                                             cancelled=cancelled, progress=progress,
-                                             destination=getattr(self, "install_destination", None))
-            finally:
-                installed = getattr(self.media_lease, "_redux_installed_game", None)
-                if installed is not None:
-                    self.installed_game = dict(installed)
-                    self._save_handoff = getattr(self.media_lease, "_redux_save_handoff", None)
-
-    def start(self):
-        with self._lock:
-            # Reject duplicate starts without stopping a currently running game.
-            if self.started is not None or self.finished_seconds is not None:
-                return super().start()
-            try:
-                return super().start()
-            except BaseException as error:
-                try:
-                    self.host.stop()
-                    if self._native_worker_alive():
-                        raise RuntimeError("The native core worker is still alive; disc files remain retained")
-                    self.finished_seconds = 0
-                    self._release_lease()
-                except Exception as stop_error:
-                    self._lease_cleanup_error = str(stop_error) or type(stop_error).__name__
-                if self.lease_retained and hasattr(error, "add_note"):
-                    error.add_note("Disc media lease retained: " + (self.lease_cleanup_error or "cleanup unavailable"))
-                raise
-
-    def stop(self):
-        with self._lock:
-            try:
-                if self.finished_seconds is None:
-                    elapsed = self.play_seconds
-                    self.host.stop()
-                    if self._native_worker_alive():
-                        raise RuntimeError("The native core worker is still alive; disc files remain retained")
-                    self.finished_seconds = elapsed
-                self._release_lease()
-            except BaseException as error:
-                self._lease_cleanup_error = str(error) or type(error).__name__
-                raise

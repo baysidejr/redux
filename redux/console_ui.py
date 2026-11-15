@@ -431,7 +431,7 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
             return
         if not self.overlay and self.screen=="home" and str(self.focus).startswith("hero:") and self.inserted_disc():
             if self.focus=="hero:details":self.inserted_disc_information()
-            else:self.inserted_disc_options()
+            else:self.play_disc()
             return
         callback=self.callbacks.get(self.focus)
         if callback:
@@ -955,9 +955,9 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
                         self.library.configure_launcher(system,backend.executable,list(backend.arguments))
         self.status.set(f"Local emulator scan complete • {assigned} system profiles configured")
 
-    def play(self):
+    def play(self,game=None):
         if self.busy:return
-        game=self._game_context()
+        game=game or self._game_context()
         if not game:return
         if not game.get("available"):
             self.notice("Connect your game drive" if game["system"]=="pc" else "Media unavailable",
@@ -965,6 +965,10 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
             return
         if self.embedded or self.playback.active():
             self.game_menu();return
+        # Playing is intentional: a game installed from a disc needs that disc in the drive.
+        needed=self.disc_requirement(game)
+        if needed:
+            self.notice("Insert the disc",needed);return
         if game["system"]=="pc":self._play_pc_game(game);return
         if game['system'] in {'jaguar','jaguar_cd'}:
             from .bigpemu import executable,EXTENSIONS
@@ -1018,36 +1022,24 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
         self.root.iconify()
         self.refresh()
 
-    def _start_integrated_game(self,game,core,media_lease=None):
+    def _start_integrated_game(self,game,core):
         library=self.library;firmware=self.firmware_directory()
         from .firmware_files import missing_firmware,system_label
-        try:game_path=None if game.get("transient_disc") else library.path_for(game)
+        try:game_path=library.path_for(game)
         except (OSError,ValueError,KeyError,AttributeError):game_path=None
         missing=missing_firmware(game.get("system"),firmware,region=game.get("region"),game_path=game_path)
         if missing:
             names,message=missing
-            retained=""
-            if media_lease:
-                released=media_lease.close()
-                if released is False or getattr(media_lease,"closed",True) is False:
-                    self.retained_disc_leases=getattr(self,"retained_disc_leases",[])+[media_lease]
-                    retained="\nTemporary disc buffer retained: "+str(media_lease.entry_path)
             self.menu(f"{system_label(game.get('system'))} firmware needed",
                       [("Choose firmware folder",self.choose_firmware),("Copy BIOS files from a drive",self.copy_firmware_menu),("Back",lambda:None)],
-                      message=message+" Disc installation does not require firmware."+retained)
+                      message=message+" Disc installation does not require firmware.")
             return
         def work():
             from .embedded import EmbeddedGame
-            from .disc_session import DiscEmbeddedGame
-            session=None
-            try:
-                session=DiscEmbeddedGame(library,game,core,media_lease=media_lease,firmware=firmware,audio=not self.preferences.get("mute",False)) if media_lease else EmbeddedGame(library,game,core,firmware=firmware,audio=not self.preferences.get("mute",False))
-                return session.start()
-            except BaseException:
-                if session is None and media_lease:media_lease.close()
-                raise
+            session=EmbeddedGame(library,game,core,firmware=firmware,audio=not self.preferences.get("mute",False))
+            return session.start()
         def started(session):
-            try:record=library.start_session(game["id"]) if not game.get("transient_disc") else None
+            try:record=library.start_session(game["id"])
             except Exception:
                 session.stop();raise
             self.embedded=session;self.embedded_game=game;self.frame_sequence=-1;self.held_keys.clear()
@@ -1058,7 +1050,7 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
             from .display_preferences import DisplayPreferences
             self.game_display=DisplayPreferences(library.root).get(game["system"])
             self.embedded_record=record;self.screen="gameplay";self.overlay=None;self.focus="gameplay:menu"
-            self.status.set("Playing from temporary disc buffer" if game.get("transient_disc") else "Playing • Home or Select + Start held 1 second opens the game menu")
+            self.status.set("Playing • Home or Select + Start held 1 second opens the game menu")
             self.refresh()
         self.task(work,started,"Starting integrated playback…",cancellable=False)
 
@@ -1087,12 +1079,8 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
                 ("Load state",lambda:self.state_menu("load")),("Display",self.video_filter_menu),
                 ("Controls",self.game_controls_menu),("Screenshot",lambda:self.state_operation("capture")),
                 ("Reset game",self._reset_embedded)]
-            buffered=bool(getattr(self.embedded,"game",{}).get("transient_disc") and getattr(self.embedded,"media_lease",None))
-            installed=getattr(self.embedded,"installed_game",None)
-            if buffered and not installed:items.insert(5,("Install to library",self._install_buffered_game))
             items.append(("Stop game and return to library",self._stop_embedded))
-            self.menu("Game paused",items,
-                message=f"{display_title(self.embedded_game)} • {duration(self.embedded.play_seconds)} played"+(" • Installed to library" if installed else ""))
+            self.menu("Game paused",items,message=f"{display_title(self.embedded_game)} • {duration(self.embedded.play_seconds)} played")
             return
         active=self.playback.active()
         if not active:return
@@ -1121,40 +1109,6 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
         items.append(("Stop game and return to library",lambda:self._stop(sid)))
         self.menu("Game menu",items,message="Paused" if paused else "Running in the backend window. Game-menu controls are connecting." if bridge else "Running in the backend window.")
         self.overlay["resume_id"]=sid
-
-    def _install_buffered_game(self):
-        if self.busy or not self.embedded:return
-        session=self.embedded
-        if not getattr(session,"game",{}).get("transient_disc") or not getattr(session,"media_lease",None):return
-        if getattr(session,"installed_game",None):self.game_menu();return
-        session.pause()
-        session.install_destination=self.install_destination()
-        copied=0
-        def progress(count):
-            nonlocal copied
-            copied+=count
-            total=max(1,int(session.game.get("size",0)))
-            self.events.put(("status",f"Installing from buffer • {min(100,copied*100//total)}%"))
-        def work():
-            from .library import ImportCancelled
-            from .buffer_install import BufferInstallError
-            try:return session.install_to_library(cancelled=self.cancelled,progress=progress)
-            except ImportCancelled:
-                if getattr(session,"installed_game",None):raise
-                return None
-            except BufferInstallError as error:
-                if error.installed_game:return dict(error.installed_game,_install_warning=str(error))
-                raise
-        def done(game):
-            if game:
-                self.selected_id=game["id"]
-                if self.embedded_record is None:self.embedded_record=self.library.start_session(game["id"])
-                self.refresh();self.game_menu();self.status.set("Installed to library • the current game is ready to resume")
-                if game.get("_install_warning"):
-                    self.notice("Game installed • saves need attention",game["_install_warning"])
-                    self.overlay["back_action"]=self.game_menu
-            else:self.game_menu();self.status.set("Installation cancelled • buffered game is ready to resume")
-        self.task(work,done,"Installing from the existing disc buffer…")
 
     def _resume(self,sid):
         bridge=self.bridges.get(sid)
@@ -1343,17 +1297,8 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
                 if record is not None:self.library.finish_session(record,duration_seconds=session.play_seconds,exit_code=1 if failure else 0)
             finally:
                 self.embedded=None;self.embedded_record=None;self.game_photo=None;self.held_keys.clear()
-                installed=getattr(session,"installed_game",None)
-                if installed:self.selected_id=installed["id"];self.embedded_game=installed
-                self.screen="home" if getattr(session,"game",{}).get("transient_disc") and not installed else "details";self.overlay=None;self.focus="hero:play" if self.screen=="home" else "details:play";self.refresh()
-            transient=bool(getattr(session,"game",{}).get("transient_disc"))
-            retained=bool(getattr(session,"lease_retained",False))
-            if retained:
-                self.retained_disc_sessions=getattr(self,"retained_disc_sessions",[])+[session]
-                message="Game closed • temporary disc buffer retained: "+str(session.media_lease.entry_path)
-            else:
-                message="Game closed • saves stored; temporary disc buffer released" if transient else "Game closed • battery saves and play history stored"
-            self.status.set("Playback stopped: "+failure if failure else message)
+                self.screen="details";self.overlay=None;self.focus="details:play";self.refresh()
+            self.status.set("Playback stopped: "+failure if failure else "Game closed • battery saves and play history stored")
             if failure:self.notice("Playback stopped",failure)
             if exit_after:self._close_now()
         self.task(session.stop,done,"Saving battery memory and closing game…",cancellable=False)
@@ -1490,8 +1435,10 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
             self._task_error(str(error))
 
     def disc_dialog(self):
-        self.menu("Discs & images",[("Inspect / import mounted source",self.optical_dialog),
-            ("Acquire a data volume",self.acquire_volume),("Capture supported physical CD tracks",self.raw_disc_dialog),
+        disc=self.inserted_disc()
+        items=[("Inspect disc tracks",lambda drive=disc.drive:self._inspect_console_drive(drive))] if disc else []
+        self.menu("Discs & images",items+[("Inspect / import mounted source",self.optical_dialog),
+            ("Acquire a data volume",self.acquire_volume),("Play a physical CD",self.raw_disc_dialog),
             ("Cancel",lambda:None)],message="Original mounted image files are preferred so raw tracks remain intact.")
 
     def raw_disc_dialog(self):
@@ -1512,12 +1459,13 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
         def done(result):
             if selected and not self._disc_current(selected.drive,selected.fingerprint):return
             source,plan=result
+            play=(lambda:self.play_disc()) if selected else (lambda:self.install_disc_from_drive(drive,then_play=True))
             if source:
-                self.menu("Install disc",[("Install to library",lambda:self.install_disc_from_drive(drive,disc=selected)),("Cancel",lambda:None)],message="The original mounted image will be copied into your library.")
+                self.menu("Play disc",[("Play",play),("Cancel",lambda:None)],message="The mounted image is installed into your library the first time, then played from there.")
                 if selected:self.overlay["disc"]=selected
                 return
-            self.menu("Install disc",[("Install to library",lambda:self.install_disc_from_drive(drive,disc=selected)),("Cancel",lambda:None)],
-                message=f"{len(plan.tracks)} tracks • {human_size(plan.bytes_to_capture)}\nBIN/CUE main-channel capture; no subchannels, hidden pregaps or protection reconstruction. Unsupported layouts are rejected.")
+            self.menu("Play disc",[("Play",play),("Cancel",lambda:None)],
+                message=f"{len(plan.tracks)} tracks • {human_size(plan.bytes_to_capture)}\nThe first Play installs the disc (BIN/CUE main-channel capture; no subchannels, hidden pregaps or protection reconstruction). After that, Play starts the installed copy.")
             if selected:self.overlay["disc"]=selected
         self.task(work,done,"Checking physical CD layout…")
 

@@ -7,7 +7,7 @@ import unittest
 from unittest.mock import patch
 
 from redux.disc_identity import DiscIdentity
-from redux.disc_session import DiscEmbeddedGame, prepare_disc_game
+from redux.disc_session import prepare_disc_game
 from redux.library import ImportCancelled, Library
 
 
@@ -156,110 +156,6 @@ class DiscPreparationTests(unittest.TestCase):
         self.lease.closed = True
         with self.assertRaisesRegex(ValueError, "open media lease"):
             prepare_disc_game(self.library, self.lease)
-
-
-class DiscSessionTests(unittest.TestCase):
-    def setUp(self):
-        self.temporary = tempfile.TemporaryDirectory()
-        self.addCleanup(self.temporary.cleanup)
-        self.root = Path(self.temporary.name)
-        self.media = self.root / "disc-buffer" / "game.iso"
-        self.media.parent.mkdir()
-        self.media.write_bytes(bytes(2048))
-        self.core = self.root / "test.dll"
-        self.core.write_bytes(b"Fake core; never loaded")
-        self.lease = LeaseFixture(self.media, None)
-        self.game = {"id": (1 << 62) + 1, "bundle_hash": "a" * 64, "storage": "linked",
-                     "path": str(self.media), "system": "psx", "transient_disc": True}
-        self.library = SimpleNamespace(root=self.root / "library", path_for=lambda game: Path(game["path"]))
-        self.host = HostFixture()
-        patcher = patch("redux.libretro_host.EmbeddedSession", return_value=self.host)
-        patcher.start()
-        self.addCleanup(patcher.stop)
-        self.clock = [0.0]
-        self.session = DiscEmbeddedGame(self.library, self.game, self.core, media_lease=self.lease,
-                                        _clock=lambda: self.clock[0], audio=False)
-
-    def test_successful_stop_releases_once_and_saves_are_outside_the_lease(self):
-        self.assertTrue(self.session.directory.is_relative_to(self.library.root))
-        self.assertFalse(self.session.directory.is_relative_to(self.media.parent))
-        self.session.start()
-        self.clock[0] = 10
-        self.assertFalse(self.lease.closed)
-        self.session.stop()
-        self.assertTrue(self.lease.closed)
-        self.assertFalse(self.session.lease_retained)
-        self.assertEqual(self.session.play_seconds, 10)
-        self.assertEqual(self.host.stop_calls, 1)
-
-    def test_failed_native_shutdown_retains_media_until_a_successful_retry(self):
-        self.session.start()
-        self.host.fail_stop = True
-        with self.assertRaisesRegex(RuntimeError, "timed out"):
-            self.session.stop()
-        self.assertTrue(self.session.lease_retained)
-        self.assertEqual(self.lease.close_calls, 0)
-        self.assertIsNone(self.session.finished_seconds)
-        self.host.fail_stop = False
-        self.session.stop()
-        self.assertFalse(self.session.lease_retained)
-        self.assertIsNone(self.session.lease_cleanup_error)
-
-    def test_returned_stop_with_a_live_worker_still_retains_media(self):
-        self.session.start()
-        self.host.worker_alive = True
-        with self.assertRaisesRegex(RuntimeError, "still alive"):
-            self.session.stop()
-        self.assertEqual(self.lease.close_calls, 0)
-        self.assertTrue(self.session.lease_retained)
-        self.host.worker_alive = False
-        self.session.stop()
-        self.assertTrue(self.lease.closed)
-
-    def test_start_failure_stops_native_host_before_releasing(self):
-        self.host.fail_start = True
-        with self.assertRaisesRegex(RuntimeError, "failed to start"):
-            self.session.start()
-        self.assertEqual(self.host.stop_calls, 1)
-        self.assertTrue(self.lease.closed)
-        self.assertEqual(self.session.finished_seconds, 0)
-
-    def test_start_failure_and_shutdown_timeout_retains_media_and_original_error(self):
-        self.host.fail_start = self.host.fail_stop = True
-        with self.assertRaisesRegex(RuntimeError, "failed to start") as caught:
-            self.session.start()
-        self.assertTrue(self.session.lease_retained)
-        self.assertIn("timed out", self.session.lease_cleanup_error)
-        self.assertTrue(any("lease retained" in note for note in caught.exception.__notes__))
-        self.assertEqual(self.lease.close_calls, 0)
-        self.host.fail_stop = False
-        self.session.stop()
-        self.assertFalse(self.session.lease_retained)
-
-    def test_cleanup_refusal_is_visible_and_retry_does_not_restart_or_stop_native_again(self):
-        self.session.start()
-        self.lease.fail_cleanup = True
-        self.session.stop()
-        self.assertTrue(self.session.lease_retained)
-        self.assertIn("Unowned file", self.session.lease_cleanup_error)
-        self.assertIsNotNone(self.session.finished_seconds)
-        self.lease.fail_cleanup = False
-        self.session.stop()
-        self.assertFalse(self.session.lease_retained)
-        self.assertEqual(self.host.stop_calls, 1)
-
-    def test_duplicate_start_does_not_stop_a_running_session(self):
-        self.session.start()
-        with self.assertRaisesRegex(RuntimeError, "only be started once"):
-            self.session.start()
-        self.assertEqual(self.host.stop_calls, 0)
-        self.assertEqual(self.lease.close_calls, 0)
-
-    def test_lease_must_match_the_game_playback_path(self):
-        wrong = LeaseFixture(self.root / "another.iso", None)
-        with self.assertRaisesRegex(ValueError, "does not belong"):
-            DiscEmbeddedGame(self.library, self.game, self.core, media_lease=wrong)
-        self.assertEqual(wrong.close_calls, 0)
 
 
 if __name__ == "__main__":

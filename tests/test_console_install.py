@@ -84,21 +84,13 @@ class ConsoleInstallTests(unittest.TestCase):
         self.app.callbacks = {self.app.focus: self.app._overlay_run(overlay, callback)}
         self.app._route_controller_events([InputEvent("confirm")])
 
-    def buffered_session(self, *, transient=True, installed=False):
-        session = SimpleNamespace(game=dict(self.buffered_game, transient_disc=transient),
-            media_lease=self.lease if transient else None,
-            installed_game=self.managed_game if installed else None,
-            play_seconds=12, paused=False, resume=Mock(), stop=Mock(), install_to_library=Mock())
-        session.pause = Mock(side_effect=lambda: setattr(session, "paused", True))
-        self.app.embedded = session
-        self.app.embedded_game = session.game
-        self.app.screen, self.app.focus = "gameplay", "gameplay:menu"
-        return session
-
     def test_inserted_disc_a_action_installs_directly_into_portable_library_without_picker_or_bios(self):
         self.app.inserted_disc_options()
-        self.choose_overlay_action("Install disc to library")
+        self.assertIn("Not installed", self.app.overlay["message"])
+        self.choose_overlay_action("Play")
         work, done = self.scheduled()
+        self.assertIn("starts when the copy is done", self.app.task.call_args.args[2])
+        self.app.play = Mock()
         self.buffer.assert_not_called()
         result = work()
         self.buffer.assert_called_once()
@@ -116,6 +108,7 @@ class ConsoleInstallTests(unittest.TestCase):
         self.app.refresh.assert_called_once_with()
         self.app.library.start_session.assert_not_called()
         self.app.status.set.assert_called_once_with("Installed to library • ready to play")
+        self.app.play.assert_called_once_with(self.managed_game)
         self.no_manual_acquisition()
 
     def test_direct_install_progress_reports_read_and_managed_copy_phases(self):
@@ -126,7 +119,7 @@ class ConsoleInstallTests(unittest.TestCase):
             kwargs["progress"](1024 * 1024)
             return self.managed_game
         self.buffer.side_effect, self.install.side_effect = buffered, installed
-        self.app.install_inserted_disc()
+        self.app.install_disc_from_drive("G:", disc=self.disc)
         work, _ = self.scheduled()
         work()
         messages = [self.app.events.get_nowait()[1] for _ in range(2)]
@@ -136,7 +129,7 @@ class ConsoleInstallTests(unittest.TestCase):
 
     def test_direct_install_cancelled_during_copy_closes_unhanded_buffer_and_keeps_selection(self):
         self.install.side_effect = ImportCancelled("Stopped by controller")
-        self.app.install_inserted_disc()
+        self.app.install_disc_from_drive("G:", disc=self.disc)
         work, done = self.scheduled()
         self.assertIsNone(result := work())
         done(result)
@@ -155,78 +148,18 @@ class ConsoleInstallTests(unittest.TestCase):
 
     def test_busy_or_active_game_prevents_starting_a_second_direct_install(self):
         self.app.busy = True
-        self.app.install_inserted_disc()
+        self.app.install_disc_from_drive("G:", disc=self.disc)
         self.app.task.assert_not_called()
         self.app.busy = False
         self.app.game_menu = Mock()
         self.app.embedded = object()
-        self.app.install_inserted_disc()
+        self.app.install_disc_from_drive("G:", disc=self.disc)
         self.app.embedded = None
         self.app.playback.active.return_value = [SimpleNamespace(session_id="owned")]
-        self.app.install_inserted_disc()
+        self.app.install_disc_from_drive("G:", disc=self.disc)
         self.assertEqual(self.app.game_menu.call_count, 2)
         self.app.task.assert_not_called()
         self.buffer.assert_not_called()
-
-    def test_paused_install_action_uses_existing_session_buffer_and_starts_history_only_after_success(self):
-        session = self.buffered_session()
-        def install_owned_buffer(*, cancelled, progress):
-            self.assertIs(cancelled, self.app.cancelled)
-            progress(128)
-            session.installed_game = self.managed_game
-            return self.managed_game
-        session.install_to_library.side_effect = install_owned_buffer
-        self.app.game_menu()
-        self.choose_overlay_action("Install to library")
-        work, done = self.scheduled()
-        self.app.library.start_session.assert_not_called()
-        game = work()
-        self.app.library.start_session.assert_not_called()
-        done(game)
-        session.install_to_library.assert_called_once()
-        self.buffer.assert_not_called()
-        self.prepare.assert_not_called()
-        self.install.assert_not_called()
-        self.lease.close.assert_not_called()
-        self.app.library.start_session.assert_called_once_with(71)
-        self.assertEqual(self.app.embedded_record, 42)
-        self.assertIs(self.app.embedded, session)
-        self.assertTrue(session.paused)
-        session.resume.assert_not_called()
-        session.stop.assert_not_called()
-        self.app.refresh.assert_called_once_with()
-        self.assertEqual(self.app.overlay["title"], "Game paused")
-        self.assertNotIn("Install to library", dict(self.app.overlay["items"]))
-        self.assertIn("Installed to library", self.app.overlay["message"])
-        self.app.status.set.assert_called_once_with("Installed to library • the current game is ready to resume")
-        self.no_manual_acquisition()
-
-    def test_controller_b_during_active_buffer_copy_cancels_and_keeps_game_paused(self):
-        session = self.buffered_session()
-        def active_copy(*, cancelled, progress):
-            progress(64)
-            self.app.busy = True
-            self.app._route_controller_events([InputEvent("back")])
-            self.assertTrue(cancelled.is_set())
-            raise ImportCancelled("Controller cancelled copy")
-        session.install_to_library.side_effect = active_copy
-        self.app._install_buffered_game()
-        work, done = self.scheduled()
-        result = work()
-        self.app.busy = False
-        done(result)
-        self.assertIsNone(result)
-        self.assertIs(self.app.embedded, session)
-        self.assertTrue(session.paused)
-        session.resume.assert_not_called()
-        session.stop.assert_not_called()
-        self.lease.close.assert_not_called()
-        self.app.library.start_session.assert_not_called()
-        self.app.refresh.assert_not_called()
-        self.assertIn("Install to library", dict(self.app.overlay["items"]))
-        self.assertIn("buffered game is ready to resume", self.app.status.set.call_args.args[0])
-        self.buffer.assert_not_called()
-        self.no_manual_acquisition()
 
     def test_busy_input_accepts_pressed_b_only_when_task_is_cancellable(self):
         self.app.busy = True
@@ -238,18 +171,6 @@ class ConsoleInstallTests(unittest.TestCase):
         self.app.task_cancellable = True
         self.app.input_action("b")
         self.assertTrue(self.app.cancelled.is_set())
-
-    def test_install_row_absent_for_ordinary_or_already_installed_running_session(self):
-        for transient, installed in ((False, False), (True, True)):
-            with self.subTest(transient=transient, installed=installed):
-                session = self.buffered_session(transient=transient, installed=installed)
-                self.app.game_menu()
-                self.assertNotIn("Install to library", dict(self.app.overlay["items"]))
-                self.app._install_buffered_game()
-                session.install_to_library.assert_not_called()
-                self.app.task.assert_not_called()
-        self.buffer.assert_not_called()
-        self.no_manual_acquisition()
 
     def test_background_error_opens_controller_notice_without_native_messagebox_and_keeps_polling(self):
         del self.app.notice  # Exercise the real in-app notice/menu presentation.
@@ -270,54 +191,12 @@ class ConsoleInstallTests(unittest.TestCase):
         self.assertEqual([label for label, _ in self.app.overlay["items"]], ["OK"])
         self.app.root.after.assert_called_once_with(100, self.app._poll)
 
-    def test_stopped_disc_handoff_failure_offers_retry_or_keep_files_instead_of_resume(self):
-        session = self.buffered_session()
-        session.finished_seconds = 12
-        self.app._stop_embedded = Mock()
-        self.app._task_error("Managed save changed independently")
-        self.assertEqual(self.app.overlay["title"], "Save transfer needs attention")
-        labels = [label for label, _ in self.app.overlay["items"]]
-        self.assertEqual(labels, ["Retry finishing save transfer", "Keep files and return to library"])
-        self.assertFalse(any("resume" in label.casefold() for label in labels))
-        self.assertEqual(self.app.overlay["back_action"], self.app._return_after_retained_disc)
-        self.choose_overlay_action("Retry finishing save transfer")
-        self.app._stop_embedded.assert_called_once_with()
-        session.resume.assert_not_called()
-        self.lease.close.assert_not_called()
-
-    def test_return_after_failed_save_handoff_retains_owner_finishes_error_history_and_selects_install(self):
-        session = self.buffered_session(installed=True)
-        session.finished_seconds = 12
-        self.app.embedded_record = 42
-        self.app.library.finish_session = Mock()
-        self.app.game_photo = object()
-        self.app.held_keys = {"up", "x"}
-        previous = object()
-        self.app.retained_disc_sessions = [previous]
-        self.app._task_error("Save transfer needs retry")
-        self.choose_overlay_action("Keep files and return to library")
-        self.assertEqual(self.app.retained_disc_sessions, [previous, session])
-        self.app.library.finish_session.assert_called_once_with(42, duration_seconds=12, exit_code=1)
-        self.assertEqual(self.app.selected_id, 71)
-        self.assertIs(self.app.embedded_game, self.managed_game)
-        self.assertIsNone(self.app.embedded)
-        self.assertIsNone(self.app.embedded_record)
-        self.assertIsNone(self.app.game_photo)
-        self.assertEqual(self.app.held_keys, set())
-        self.assertIsNone(self.app.overlay)
-        self.assertEqual((self.app.screen, self.app.focus), ("details", "details:play"))
-        self.app.refresh.assert_called_once_with()
-        self.assertIn("retained for recovery", self.app.status.set.call_args.args[0])
-        session.resume.assert_not_called()
-        session.stop.assert_not_called()
-        self.lease.close.assert_not_called()
-
     def test_direct_install_post_publication_save_error_shows_installed_game_and_retains_recovery_lease(self):
         del self.app.notice
         self.lease._redux_installed_game = self.managed_game
         self.install.side_effect = BufferInstallError("User saves conflict; both copies retained",
                                                      installed_game=self.managed_game)
-        self.app.install_inserted_disc()
+        self.app.install_disc_from_drive("G:", disc=self.disc)
         work, done = self.scheduled()
         result = work()
         self.assertEqual(result["id"], 71)
@@ -332,34 +211,6 @@ class ConsoleInstallTests(unittest.TestCase):
         self.app.status.set.assert_called_once_with("Installed to library • ready to play")
         self.app.library.start_session.assert_not_called()
         self.no_manual_acquisition()
-
-    def test_paused_install_post_publication_save_warning_keeps_game_paused_and_returns_to_menu(self):
-        del self.app.notice
-        session = self.buffered_session()
-        def published_with_warning(**kwargs):
-            session.installed_game = self.managed_game
-            raise BufferInstallError("Save snapshot needs reconciliation", installed_game=self.managed_game)
-        session.install_to_library.side_effect = published_with_warning
-        self.app._install_buffered_game()
-        work, done = self.scheduled()
-        result = work()
-        self.assertEqual(result["id"], 71)
-        done(result)
-        self.assertIs(self.app.embedded, session)
-        self.assertTrue(session.paused)
-        self.app.library.start_session.assert_called_once_with(71)
-        self.assertEqual(self.app.embedded_record, 42)
-        self.assertEqual(self.app.overlay["title"], "Game installed • saves need attention")
-        self.assertIn("reconciliation", self.app.overlay["message"])
-        self.assertEqual(self.app.overlay["back_action"], self.app.game_menu)
-        self.app.input_action("back")
-        self.assertEqual(self.app.overlay["title"], "Game paused")
-        self.assertNotIn("Install to library", dict(self.app.overlay["items"]))
-        session.resume.assert_not_called()
-        self.lease.close.assert_not_called()
-        self.buffer.assert_not_called()
-        self.no_manual_acquisition()
-
 
 if __name__ == "__main__":
     unittest.main()

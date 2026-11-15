@@ -241,7 +241,7 @@ def install_buffered_disc(library, lease, game, cancelled=None, progress=None, d
     copied manifest before publication, closing the source-change race.
 
     The normal serializable installed game is returned. An internal handoff is
-    retained on the lease for DiscEmbeddedGame's final post-stop synchronization.
+    retained on the lease for the save-data handoff.
     If a save conflict follows a successful media install, the exception exposes
     ``installed_game`` and both source/destination user-data copies are retained.
     """
