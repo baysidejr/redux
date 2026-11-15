@@ -1,4 +1,6 @@
-# Project status — 0.15.1, 2026-11-15
+# Project status — 0.15.2, 2026-11-15
+
+Release 0.15.2 (2026-11-15) completes the system tiles: owner-made pixel art for Atari 2600, Atari 7800, Game Boy, Game Boy Color, Master System and Game Gear, so every playable system has a collection tile and hero backdrop (twenty-three tiles including PC games). Game Boy Advance, which has no emulator, stays without one.
 
 Release 0.15.1 (2026-11-15) drops Snes9x and Beetle PCE Fast from the optional core list (`core_install.CORES`, `tools/cores/install_official.py`). No system was mapped to either: SNES runs on Mednafen Supafaust and the PC Engine family on the full Beetle PCE, so the two were dead weight in the download table. Thirteen cores remain, eleven recommended plus Mupen64Plus-Next and MAME.
 

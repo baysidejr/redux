@@ -5,7 +5,7 @@ import unittest
 
 from redux.ui_assets import Artwork
 
-BUNDLED = {"genesis", "sega_cd", "nes", "snes", "pce", "pce_cd", "supergrafx", "neo_geo_cd", "psx", "32x", "saturn", "n64", "jaguar", "jaguar_cd", "3do", "neo_geo"}
+BUNDLED = {"genesis", "sega_cd", "nes", "snes", "pce", "pce_cd", "supergrafx", "neo_geo_cd", "psx", "32x", "saturn", "n64", "jaguar", "jaguar_cd", "3do", "neo_geo", "atari2600", "atari7800", "gb", "gbc", "sms", "game_gear"}
 
 
 class PlatformTileTests(unittest.TestCase):
