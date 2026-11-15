@@ -83,3 +83,7 @@ images: libretro-thumbnails. Descriptions and facts: TheGamesDB. Hero banners:
 SteamGridDB first, TheGamesDB fan art where it has none. The build script lives
 outside the repository history (`tools/gamedb/`, gitignored) because it needs a
 developer's TheGamesDB and SteamGridDB keys; the output here is what ships.
+
+## Neo Geo cartridge names
+
+`neo_geo/names.json` is not a catalog: it maps FinalBurn Neo set names (`mslug`, `kof98`) to a title and publisher so a zipped Neo Geo AES/MVS game on a game card gets a readable name. Source: libretro-database `dat/SNK - Neo Geo.dat`, English title only, set numbers and board codes stripped. The Database page does not list this system; it has no art or descriptions of its own.

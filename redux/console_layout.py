@@ -23,7 +23,7 @@ BADGES={"welcome":("REDUX","#e5405e"),"psx":("PS","#8e24aa"),"nes":("NES","#ec40
     "3do":("3DO","#bb653e"),"sega_cd":("SEGA CD","#1f5fa8"),"pce_cd":("TG-CD","#c98a2e"),
     "jaguar":("JAG","#9b2335"),"jaguar_cd":("JAG CD","#9b2335"),"32x":("32X","#3b7a57"),
     "pc":("PC","#2779b0"),
-    "genesis":("GEN","#1976d2"),"saturn":("SAT","#00a6af"),"neo_geo_cd":("NGCD","#65a641"),
+    "genesis":("GEN","#1976d2"),"saturn":("SAT","#00a6af"),"neo_geo":("NEO GEO","#c9a227"),"neo_geo_cd":("NGCD","#65a641"),
     "pce":("PCE","#dc9d38"),"n64":("N64","#4f9a58")}
 
 

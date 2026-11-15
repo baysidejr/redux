@@ -39,6 +39,7 @@ class ConsoleCores:
     def core_options(self,name):
         installed=(project_root()/'tools/cores'/(name+'_libretro.dll')).is_file()
         firmware_notes={'neocd':' NeoCD uses its built-in HLE when no original BIOS is available; compatibility varies. For original firmware, put your BIOS in the neocd subfolder of the selected BIOS folder (normally bios/neocd). States made with HLE and original BIOS are not interchangeable.',
+                        'fbneo':' FinalBurn Neo plays Neo Geo AES/MVS cartridges as zipped ROM sets named by set name (mslug.zip). It needs the neogeo.zip BIOS set in the fbneo subfolder of the selected BIOS folder (normally bios/fbneo) or next to the games; ROM sets must match this FBNeo build. FBNeo is free for non-commercial use.',
                         'opera':' Current Opera includes Opera Boot. Original BIOS such as panafz1.bin or panafz10.bin goes directly in the selected BIOS folder; some games need original firmware.'}
         self.menu(name.replace('_',' ').title(),[
             ('Repair / update' if installed else 'Install',lambda:self.download_cores((name,),repair=installed)),

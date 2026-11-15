@@ -1,4 +1,6 @@
-# Project status — 0.11.2, 2026-11-14
+# Project status — 0.12.0, 2026-11-14
+
+Release 0.12.0 (2026-11-14) adds the Neo Geo AES/MVS cartridge system: `neo_geo` in the system list with its own owner-made tile and NEO GEO badge, a `Neo Geo` folder on every game card (aliases AES, MVS, Neo Geo AES) that accepts zipped ROM sets only, while archives stay ignored in other system folders; a shipped table of 278 set names from libretro-database (`redux/database/neo_geo/names.json`) gives each set its title and publisher at sync time; FinalBurn Neo (`fbneo`, non-commercial license kept beside the core) joins the recommended cores, hosted by the built-in libretro host with `fbneo-neogeo-mode = AES`, and needs the `neogeo.zip` BIOS set in `bios/fbneo` or beside the games. The libretro host now answers null-pointer support queries (save-state context and the other scalar queries) with success instead of failing the environment callback, which FinalBurn Neo triggered at initialisation and which would have refused every Neo Geo launch; the fix was confirmed by tracing the downloaded core (`tools/cores/probe_profiles.py` now lists `fbneo`). Playing a real Neo Geo set has not been tried yet.
 
 Release 0.11.2 (2026-11-14) completes the system tiles: owner-made 3DO and Jaguar CD pixel-art tiles, so every Database card and collection tile has a console picture.
 

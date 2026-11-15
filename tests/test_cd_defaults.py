@@ -29,7 +29,7 @@ def neocd_image(ipl=b'BOOT.PRG,0,0\r\n'):
 
 class NewCDDefaultsTests(unittest.TestCase):
     def test_dedicated_cores_are_recommended_and_enabled(self):
-        for system,name in (('neo_geo_cd','neocd'),('3do','opera')):
+        for system,name in (('neo_geo_cd','neocd'),('3do','opera'),('neo_geo','fbneo')):
             self.assertIn(system,HOSTED_DEFAULTS)
             self.assertIn(name,recommended_names())
             self.assertEqual(PROFILES[system].filename,name+'_libretro.dll')

@@ -546,8 +546,11 @@ class EmbeddedSession:
                     return False
                 C.cast(data, C.POINTER(C.c_char_p))[0] = self._strings[command]
                 return True
+            # Cores may pass NULL to ask whether a query is supported (FinalBurn Neo does for the
+            # save-state context); answer yes and write only through a real pointer.
             if command in (2, 3, 17, 0x10031):  # overscan, dupe, option update, fast-forward
-                C.cast(data, C.POINTER(C.c_bool))[0] = command == 3
+                if data:
+                    C.cast(data, C.POINTER(C.c_bool))[0] = command == 3
                 return True
             if command == 10:
                 value = C.cast(data, C.POINTER(C.c_int))[0]
@@ -604,16 +607,19 @@ class EmbeddedSession:
                         self.audio_error = str(exc)
                         self._audio_sink = None
                 return True
-            if command in (39, 52, 59, 0x10048):
-                C.cast(data, C.POINTER(C.c_uint))[0] = 0
+            if command in (39, 52, 59, 0x10048):  # language, options version, message version, save-state context
+                if data:
+                    C.cast(data, C.POINTER(C.c_uint))[0] = 0
                 return True
             if command == 0x1002F:
-                C.cast(data, C.POINTER(C.c_int))[0] = 3 if self.audio_enabled else 1
+                if data:
+                    C.cast(data, C.POINTER(C.c_int))[0] = 3 if self.audio_enabled else 1
                 return True
             if command == 0x10033:
                 return True
             if command == 0x10032:
-                C.cast(data, C.POINTER(C.c_float))[0] = 60.0
+                if data:
+                    C.cast(data, C.POINTER(C.c_float))[0] = 60.0
                 return True
             if command == 6:
                 msg = C.cast(data, C.POINTER(_Message)).contents.msg

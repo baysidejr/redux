@@ -76,6 +76,10 @@ _N64_SOFTWARE_OPTIONS = {
     "mupen64plus-rsp-plugin": "cxd4",
 }
 
+# FinalBurn Neo declares fbneo-neogeo-mode (DIPSWITCH|MVS|AES|UNIBIOS). Redux presents the home
+# console, so games boot as an AES cartridge rather than an arcade cabinet.
+_NEO_GEO_OPTIONS = {"fbneo-neogeo-mode": "AES"}
+
 _profiles = (
     CoreProfile("nes", "mesen_libretro.dll", "Mesen", "mesen", "upstream_family",
                 blockers=(_REVISION_UNKNOWN,), original_system_ids=(1,)),
@@ -121,6 +125,8 @@ _profiles = (
                 "upstream_family", _N64_SOFTWARE_OPTIONS,
                 (_REVISION_UNKNOWN, "Installed build must declare Angrylion RDP and CXD4 RSP; software support is conditional.",
                  "Original native custom plugin paths/configuration are not stock Windows libretro settings."), (3,)),
+    CoreProfile("neo_geo", "fbneo_libretro.dll", "FinalBurn Neo", None, "redux_extension", _NEO_GEO_OPTIONS,
+                blockers=("The neogeo.zip BIOS set is required (bios/fbneo or beside the game); ROM sets must match the installed FinalBurn Neo revision.",)),
     CoreProfile("neo_geo_cd", "neocd_libretro.dll", "NeoCD", None, "redux_extension",
                 blockers=("Original BIOS recommended; built-in HLE is core-version dependent.",)),
     CoreProfile("3do", "opera_libretro.dll", "Opera", None, "redux_extension",

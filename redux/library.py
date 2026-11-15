@@ -26,7 +26,7 @@ SYSTEMS = {
     "jaguar": "Atari Jaguar", "jaguar_cd": "Atari Jaguar CD",
     "unknown": "Unassigned", "nes": "NES", "snes": "SNES", "n64": "Nintendo 64",
     "genesis": "Mega Drive / Genesis", "32x": "32X", "sega_cd": "Sega CD",
-    "saturn": "Saturn", "psx": "PlayStation", "neo_geo_cd": "Neo Geo CD",
+    "saturn": "Saturn", "psx": "PlayStation", "neo_geo": "Neo Geo", "neo_geo_cd": "Neo Geo CD",
     "pce": "PC Engine / TurboGrafx-16", "pce_cd": "PC Engine CD",
     "supergrafx": "SuperGrafx", "atari2600": "Atari 2600", "atari7800": "Atari 7800",
     "gb": "Game Boy", "gbc": "Game Boy Color", "gba": "Game Boy Advance",
@@ -39,7 +39,11 @@ EXTENSION_SYSTEM = {
     ".32x": "32x", ".pce": "pce", ".a26": "atari2600", ".a78": "atari7800",
     ".gb": "gb", ".gbc": "gbc", ".gba": "gba", ".sms": "sms", ".gg": "game_gear",
 }
-MEDIA_EXTENSIONS = set(EXTENSION_SYSTEM) | {".cue", ".m3u", ".iso", ".chd", ".ccd", ".bin",'.cdi','.cof','.abs','.rom'}
+# Neo Geo AES/MVS games are zipped ROM sets named by set name (mslug.zip); FinalBurn Neo
+# loads the archive itself. Archives are media only in that system's folder.
+ARCHIVE_EXTENSIONS = frozenset({".zip", ".7z"})
+ARCHIVE_SYSTEMS = frozenset({"neo_geo"})
+MEDIA_EXTENSIONS = set(EXTENSION_SYSTEM) | {".cue", ".m3u", ".iso", ".chd", ".ccd", ".bin",'.cdi','.cof','.abs','.rom'} | set(ARCHIVE_EXTENSIONS)
 _CUE_FILE = re.compile(r'^\s*FILE\s+(?:"([^"\r\n]+)"|(\S+))\s+\S+\s*$', re.I)
 ARTWORK_FIELDS = {"cover": "artwork_path", "tile": "tile_path", "hero": "hero_path",
                   "screenshot": "screenshot_path", "logo": "logo_path"}
@@ -126,7 +130,15 @@ def inspect_bundle(entry: str | Path) -> Bundle:
     return Bundle(entry, root, files)
 
 
-def discover_media(folder: str | Path, *, cancelled=None) -> list[Path]:
+def discover_media(folder: str | Path, *, cancelled=None, system: str | None = None) -> list[Path]:
+    """Media files under a folder. With a system, archives count only for archive systems (Neo Geo)
+    and archive systems accept nothing else."""
+    if system is None:
+        extensions = set(MEDIA_EXTENSIONS) - ARCHIVE_EXTENSIONS
+    elif system in ARCHIVE_SYSTEMS:
+        extensions = set(ARCHIVE_EXTENSIONS)
+    else:
+        extensions = set(MEDIA_EXTENSIONS) - ARCHIVE_EXTENSIONS
     def check():
         if cancelled is not None and cancelled.is_set():raise ImportCancelled("Folder scan cancelled")
     check()
@@ -136,7 +148,7 @@ def discover_media(folder: str | Path, *, cancelled=None) -> list[Path]:
     candidates=[]
     for path in root.rglob("*"):
         check()
-        if path.is_file() and path.suffix.lower() in MEDIA_EXTENSIONS and not _markdown_document(path):candidates.append(path)
+        if path.is_file() and path.suffix.lower() in extensions and not _markdown_document(path):candidates.append(path)
     candidates.sort(key=lambda path:str(path).casefold())
     # Do not add a CUE's BIN tracks or an M3U's component discs as separate games.
     referenced = set()

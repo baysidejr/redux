@@ -33,15 +33,16 @@ from pathlib import Path
 import string
 
 from .library import SYSTEMS, ImportCancelled, discover_media
+from .neo_geo import game_facts as neo_geo_facts
 
 MARKER = "Redux Games"
 CONFIG_NAME = "game.json"
 ART_FOLDER = "art"
 ART_ROLES = (("header", "hero"), ("boxart", "cover"), ("gameimage", "screenshot"))
 ART_EXTENSIONS = (".png", ".jpg", ".jpeg", ".webp")
-CARD_SYSTEM_FOLDERS = ("PlayStation", "Saturn", "Sega CD", "PC Engine CD", "Neo Geo CD", "3DO", "Jaguar CD", "PC")
+CARD_SYSTEM_FOLDERS = ("PlayStation", "Saturn", "Sega CD", "PC Engine CD", "Neo Geo", "Neo Geo CD", "3DO", "Jaguar CD", "PC")
 SYSTEM_FOLDER_NAMES = {"psx": "PlayStation", "saturn": "Saturn", "sega_cd": "Sega CD", "pce_cd": "PC Engine CD",
-                       "neo_geo_cd": "Neo Geo CD", "3do": "3DO", "jaguar_cd": "Jaguar CD", "pc": "PC"}
+                       "neo_geo": "Neo Geo", "neo_geo_cd": "Neo Geo CD", "3do": "3DO", "jaguar_cd": "Jaguar CD", "pc": "PC"}
 MAX_PC_GAMES_PER_CARD = 500
 _SKIP_FOLDERS = {"$recycle.bin", "system volume information", "windows", "program files", "program files (x86)",
                  "programdata", "users", "recovery", "perflogs", "msocache", "redux games", "steam", "steamlibrary",
@@ -64,6 +65,8 @@ def system_folders():
     names["mega cd"] = "sega_cd"; names["megacd"] = "sega_cd"; names["segacd"] = "sega_cd"
     names["turbografx cd"] = "pce_cd"; names["turbografx-cd"] = "pce_cd"; names["pc engine cd"] = "pce_cd"
     names["neogeo cd"] = "neo_geo_cd"; names["neo-geo cd"] = "neo_geo_cd"
+    for name in ("neogeo", "neo-geo", "neo geo aes", "neo geo mvs", "neo-geo aes", "neogeo aes", "aes", "mvs"):
+        names[name] = "neo_geo"
     names["atari jaguar cd"] = "jaguar_cd"; names["jaguarcd"] = "jaguar_cd"
     return names
 
@@ -268,6 +271,8 @@ def prepare_card(drive):
         readme.write_text(
             "Redux game card\n\nPut each system's disc images or cartridge files in its folder: " + ", ".join(CARD_SYSTEM_FOLDERS[:-1]) +
             ", or any other supported system's name (Jaguar, NES, Genesis, ...). Redux plays them from here.\n\n"
+            "Neo Geo: zipped AES/MVS ROM sets named by set name (mslug.zip). The neogeo.zip BIOS goes in the bios/fbneo folder "
+            "of Redux or next to the games.\n\n"
             "PC: Redux writes one folder per installed PC game it finds on this drive, with a game.json and an art folder. "
             "Edit game.json to change the title, EXE or arguments; add header, boxart and gameimage images to art.\n",
             encoding="utf-8")
@@ -358,10 +363,12 @@ def scan_card(marker, *, cancelled=None):
                     found.append(CardGame("pc", executable, game_folder.name, game_folder))
             continue
         try:
-            entries = discover_media(folder, cancelled=cancelled)
+            entries = discover_media(folder, cancelled=cancelled, system=system)
         except (OSError, ValueError):
             continue
-        found.extend(CardGame(system, entry) for entry in entries)
+        for entry in entries:
+            facts = neo_geo_facts(entry) if system == "neo_geo" else None
+            found.append(CardGame(system, entry, facts["title"] if facts else None))
     return found
 
 
@@ -432,6 +439,10 @@ def sync_card(library, marker, *, cancelled=None, catalogue=None, progress=None)
             else:
                 game, created, _ = import_identified(library, item.path, system=item.system, linked=True, cancelled=cancelled, catalogue=catalogue)
                 if created:
+                    facts = neo_geo_facts(item.path) if item.system == "neo_geo" else None
+                    if facts:
+                        fields = {key: value for key, value in facts.items() if key in ("title", "publisher") and not (key == "publisher" and game.get(key))}
+                        game = library.update_metadata(game["id"], **fields)
                     result.added.append(game["id"])
                 else:
                     result.existing += 1

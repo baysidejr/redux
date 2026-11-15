@@ -31,6 +31,16 @@ class CoreOptionTests(unittest.TestCase):
         for options in (["choice"],{"choice":1},{"bad\0key":"yes"},{"a":"b\0"}):
             with self.subTest(options=options),self.assertRaises(ValueError):self.session(options)
 
+    def test_null_pointer_support_queries_succeed_without_writing(self):
+        # FinalBurn Neo asks for the save-state context with a NULL pointer to learn whether the
+        # frontend supports it; a crash there used to poison the whole session before any game loaded.
+        host=self.session({})
+        for command in (0x10048,52,59,39,2,3,17,0x10031,0x1002F,0x10032):
+            with self.subTest(command=hex(command)):
+                self.assertTrue(host._environment(command,None));self.assertIsNone(host._callback_error)
+        value=C.c_uint(7);self.assertTrue(host._environment(0x10048,C.addressof(value)));self.assertEqual(value.value,0)
+        flag=C.c_bool(False);self.assertTrue(host._environment(3,C.addressof(flag)));self.assertTrue(flag.value)
+
     def test_native_log_callback_keeps_bounded_literal_format_text(self):
         host=self.session({});callback=_LogCallback()
         self.assertTrue(host._environment(27,C.addressof(callback)))

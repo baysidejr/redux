@@ -6,7 +6,7 @@ A controller-first Windows game library for the living room. Browse games, inser
 
 ## Install
 
-Download **ReduxSetup-0.11.2-win-x64.exe** from [Releases](https://github.com/baysidejr/redux/releases/latest), run it, and open Redux from the Start menu. Requires Windows 10 version 2004 or newer, x64. The default installation is per user under `%LOCALAPPDATA%\Programs\Redux`; administrator access is not required for ordinary installation or use.
+Download **ReduxSetup-0.12.0-win-x64.exe** from [Releases](https://github.com/baysidejr/redux/releases/latest), run it, and open Redux from the Start menu. Requires Windows 10 version 2004 or newer, x64. The default installation is per user under `%LOCALAPPDATA%\Programs\Redux`; administrator access is not required for ordinary installation or use.
 
 A portable ZIP is also available. Extract the complete `Redux` folder and run `Redux.exe`; keep `_internal` beside it. Python is included in both distributions.
 
@@ -53,9 +53,11 @@ See [SECURITY.md](SECURITY.md) and the [release security review](docs/SECURITY_R
 
 The application and installer are currently unsigned. Publishing source does not grant a license to third-party game artwork, BIOS, games or trademarks.
 
-## Neo Geo CD and 3DO
+## Neo Geo, Neo Geo CD and 3DO
 
-The recommended setup includes **NeoCD** for Neo Geo CD and **Opera** for 3DO. Both are enabled for integrated playback by default. MAME remains optional for other systems. The recommended set now contains ten distinct cores.
+The recommended setup includes **FinalBurn Neo** for Neo Geo AES/MVS cartridges, **NeoCD** for Neo Geo CD and **Opera** for 3DO. All three are enabled for integrated playback by default. MAME remains optional for other systems. The recommended set now contains eleven distinct cores.
+
+Neo Geo cartridge games are zipped ROM sets named by set name (`mslug.zip`, `kof98.zip`), placed in a game card's `Neo Geo` folder (also accepted: `AES`, `MVS`, `Neo Geo AES`). Redux names them from a shipped table of 278 sets (`redux/database/neo_geo/names.json`, from libretro-database) and boots them in AES (home console) mode. The `neogeo.zip` BIOS set goes in `bios/fbneo` under the selected BIOS folder, or beside the games. FinalBurn Neo is licensed for non-commercial use; its license is kept beside the downloaded core.
 
 Current NeoCD can fall back to its built-in HLE BIOS; original firmware improves compatibility and belongs in `bios/neocd` (the `neocd` subfolder of your selected BIOS directory). Current Opera includes Opera Boot; optional original BIOS such as `panafz1.bin` or `panafz10.bin` goes directly in the selected BIOS directory. Some games still need original firmware. Switching NeoCD between HLE and original BIOS can invalidate save-state compatibility. No retail firmware is downloaded.
 

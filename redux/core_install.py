@@ -23,6 +23,7 @@ from .library import ImportCancelled
 
 CORES = {
     "neocd": "https://github.com/libretro/neocd_libretro",
+    "fbneo": "https://docs.libretro.com/library/fbneo/",
     "opera": "https://docs.libretro.com/library/opera/",
     "mesen": "https://docs.libretro.com/library/mesen/",
     "snes9x": "https://docs.libretro.com/library/snes9x/",
@@ -39,6 +40,7 @@ CORES = {
 }
 LICENSES = {
     "neocd": "https://raw.githubusercontent.com/libretro/neocd_libretro/master/LICENSE.md",
+    "fbneo": "https://raw.githubusercontent.com/libretro/FBNeo/master/src/license.txt",
     "opera": "https://raw.githubusercontent.com/libretro/opera-libretro/master/LICENSE",
     "mesen": "https://raw.githubusercontent.com/libretro/Mesen/master/LICENSE",
     "snes9x": "https://raw.githubusercontent.com/snes9xgit/snes9x/master/LICENSE",

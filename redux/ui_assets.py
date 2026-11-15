@@ -21,6 +21,7 @@ SYSTEM_ART={
  "pce":("tg16","12_Collection_TG16.png","#986d40"),
  "pce_cd":("tgcd","13_Collection_TGCD.png","#537f88"),
  "supergrafx":("sgx","16_Collection_SGX.png","#607f77"),
+ "neo_geo":("neogeo","Collection_NeoGeo.png","#6a5a2e"),
  "neo_geo_cd":("ngcd","18_Collection_NGCD.png","#6a6a50"),
  "atari2600":("a2600","Collection_A2600.png","#8e6847"),
  "atari7800":("a7800","Collection_A7800.png","#715c63"),
