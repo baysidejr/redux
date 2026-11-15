@@ -350,12 +350,31 @@ class ConsoleStage:
         else:
             callback()
 
-    def cartridge_games(self, card):
-        """The collection games that live on a card (its drive)."""
+    def cartridge_games(self, card, kind=None):
+        """The collection games that are on a card now.
+
+        A console cartridge's games are console games in its own folder; a GOG cartridge's are PC
+        games installed anywhere on its drive. A library entry whose file is gone does not count:
+        a drive reused as a different card keeps the entries of what it held before."""
         import os
-        prefix = os.path.normcase(str(Path(card).parent))
-        return [game for game in getattr(self, "all_games", []) or []
-                if os.path.normcase(str(game.get("source_path") or game.get("path") or "")).startswith(prefix)]
+        if kind is None:
+            from .game_cards import card_kind
+            try:
+                kind = card_kind(card)
+            except OSError:
+                kind = None
+        folder = Path(card) if kind == "console" else Path(card).parent
+        prefix = os.path.normcase(str(folder)).rstrip("\\/") + os.sep
+        games = []
+        for game in getattr(self, "all_games", []) or []:
+            if not os.path.normcase(str(game.get("source_path") or game.get("path") or "")).startswith(prefix):
+                continue
+            if not game.get("available", True):
+                continue
+            if (kind == "console" and game.get("system") == "pc") or (kind == "gog" and game.get("system") != "pc"):
+                continue
+            games.append(game)
+        return games
 
     def inserted_cartridge(self):
         """The connected cartridge and its game: {'card', 'game', 'count', 'system'}, or None.
@@ -370,7 +389,7 @@ class ConsoleStage:
                 continue
             if kind not in ("console", "gog", "legacy"):
                 continue
-            games = self.cartridge_games(card)
+            games = self.cartridge_games(card, kind)
             if kind == "legacy" and len(games) != 1:
                 continue
             if games:

@@ -199,6 +199,24 @@ class HomeShelfTests(unittest.TestCase):
             ConsoleStage.note_card_insert(app, card);self.assertIsNone(getattr(app, "card_autoplay", None))
             app.texts = [];app.stage_animation = None;ReferenceLayout._home(app)
             self.assertIn("2 games on this cartridge", app.texts);self.assertIn("NES", app.texts)
+            # The drive once held a GOG game whose library entry remains: it is not on this console card.
+            app.all_games = [{"id": 3, "title": "Clair Obscur: Expedition 33", "system": "pc", "source_path": str(drive / "Expedition 33" / "SandFallGOG.exe"), "available": False},
+                             {"id": 4, "title": "Super Mario 64 (USA)", "system": "n64", "source_path": str(drive / "Redux Games" / "Nintendo 64" / "Super Mario 64 (USA).z64"), "available": True}]
+            cartridge = ConsoleStage.inserted_cartridge(app)
+            self.assertEqual((cartridge["game"]["id"], cartridge["count"], cartridge["system"]), (4, 1, "n64"))
+            app.all_games[0]["available"] = True
+            self.assertEqual(ConsoleStage.inserted_cartridge(app)["count"], 1, "a PC game is never a console cartridge's game")
+            app.all_games.append({"id": 7, "title": "Lost", "system": "n64", "source_path": str(drive / "Redux Games" / "Nintendo 64" / "gone.z64"), "available": False})
+            self.assertEqual(ConsoleStage.inserted_cartridge(app)["game"]["id"], 4, "a missing file is not on the card")
+            app.all_games.append({"id": 8, "title": "Beside", "system": "n64", "source_path": str(drive / "Redux Games2" / "x.z64"), "available": True})
+            self.assertEqual(ConsoleStage.inserted_cartridge(app)["count"], 1, "a neighbouring folder is not the card's")
+            # A GOG cartridge counts its PC game only.
+            gog = Path(temporary) / "gog";gog.mkdir();game_cards.prepare_card(gog, "gog")
+            app.card_roots = {str(gog / game_cards.MARKER)}
+            app.all_games = [{"id": 11, "title": "Expedition 33", "system": "pc", "source_path": str(gog / "Expedition 33" / "SandFallGOG.exe"), "available": True},
+                             {"id": 12, "title": "Stray ROM", "system": "nes", "source_path": str(gog / "smb.nes"), "available": True}]
+            cartridge = ConsoleStage.inserted_cartridge(app)
+            self.assertEqual((cartridge["game"]["id"], cartridge["count"], cartridge["system"]), (11, 1, "pc"))
             # Extra storage is not a cartridge.
             storage = Path(temporary) / "ssd";storage.mkdir();game_cards.prepare_card(storage, "storage")
             app.card_roots = {str(storage / game_cards.MARKER)};app.all_games = [{"id": 9, "title": "Disc Game", "system": "psx", "source_path": str(storage / "Redux Games" / "PlayStation" / "d.chd"), "available": True}]
