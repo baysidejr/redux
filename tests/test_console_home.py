@@ -149,7 +149,7 @@ class HomeShelfTests(unittest.TestCase):
         self.assertEqual(sheet.box(9), (480, 270, 960, 540))
         # The stage draws the sheet on the right and keeps the words on the left.
         app = self.app();app.art = SimpleNamespace(path=lambda system, kind="hero", custom=None: f"{system}-{kind}.png", bundled=Artwork.bundled, hero=lambda: "hero-banner.jpg")
-        drawn = [];app.sprite = lambda sheet_path, box, x, y, w, h: drawn.append((Path(sheet_path).name, box, round(w), round(h))) or True
+        drawn = [];app.device_sprite = lambda sheet_path, box, x, y, w, h, pixel_scale=1, clip=None: drawn.append((Path(sheet_path).name, box, round(w), round(h))) or True
         loader = lambda: [d for d in drawn if d[0] == "sega_cd.png"]
         app.busy = True;app.status = SimpleNamespace(get=lambda: "Installing disc • Saving to library • 7 MiB", set=lambda t: None)
         ConsoleStage.start_stage(app, "sega_cd", "Eternal Champions")
@@ -204,7 +204,7 @@ class HomeShelfTests(unittest.TestCase):
     def test_the_hero_stands_still_until_a_load_and_holds_where_it_stopped_after(self):
         from redux.ui_assets import Artwork
         app = self.app();app.art = SimpleNamespace(path=lambda system, kind="hero", custom=None: f"{system}-{kind}.png", bundled=Artwork.bundled, hero=lambda: "hero-banner.jpg")
-        app.sprite = lambda *a: True
+        app.sprite = lambda *a: True;app.device_sprite = lambda *a, **k: True
         carousel = ConsoleStage.banner_carousel(app)
         self.assertEqual(carousel.status(time.monotonic()), "stopped", "no motion on Home")
         self.assertEqual(carousel.sample(0), carousel.sample(100), "the same stretch stays on screen")

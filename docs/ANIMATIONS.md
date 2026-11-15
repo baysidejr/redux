@@ -17,6 +17,25 @@ banner has settled (at most 6.8 s), the loader has played its intro and several 
 and the outro fills the last second. An install that takes longer simply runs its
 loop until it is done.
 
+## Scaling
+
+Every sheet is exported at exactly 2x its art (`pixelScale` in the manifests): a loader cell
+is 240 x 135 art pixels, a banner 90 x 270. Redux reduces a cell to its art pixels first
+(exact, since each art pixel is a 2 x 2 block) and enlarges it by the largest whole number
+that fits its space, measured in real screen pixels, so every art pixel becomes an even
+square. Only when even 1x does not fit does it drop to a fractional size. Nothing is ever
+stretched: sprites keep their shape, are contained and centred, and the spare space is
+`#0a0816`. The loading screen is laid out from the window itself: the carousel spans the
+full window width in its own clipped viewport (a wider window shows more pennants), and the
+loader takes the space between the title band and the footer at the window's bottom.
+
+| Window | Loader | Banners |
+|---|---|---|
+| 1280 x 720 | 3x (720 x 405) | below 1x (60 x 180) |
+| 1920 x 1080 | 4x (960 x 540) | 1x (90 x 270) |
+| 2560 x 1080 | 4x | 1x, more of them |
+| 3840 x 2160 | 9x (2160 x 1215) | 2x (180 x 540) |
+
 ## The banner carousel
 
 `redux/assets/banners/console_banners.png` is an atlas of 52 banners, 8 columns by 7 rows

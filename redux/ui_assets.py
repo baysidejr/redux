@@ -155,26 +155,46 @@ class Artwork:
         except (OSError,ValueError,Image.DecompressionBombError):
             return None
 
-    def sprite(self,sheet,box,width,height):
-        """One cell of a sprite sheet, scaled with nearest-neighbour so the pixels stay crisp."""
+    def sprite(self,sheet,box,width,height,pixel_scale=1,crop=None):
+        """One cell of a sprite sheet at width x height screen pixels, nearest-neighbour.
+
+        With ``pixel_scale`` (the sheet's export multiple) the cell is first reduced to its
+        logical pixels, which is exact for art exported at a whole multiple, then enlarged; a
+        whole-number enlargement then gives every art pixel the same square of screen pixels.
+        ``crop`` (left, top, right, bottom in output pixels) clips the result to a viewport."""
         if width<1 or height<1:return None
         sheet=Path(sheet)
         try:
             stat=sheet.stat()
-            key=("sprite",str(sheet),stat.st_mtime_ns,tuple(int(v) for v in box),int(width),int(height))
+            box=tuple(int(v) for v in box);scale=max(1,int(pixel_scale or 1))
+            crop=tuple(int(v) for v in crop) if crop else None
+            key=("sprite",str(sheet),stat.st_mtime_ns,box,int(width),int(height),scale,crop)
             sprites=self.__dict__.setdefault("_sprites",OrderedDict())
             if key in sprites:
                 sprites.move_to_end(key);return sprites[key]
-            sheets=self.__dict__.setdefault("_sheets",OrderedDict())
-            sheet_key=(str(sheet),stat.st_mtime_ns)
-            if sheet_key not in sheets:
-                if stat.st_size>64*1024*1024:return None
-                with Image.open(sheet) as source:
-                    if source.width*source.height>40_000_000:return None
-                    sheets[sheet_key]=source.convert("RGBA")
-                while len(sheets)>4:sheets.popitem(last=False)
-            cell=sheets[sheet_key].crop(tuple(int(v) for v in box)).resize((int(width),int(height)),Image.Resampling.NEAREST)
-            photo=ImageTk.PhotoImage(cell,master=self.master)
+            images=self.__dict__.setdefault("_sprite_images",OrderedDict())
+            image_key=key[:-1]
+            image=images.get(image_key)
+            if image is None:
+                sheets=self.__dict__.setdefault("_sheets",OrderedDict())
+                sheet_key=(str(sheet),stat.st_mtime_ns)
+                if sheet_key not in sheets:
+                    if stat.st_size>64*1024*1024:return None
+                    with Image.open(sheet) as source:
+                        if source.width*source.height>40_000_000:return None
+                        sheets[sheet_key]=source.convert("RGBA")
+                    while len(sheets)>4:sheets.popitem(last=False)
+                cell=sheets[sheet_key].crop(box)
+                if scale>1 and cell.width%scale==0 and cell.height%scale==0:
+                    cell=cell.resize((cell.width//scale,cell.height//scale),Image.Resampling.NEAREST)
+                image=cell.resize((int(width),int(height)),Image.Resampling.NEAREST)
+                images[image_key]=image
+                while len(images)>96:images.popitem(last=False)
+            else:images.move_to_end(image_key)
+            if crop:
+                image=image.crop(crop)
+                if image.width<1 or image.height<1:return None
+            photo=ImageTk.PhotoImage(image,master=self.master)
             sprites[key]=photo
             while len(sprites)>320:sprites.popitem(last=False)
             return photo

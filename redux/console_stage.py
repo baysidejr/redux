@@ -23,6 +23,7 @@ from pathlib import Path
 
 from .banner_carousel import BannerCarousel, load_manifest
 from .library import SYSTEMS
+from .pixel_fit import contain, fit_height
 from .ui_theme import WHITE, MUTED, ACCENT
 
 AUTOPLAY_DELAY = 0.4      # seconds after the insert event before Play fires on its own
@@ -31,6 +32,7 @@ STOP_AFTER = 0.6                # seconds of fast cruise before the brake onto t
 STAGE_HOLD_SECONDS = 10.0       # a game appears ten seconds after its load began: banner settled, loader looped, outro played
 HOLD_POLL_MS = 100
 HERO_FRACTION = 0.25            # the carousel's share of the loading screen
+STAGE_FILL = "#0a0816"          # behind sprites wherever they do not cover their space
 LIGHTS = 8
 HOME_ORDER = ("nes", "snes", "n64", "genesis", "32x", "sega_cd", "saturn", "sms", "game_gear", "psx", "pce", "pce_cd", "supergrafx",
               "neo_geo", "neo_geo_cd", "3do", "atari2600", "atari7800", "jaguar", "jaguar_cd", "gb", "gbc", "gba", "pc")
@@ -75,6 +77,9 @@ class SpriteSheetAnimation:
         self.height = int(frame.get("height", 270))
         self.fps = max(1, min(60, int(entry.get("fps", settings.get("fps", 12)))))
         self.columns = max(1, int(entry.get("columns", 8)))
+        self.pixel_scale = max(1, int(entry.get("pixelScale", settings.get("pixelScale", 1)) or 1))
+        self.logical_width = self.width // self.pixel_scale
+        self.logical_height = self.height // self.pixel_scale
         self.intro = tuple(entry.get("intro") or (0, -1))
         self.loop = tuple(entry.get("loop") or self.intro)
         self.outro = tuple(entry.get("outro") or ())
@@ -249,24 +254,41 @@ class ConsoleStage:
             return 0.0
 
     def _draw_carousel(self, x, y, w, h):
+        """The carousel in a stage area given in canvas units; see ``_draw_carousel_device``."""
+        _, _, scale, ox, oy = self.device_frame()
+        return self._draw_carousel_device(ox + x * scale, oy + y * scale, w * scale, h * scale)
+
+    def _draw_carousel_device(self, dx, dy, dw, dh):
+        """The banners in their own clipped viewport, in screen pixels.
+
+        Banners are enlarged by the largest whole factor of their logical size that fits the
+        viewport's height (fractional only when 1x does not fit), centred vertically on the
+        stage colour, and clipped at the viewport's edges; a wider viewport shows more of them."""
         carousel = self.banner_carousel()
         if not carousel:
             return False
-        now = time.monotonic()
-        for banner, source, (left, top, width, height) in carousel.placements(w, h, now):
-            # The canvas has no clip: trim a banner that hangs over either edge by cropping its source.
-            sx0, sy0, sx1, sy1 = source
-            src_w = sx1 - sx0
-            if left < 0:
-                cut = min(width, -left)
-                sx0 += round(src_w * cut / width); left += cut; width -= cut
-            if left + width > w:
-                cut = min(width, left + width - w)
-                sx1 -= round(src_w * cut / width); width -= cut
-            if width <= 0 or sx1 <= sx0:
-                continue
-            self.sprite(carousel.atlas, (sx0, sy0, sx1, sy1), x + left, y + top, width, height)
+        dx, dy, dw, dh = int(round(dx)), int(round(dy)), int(round(dw)), int(round(dh))
+        if dw <= 0 or dh <= 0:
+            return False
+        self.device_rect(dx, dy, dw, dh, STAGE_FILL)
+        factor = fit_height(dh, carousel.logical_height)
+        tile = max(1, round(carousel.logical_width * factor))
+        banner_h = round(carousel.logical_height * factor)
+        top = dy + (dh - banner_h) // 2
+        clip = (dx, dy, dx + dw, dy + dh)
+        for banner, source, (left, _, width, height) in carousel.placements(dw, dh, time.monotonic(), tile=tile):
+            self.device_sprite(carousel.atlas, source, dx + left, top, width, height, carousel.pixel_scale, clip)
         return True
+
+    def _draw_loader_device(self, sheet, index, dx, dy, dw, dh, fill=True):
+        """A loader cell contained and centred in a screen-pixel box, at a whole-number enlargement where it fits."""
+        left, top, width, height, factor = contain(int(dx), int(dy), int(dw), int(dh), sheet.logical_width, sheet.logical_height)
+        if fill:
+            self.device_rect(int(dx), int(dy), int(dw), int(dh), STAGE_FILL)
+        if width <= 0 or height <= 0:
+            return None
+        self.device_sprite(sheet.sheet, sheet.box(index), left, top, width, height, sheet.pixel_scale)
+        return left, top, width, height, factor
 
     def _stage_tick(self):
         """Keep the stage moving while something is loading or a disc just went in."""
@@ -456,20 +478,28 @@ class ConsoleStage:
             self.rect(x + 1, 1, w - 3, h - 2, "", WHITE, 2)
 
     def _loading_screen(self):
-        """While a game loads: the banner carousel across the top quarter, the console's loader below."""
+        """While a game loads: the banner carousel across the top quarter, the console's loader below.
+
+        Laid out from the window in screen pixels: the carousel spans the whole window width
+        (more banners on a wider window), the loader is contained and centred in the space
+        below at a whole-number enlargement where it fits, on the stage colour."""
         animation = getattr(self, "stage_animation", None) or {}
         system = animation.get("system") or "unknown"
         title = animation.get("title") or SYSTEMS.get(system, "")
         status = self.status.get() if hasattr(self.status, "get") else ""
         percent = _PERCENT.search(status or "")
-        hero_h = round(720 * HERO_FRACTION)
-        self.rect(0, 0, 1280, 720, "#0a0816")
-        if not self._draw_carousel(0, 0, 1280, hero_h):
-            self.picture(self.art.hero(), 0, 0, 1280, hero_h)
-        # The centre marks under and over the strip, and the gold rule beneath it.
-        self.rect(634, 0, 12, 5, "#ffde76");self.rect(637, 5, 6, 5, "#ffde76");self.rect(634, hero_h - 5, 12, 5, "#ffde76")
-        self.rect(0, hero_h, 1280, 2, "#89632c")
-        band = hero_h + 10
+        width, height, scale, ox, oy = self.device_frame()
+        self.device_rect(0, 0, width, height, STAGE_FILL)
+        hero = round(height * HERO_FRACTION)
+        if not self._draw_carousel_device(0, 0, width, hero):
+            self.picture(self.art.hero(), 0, 0, 1280, (hero - oy) / scale)
+        # The centre marks over and under the strip, and the gold rule beneath it.
+        unit = max(1, round(scale * 2))
+        centre = width // 2
+        self.device_rect(centre - 3 * unit, 0, 6 * unit, 3 * unit, "#ffde76");self.device_rect(centre - 1 * unit, 3 * unit, 2 * unit, 2 * unit, "#ffde76")
+        self.device_rect(centre - 3 * unit, hero - 3 * unit, 6 * unit, 3 * unit, "#ffde76")
+        self.device_rect(0, hero, width, max(1, round(2 * scale)), "#89632c")
+        band = (hero - oy) / scale + 10
         self.display(40, band, "NOW LOADING", 13, "#c7c1d1", "bold")
         self.display(40, band + 22, self.fit_text(str(title).upper(), 680, 28, "bold"), 28, WHITE, "bold")
         self.display(1240, band + 4, self.fit_text(status or "Starting…", 480, 14), 14, "#dedbe3", anchor="ne")
@@ -477,24 +507,26 @@ class ConsoleStage:
             value = max(0, min(100, int(percent.group(1))))
             self.rect(760, band + 30, 480, 6, "#2a2531");self.rect(760, band + 30, 480 * value / 100, 6, ACCENT)
             self.display(1240, band + 42, f"{value}%", 13, WHITE, "bold", anchor="ne")
-        top = hero_h + 66
+        # The footer sits at the bottom of the window, not of the 16:9 frame; the loader gets everything between.
+        foot = (height - oy) / scale - 26
+        footer = round(height - 40 * scale)
+        area_top = round(oy + (band + 60) * scale)
+        margin = round(24 * scale)
         elapsed = time.monotonic() - animation.get("started", time.monotonic())
         sheet = self.sheet_animation(system)
         if sheet:
-            loader_h = 720 - top - 36
-            loader_w = loader_h * sheet.width / sheet.height
             finishing = animation.get("finishing_since")
             index = sheet.index_at(elapsed, finishing_since=None if finishing is None else time.monotonic() - finishing)
-            self.sprite(sheet.sheet, sheet.box(index), (1280 - loader_w) / 2, top, loader_w, loader_h)
+            self._draw_loader_device(sheet, index, margin, area_top, width - 2 * margin, footer - area_top - margin, fill=False)
         else:
             # No loader for this console yet: the lights and the sliding disc, centred.
-            self._stage_loading_marks(240, top + 200, 800, elapsed)
+            self._stage_loading_marks(240, band + 260, 800, elapsed)
         cancel = getattr(self, "cancelled", None)
         if self.busy and cancel is not None and getattr(self, "task_cancellable", True):
-            self.button_canvas("task:cancel", "Cancel", 1130, 686, 110, 26, cancel.set)
+            self.button_canvas("task:cancel", "Cancel", 1130, foot - 8, 110, 26, cancel.set)
         else:
-            self.display(1240, 694, "LOADING", 13, "#9a9aa2", "bold", anchor="ne")
-        self.display(40, 694, SYSTEMS.get(system, "").upper(), 13, "#9a9aa2", "bold")
+            self.display(1240, foot, "LOADING", 13, "#9a9aa2", "bold", anchor="ne")
+        self.display(40, foot, SYSTEMS.get(system, "").upper(), 13, "#9a9aa2", "bold")
 
     def _stage_loading_marks(self, x, y, w, elapsed):
         lit = int(elapsed * 9) % LIGHTS
@@ -536,12 +568,13 @@ class ConsoleStage:
         if sheet:
             # The owner's animation on the right, the words on the left, the hero banner behind.
             self._top_shade(x, y, w, h - 29)
-            sprite_h = h - 29 - 8
-            sprite_w = sprite_h * sheet.width / sheet.height
-            sprite_x = x + w - sprite_w - 10
+            # The right half of the stage holds the loader, contained at a whole-number size where it fits.
+            _, _, scale, ox, oy = self.device_frame()
+            box_x, box_w = x + w / 2, w / 2 - 10
             finishing = animation.get("finishing_since")
             index = sheet.index_at(elapsed, finishing_since=None if finishing is None else time.monotonic() - finishing)
-            self.sprite(sheet.sheet, sheet.box(index), sprite_x, y + 4, sprite_w, sprite_h)
+            placed = self._draw_loader_device(sheet, index, ox + box_x * scale, oy + (y + 4) * scale, box_w * scale, (h - 29 - 8) * scale, fill=False)
+            sprite_x = (placed[0] - ox) / scale if placed else box_x
             text_w = sprite_x - x - 56
             self.display(x + 36, 58, "NOW LOADING", 14, "#c7c1d1", "bold")
             self.display(x + 36, 92, self.fit_text((title or SYSTEMS.get(system, "")).upper(), text_w, 30, "bold"), 30, WHITE, "bold", width=text_w)

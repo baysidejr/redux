@@ -31,6 +31,9 @@ class BannerCarousel:
         frame = manifest.get("frame") or {}
         self.frame_width = int(frame.get("width", 180))
         self.frame_height = int(frame.get("height", 540))
+        self.pixel_scale = max(1, int(manifest.get("pixelScale", 1) or 1))
+        self.logical_width = self.frame_width // self.pixel_scale
+        self.logical_height = self.frame_height // self.pixel_scale
         self.aliases = dict(manifest.get("aliases") or {})
         self.systems = dict(manifest.get("systems") or {})
         if not self.count or not self.cruise_speed > 0:
@@ -132,21 +135,26 @@ class BannerCarousel:
         return self.order[int(round(self.sample(now))) % self.count]
 
     # ------------------------------------------------------------------ layout
-    def placements(self, width, height, now):
+    def placements(self, width, height, now, tile=None):
         """[(banner id, source rect, (left, top, width, height))] for every banner touching a viewport.
 
-        Banners keep the frame's shape at the viewport's height and are rounded so neighbours
-        touch with no gaps; the one at ``phase`` sits centred."""
+        Banners keep the frame's shape at the viewport's height (or ``tile`` pixels wide, for
+        whole-pixel enlargements) and are rounded so neighbours touch with no gaps; the one at
+        ``phase`` sits centred. A wider viewport simply shows more banners."""
         if not (width > 0 and height > 0):
             raise ValueError("Invalid viewport")
-        tile = height * self.frame_width / self.frame_height
+        if tile:
+            height = round(tile * self.frame_height / self.frame_width)
+        else:
+            tile = height * self.frame_width / self.frame_height
         phase = self.sample(now)
         half = width / (2 * tile)
         result = []
         for n in range(math.floor(phase - half) - 1, math.ceil(phase + half) + 2):
             banner = self.order[n % self.count]
-            left = round(width / 2 + (n - phase - 0.5) * tile)
-            right = round(width / 2 + (n - phase + 0.5) * tile)
+            # Round half up (not Python's half-to-even) so every banner of a whole-pixel tile is the same width.
+            left = math.floor(width / 2 + (n - phase - 0.5) * tile + 0.5)
+            right = math.floor(width / 2 + (n - phase + 0.5) * tile + 0.5)
             if right <= 0 or left >= width:
                 continue
             result.append((banner, self.rect(banner), (left, 0, right - left, height)))

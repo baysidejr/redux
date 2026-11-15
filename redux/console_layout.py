@@ -104,6 +104,37 @@ class ReferenceLayout:
             return True
         return False
 
+    def device_frame(self):
+        """(width, height, scale, offset_x, offset_y) of the window in screen pixels; 1280x720 at 1x without a window."""
+        scale=getattr(self,"scale",1) or 1;ox=getattr(self,"offset_x",0) or 0;oy=getattr(self,"offset_y",0) or 0
+        canvas=getattr(self,"canvas",None)
+        try:
+            width,height=canvas.winfo_width(),canvas.winfo_height()
+            if width>32 and height>18:return width,height,scale,ox,oy
+        except (AttributeError,tk.TclError):pass
+        return round(1280*scale+2*ox),round(720*scale+2*oy),scale,ox,oy
+
+    def device_rect(self,x,y,w,h,color):
+        """A filled rectangle in screen pixels, outside the 16:9 canvas frame if need be."""
+        canvas=getattr(self,"canvas",None)
+        if canvas is not None and w>0 and h>0:canvas.create_rectangle(x,y,x+w,y+h,fill=color,outline=color,width=0)
+
+    def device_sprite(self,sheet,box,x,y,w,h,pixel_scale=1,clip=None):
+        """A sprite cell at x, y, w, h in screen pixels, clipped to ``clip`` (left, top, right, bottom)."""
+        x,y,w,h=int(round(x)),int(round(y)),int(round(w)),int(round(h))
+        crop=None;ix,iy=x,y
+        if clip:
+            cx0,cy0,cx1,cy1=(int(round(v)) for v in clip)
+            ix,iy=max(x,cx0),max(y,cy0);ix1,iy1=min(x+w,cx1),min(y+h,cy1)
+            if ix1<=ix or iy1<=iy:return False
+            if (ix,iy,ix1,iy1)!=(x,y,x+w,y+h):crop=(ix-x,iy-y,ix1-x,iy1-y)
+        photo=self.art.sprite(sheet,box,w,h,pixel_scale,crop)
+        if photo:
+            self.photos.append(photo)
+            self.canvas.create_image(ix,iy,anchor="nw",image=photo)
+            return True
+        return False
+
     def sprite(self,sheet,box,x,y,w,h):
         photo=self.art.sprite(sheet,box,round(w*self.scale),round(h*self.scale))
         if photo:
