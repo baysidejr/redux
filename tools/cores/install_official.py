@@ -19,10 +19,8 @@ import zipfile
 
 CORES = {
     "mesen": "https://docs.libretro.com/library/mesen/",
-    "snes9x": "https://docs.libretro.com/library/snes9x/",
     "genesis_plus_gx": "https://docs.libretro.com/library/genesis_plus_gx/",
     "gambatte": "https://docs.libretro.com/library/gambatte/",
-    "mednafen_pce_fast": "https://docs.libretro.com/library/beetle_pce_fast/",
     "mednafen_psx": "https://docs.libretro.com/library/beetle_psx/",
     "mednafen_saturn": "https://docs.libretro.com/library/beetle_saturn/",
     "mednafen_supafaust": "https://github.com/libretro/supafaust",
@@ -33,10 +31,8 @@ CORES = {
 }
 LICENSES = {
     "mesen": "https://raw.githubusercontent.com/libretro/Mesen/master/LICENSE",
-    "snes9x": "https://raw.githubusercontent.com/snes9xgit/snes9x/master/LICENSE",
     "genesis_plus_gx": "https://raw.githubusercontent.com/ekeeke/Genesis-Plus-GX/master/LICENSE.txt",
     "gambatte": "https://raw.githubusercontent.com/libretro/gambatte-libretro/master/COPYING",
-    "mednafen_pce_fast": "https://raw.githubusercontent.com/libretro/beetle-pce-fast-libretro/master/COPYING",
     "mednafen_psx": "https://raw.githubusercontent.com/libretro/beetle-psx-libretro/master/COPYING",
     "mednafen_saturn": "https://raw.githubusercontent.com/libretro/beetle-saturn-libretro/master/COPYING",
     "mednafen_supafaust": "https://raw.githubusercontent.com/libretro/supafaust/master/COPYING",
