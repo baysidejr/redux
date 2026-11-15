@@ -28,6 +28,8 @@ from .ui_theme import WHITE, MUTED, ACCENT
 AUTOPLAY_DELAY = 0.4      # seconds after the insert event before Play fires on its own
 AUTOPLAY_STAGE = 0.9      # seconds of stage animation before the install or load starts
 STOP_AFTER = 0.6                # seconds of fast cruise before the brake onto the loading console
+STAGE_HOLD_SECONDS = 8.0        # a game appears eight seconds after its load began: banner settled, loader looped, outro played
+HOLD_POLL_MS = 100
 HERO_FRACTION = 0.25            # the carousel's share of the loading screen
 LIGHTS = 8
 HOME_ORDER = ("nes", "snes", "n64", "genesis", "32x", "sega_cd", "saturn", "sms", "game_gear", "psx", "pce", "pce_cd", "supergrafx",
@@ -142,8 +144,55 @@ class ConsoleStage:
             if draw:
                 draw()
 
+    def stage_ready(self, now=None):
+        """True when the outro should begin: the game appears STAGE_HOLD_SECONDS after the load began.
+
+        The banner settles within 6.8 s and the loader's intro and one loop take 4 s, so both
+        have happened by then; the outro fills the last second of the eight."""
+        animation = getattr(self, "stage_animation", None)
+        if not animation:
+            return True
+        now = time.monotonic() if now is None else now
+        sheet = self.sheet_animation(animation.get("system"))
+        outro = sheet.outro_seconds if sheet else 0.0
+        return now - animation["started"] >= STAGE_HOLD_SECONDS - outro
+
+    def hold_for_stage(self, start):
+        """Run ``start`` once the stage has had its moment: banner settled, loader looped, outro played.
+
+        Without a Tk root (tests, headless) ``start`` runs at once. If the stage animation goes
+        away while waiting (the player left, a disc came out), the start is dropped."""
+        root = getattr(self, "root", None)
+        if root is None or not hasattr(root, "after") or not getattr(self, "stage_animation", None):
+            start()
+            return
+        token = object()
+        self._stage_hold = token
+        def poll():
+            if getattr(self, "_stage_hold", None) is not token:
+                return
+            animation = getattr(self, "stage_animation", None)
+            if not animation:
+                self._stage_hold = None
+                return
+            if not self.stage_ready():
+                root.after(HOLD_POLL_MS, poll)
+                return
+            if animation.get("finishing_since") is None:
+                self.finish_stage()
+            sheet = self.sheet_animation(animation.get("system"))
+            outro = sheet.outro_seconds if sheet else 0.0
+            remaining = animation["finishing_since"] + outro - time.monotonic()
+            if remaining > 0:
+                root.after(max(HOLD_POLL_MS, int(remaining * 1000)), poll)
+                return
+            self._stage_hold = None
+            start()
+        root.after(HOLD_POLL_MS, poll)
+
     def clear_stage(self):
         self.stage_animation = None
+        self._stage_hold = None
         carousel = self.banner_carousel()
         if carousel:
             carousel.hold(time.monotonic())

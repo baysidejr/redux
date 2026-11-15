@@ -1,4 +1,6 @@
-# Project status — 0.22.1, 2026-11-15
+# Project status — 0.23.0, 2026-11-15
+
+Release 0.23.0 (2026-11-15): the stage gets its moment. A game appears eight seconds after its load began (`STAGE_HOLD_SECONDS`): `hold_for_stage` polls on the Tk clock, starts the loader's outro at eight minus its length, and only then runs the core start (`_start_integrated_game`) or the PC launch (`_play_pc_game`); the banner always settles within 6.8 s and the loader's intro plus one loop take 4 s, so both fit. A stage that goes away while waiting drops the start instead of launching blind; without a window the start runs at once. Installs that take longer than eight seconds just loop until done, then play the outro and hand over.
 
 Release 0.22.1 (2026-11-15): the hero stands still. The carousel picks a random stretch of pennants when Redux starts and does not move on Home; it scrolls and brakes only on the loading screen, and holds wherever it stopped afterwards (`BannerCarousel.hold`). The stage no longer redraws while idle.
 

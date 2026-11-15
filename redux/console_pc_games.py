@@ -53,10 +53,12 @@ class ConsolePCGames:
         path=self.library.path_for(game)
         arguments,folder=self.library.pc_game_config(game)
         self.show_stage("pc",game["title"])
-        session=self.playback.launch(game["id"],path,arguments,path,profile_id="pc_game",title=game["title"],cwd=folder)
-        self.sessions[session.session_id]=self.library.start_session(game["id"])
-        self.status.set("Playing "+game["title"]+" • use the game's own pause and save controls")
-        self.root.iconify();self.refresh()
+        def launch():
+            session=self.playback.launch(game["id"],path,arguments,path,profile_id="pc_game",title=game["title"],cwd=folder)
+            self.sessions[session.session_id]=self.library.start_session(game["id"])
+            self.status.set("Playing "+game["title"]+" • use the game's own pause and save controls")
+            self.root.iconify();self.refresh()
+        self.hold_for_stage(launch)
 
     def _pc_quit_menu(self,sid):
         self.menu("Quit this PC game?",[("Keep playing",lambda:self._resume(sid)),

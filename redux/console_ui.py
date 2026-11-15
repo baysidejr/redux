@@ -1023,7 +1023,8 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleSta
             self.embedded_record=record;self.screen="gameplay";self.overlay=None;self.focus="gameplay:menu"
             self.status.set("Playing • Home or Select + Start held 1 second opens the game menu")
             self.refresh()
-        self.task(work,started,"Starting integrated playback…",cancellable=False)
+        # The stage gets its moment first: the banner settles, the loader loops once, the outro plays.
+        self.hold_for_stage(lambda:self.task(work,started,"Starting integrated playback…",cancellable=False))
 
     def _request_game_menu(self):
         if self.busy:return

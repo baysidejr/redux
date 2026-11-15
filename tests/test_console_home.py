@@ -218,6 +218,32 @@ class HomeShelfTests(unittest.TestCase):
         self.assertEqual(carousel.status(time.monotonic()), "stopped", "after the load the strip holds still again")
         self.assertNotEqual(carousel.sample(time.monotonic()), before)
 
+    def test_a_game_waits_eight_seconds_on_the_stage_then_the_outro_then_starts(self):
+        from redux.console_stage import STAGE_HOLD_SECONDS
+        from redux.ui_assets import Artwork
+        app = self.app();app.art = SimpleNamespace(path=lambda system, kind="hero", custom=None: f"{system}-{kind}.png", bundled=Artwork.bundled, hero=lambda: "hero-banner.jpg")
+        started = [];waits = []
+        app.root = SimpleNamespace(after=lambda ms, callback: waits.append((ms, callback)))
+        ConsoleStage.start_stage(app, "sega_cd", "Eternal Champions")
+        ConsoleStage.hold_for_stage(app, lambda: started.append(time.monotonic()))
+        self.assertEqual(started, [], "the game does not start at once")
+        # Poll while the stage is young: it keeps waiting and nothing finishes.
+        ms, poll = waits.pop();poll()
+        self.assertEqual(started, []);self.assertIsNone(app.stage_animation.get("finishing_since"));self.assertEqual(waits[-1][0], 100)
+        # Seven seconds in (eight minus the one-second outro) the outro begins and the start is scheduled for the outro's end.
+        app.stage_animation["started"] -= STAGE_HOLD_SECONDS - 1.0
+        ms, poll = waits.pop();poll()
+        self.assertIsNotNone(app.stage_animation["finishing_since"], "the outro plays inside the eight seconds");self.assertEqual(started, [])
+        ms, poll = waits.pop();self.assertGreaterEqual(ms, 900)
+        app.stage_animation["finishing_since"] -= 1.0;poll()
+        self.assertEqual(len(started), 1, "the game starts when the outro ends")
+        # A load whose stage went away (the player left) is dropped rather than started blind.
+        started.clear();ConsoleStage.start_stage(app, "nes", "Mario");ConsoleStage.hold_for_stage(app, lambda: started.append(1))
+        ms, poll = waits.pop();ConsoleStage.clear_stage(app);poll()
+        self.assertEqual(started, []);self.assertFalse(waits)
+        # Without a window there is nothing to wait for.
+        app.root = None;ConsoleStage.start_stage(app, "nes", "Mario");ConsoleStage.hold_for_stage(app, lambda: started.append(2));self.assertEqual(started, [2])
+
     def test_frame_animations_loop_from_their_marked_frame(self):
         with tempfile.TemporaryDirectory() as temporary:
             folder = Path(temporary)
