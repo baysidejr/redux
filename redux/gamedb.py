@@ -1,9 +1,9 @@
-"""Redux's preloaded game database: art and facts for the CD systems.
+"""Redux's preloaded game database: art and facts for the CD systems and for PC games on GOG.
 
 Redux never scrapes. Each system folder under redux/database holds games.json
-and art/<game id>/ (boxart.jpg, gameimage.png, hero.jpg); the layout is
+and art/<game id>/ (boxart.jpg, gameimage.png or .jpg, hero.jpg); the layout is
 documented in redux/database/README.md. A disc is recognised by the serial in
-its header first and by its header title second.
+its header first and by its header title second; a GOG game by its product id.
 """
 from __future__ import annotations
 
@@ -14,15 +14,16 @@ import sys
 import unicodedata
 from pathlib import Path
 
-SYSTEM_ORDER = ("sega_cd", "psx", "saturn", "pce_cd", "neo_geo_cd", "3do", "jaguar_cd")
+SYSTEM_ORDER = ("sega_cd", "psx", "saturn", "pce_cd", "neo_geo_cd", "3do", "jaguar_cd", "pc")
 LABELS = {"sega_cd": "Sega CD", "psx": "PlayStation", "saturn": "Saturn", "pce_cd": "PC Engine CD",
-          "neo_geo_cd": "Neo Geo CD", "3do": "3DO", "jaguar_cd": "Jaguar CD"}
+          "neo_geo_cd": "Neo Geo CD", "3do": "3DO", "jaguar_cd": "Jaguar CD", "pc": "PC (GOG)"}
 ART_ROLES = ("boxart", "gameimage", "hero")
 _ROMAN = {"ii": "2", "iii": "3", "iv": "4", "v": "5", "vi": "6", "vii": "7", "viii": "8", "ix": "9", "x": "10"}
 
 
 RELEASE_URL = "https://github.com/baysidejr/redux/releases/download/{release}/{asset}"
 MAX_ASSET_BYTES = 2 * 1024 ** 3
+MAX_PARTS = 16
 
 
 def database_root():
@@ -117,35 +118,71 @@ class GameDatabase:
         marker = self.downloads / system / "art" / ".complete"
         if marker.is_file():
             return "installed" if marker.read_text(encoding="utf-8").strip() == str(entry.get("sha256", "")) else "available"
-        return "available" if entry.get("asset") else "none"
+        return "available" if self.art_parts(entry) else "none"
 
     def art_size(self, system):
         return int(((self.manifest().get("systems") or {}).get(system, {}) or {}).get("bytes") or 0)
 
     def download_art(self, system, *, progress=None, cancelled=None, opener=None):
-        """Fetch a system's art zip from the GitHub release, check its hash, unpack it.
+        """Fetch a system's art from the GitHub release, check each file's hash, unpack it.
 
-        Everything lands in the downloads folder; the bundle is never written to.
-        ``progress(done_bytes, total_bytes)`` is called as data arrives.
+        Large systems ship their art in several zips (the manifest's ``parts``); every
+        part must arrive before the art is swapped in. Everything lands in the downloads
+        folder; the bundle is never written to. ``progress(done_bytes, total_bytes)`` is
+        called as data arrives, counting across all parts.
         """
-        import hashlib
         import shutil
-        import tempfile
-        import zipfile
-        from urllib.request import Request, urlopen
         entry = (self.manifest().get("systems") or {}).get(system)
-        if not entry or not entry.get("asset"):
+        parts = self.art_parts(entry)
+        if not parts:
             raise DownloadError("This build has no art download for that system.")
-        url = RELEASE_URL.format(release=self.manifest().get("release", "database"), asset=entry["asset"])
-        expected = str(entry.get("sha256", ""))
-        total = int(entry.get("bytes") or 0)
-        if total > MAX_ASSET_BYTES:
+        release = self.manifest().get("release", "database")
+        total = sum(int(part.get("bytes") or 0) for part in parts)
+        if any(int(part.get("bytes") or 0) > MAX_ASSET_BYTES for part in parts):
             raise DownloadError("The art download is larger than Redux accepts.")
         target_root = self.downloads / system
         target_root.mkdir(parents=True, exist_ok=True)
+        staging = target_root / "art.new"
+        if staging.exists():
+            shutil.rmtree(staging)
+        offset = 0
+        try:
+            for part in parts:
+                url = RELEASE_URL.format(release=release, asset=part["asset"])
+                archive = self._download_part(url, str(part.get("sha256", "")), offset, total, target_root, progress, cancelled, opener)
+                try:
+                    self._unpack_art(archive, staging)
+                finally:
+                    archive.unlink(missing_ok=True)
+                offset += int(part.get("bytes") or 0)
+        except DownloadError:
+            shutil.rmtree(staging, ignore_errors=True)
+            raise
+        art_root = target_root / "art"
+        if art_root.exists():
+            shutil.rmtree(art_root)
+        staging.rename(art_root)
+        (art_root / ".complete").write_text(str(entry.get("sha256", "")), encoding="utf-8")
+        self._systems.pop(system, None)
+        return art_root
+
+    @staticmethod
+    def art_parts(entry):
+        """The zips a manifest entry names: ``parts`` for a split system, else its single ``asset``."""
+        if not entry:
+            return []
+        parts = entry.get("parts")
+        if isinstance(parts, list) and parts:
+            return [part for part in parts[:MAX_PARTS] if isinstance(part, dict) and part.get("asset")]
+        return [dict(asset=entry["asset"], bytes=entry.get("bytes"), sha256=entry.get("sha256"))] if entry.get("asset") else []
+
+    def _download_part(self, url, expected, offset, total, target_root, progress, cancelled, opener):
+        import hashlib
+        import tempfile
+        from urllib.request import Request, urlopen
         digest = hashlib.sha256()
         done = 0
-        with tempfile.NamedTemporaryFile(prefix=f"{system}-art-", suffix=".zip", dir=target_root, delete=False) as temp:
+        with tempfile.NamedTemporaryFile(prefix="art-", suffix=".zip", dir=target_root, delete=False) as temp:
             temp_path = Path(temp.name)
             try:
                 opener = opener or (lambda u: urlopen(Request(u, headers={"User-Agent": "Redux"}), timeout=60))
@@ -162,7 +199,7 @@ class GameDatabase:
                         digest.update(chunk)
                         temp.write(chunk)
                         if progress:
-                            progress(done, total)
+                            progress(offset + done, total)
             except OSError as error:
                 temp_path.unlink(missing_ok=True)
                 raise DownloadError(f"The download failed: {error}") from error
@@ -173,12 +210,14 @@ class GameDatabase:
         if expected and digest.hexdigest() != expected:
             temp_path.unlink(missing_ok=True)
             raise DownloadError("The downloaded file did not match the release's checksum, so it was discarded.")
-        art_root = target_root / "art"
-        staging = target_root / "art.new"
-        if staging.exists():
-            shutil.rmtree(staging)
+        return temp_path
+
+    @staticmethod
+    def _unpack_art(archive_path, staging):
+        import shutil
+        import zipfile
         try:
-            with zipfile.ZipFile(temp_path) as archive:
+            with zipfile.ZipFile(archive_path) as archive:
                 for member in archive.infolist():
                     name = member.filename
                     if member.is_dir() or not name.startswith("art/") or ".." in name.split("/") or name.startswith("/"):
@@ -188,16 +227,7 @@ class GameDatabase:
                     with archive.open(member) as source, destination.open("wb") as sink:
                         shutil.copyfileobj(source, sink)
         except (zipfile.BadZipFile, OSError) as error:
-            shutil.rmtree(staging, ignore_errors=True)
-            temp_path.unlink(missing_ok=True)
             raise DownloadError(f"The art archive could not be unpacked: {error}") from error
-        temp_path.unlink(missing_ok=True)
-        if art_root.exists():
-            shutil.rmtree(art_root)
-        staging.rename(art_root)
-        (art_root / ".complete").write_text(expected, encoding="utf-8")
-        self._systems.pop(system, None)
-        return art_root
 
     def remove_art(self, system):
         import shutil

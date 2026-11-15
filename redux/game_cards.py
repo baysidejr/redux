@@ -198,6 +198,7 @@ class CardGame:
     folder: Path | None = None
     arguments: tuple = ()
     working_directory: str = ""
+    store_id: str = ""
 
 
 @dataclass
@@ -227,6 +228,28 @@ class CardSync:
 def _card_label(card):
     drive = Path(card).anchor.rstrip("\\/") or str(card)
     return f"{KIND_LABELS.get(card_kind(card) or 'legacy', 'Game card')} {drive}"
+
+
+def gog_info(folder):
+    """(GOG product id, GOG title) from a GOG install's goggame-<id>.info files, or ("", "").
+
+    A folder can hold several info files (the game and its DLC); the game's own has
+    gameId equal to rootGameId."""
+    folder = Path(folder)
+    best = ("", "")
+    for info in sorted(folder.glob("goggame-*.info")):
+        try:
+            document = json.loads(info.read_text(encoding="utf-8-sig"))
+        except (OSError, ValueError):
+            continue
+        if not isinstance(document, dict):
+            continue
+        game_id = str(document.get("gameId") or info.stem.split("-", 1)[-1] or "").strip()[:32]
+        name = str(document.get("name") or "").strip()[:500]
+        root = str(document.get("rootGameId") or "").strip()
+        if game_id and (not best[0] or game_id == root):
+            best = (game_id, name)
+    return best
 
 
 def pc_game_executable(folder):
@@ -281,7 +304,7 @@ def _safe_name(value):
     return cleaned[:120] or "Game"
 
 
-def config_template(title, executable, drive):
+def config_template(title, executable, drive, store_id=""):
     executable = Path(executable)
     try:
         stored = executable.relative_to(Path(drive)).as_posix()
@@ -289,6 +312,7 @@ def config_template(title, executable, drive):
         stored = str(executable)
     return {
         "title": title,
+        "gog_id": store_id,
         "executable": stored,
         "arguments": [],
         "working_directory": "",
@@ -350,8 +374,9 @@ def write_pc_configs(drive):
         if config.exists():
             continue
         try:
+            store_id, name = gog_info(folder)
             (target / ART_FOLDER).mkdir(parents=True, exist_ok=True)
-            config.write_text(json.dumps(config_template(folder.name, executable, root), indent=2) + "\n", encoding="utf-8")
+            config.write_text(json.dumps(config_template(name or folder.name, executable, root, store_id), indent=2) + "\n", encoding="utf-8")
             written.append(target)
         except OSError:
             continue
@@ -379,7 +404,8 @@ def read_config(folder, drive):
                 arguments = document.get("arguments", [])
                 arguments = tuple(str(value) for value in arguments) if isinstance(arguments, list) and all(isinstance(value, str) for value in arguments) else ()
                 working = str(document.get("working_directory") or "")
-                return CardGame("pc", path.resolve(), str(document.get("title") or folder.name).strip()[:500] or folder.name, folder, arguments, working)
+                store_id = str(document.get("gog_id") or "").strip()[:32]
+                return CardGame("pc", path.resolve(), str(document.get("title") or folder.name).strip()[:500] or folder.name, folder, arguments, working, store_id)
         except OSError:
             continue
     return None
@@ -427,7 +453,8 @@ def scan_card(marker, *, cancelled=None):
                     continue  # a config that points nowhere adds nothing
                 executable = pc_game_executable(game_folder)
                 if executable:
-                    found.append(CardGame("pc", executable, game_folder.name, game_folder))
+                    store_id, name = gog_info(game_folder)
+                    found.append(CardGame("pc", executable, name or game_folder.name, game_folder, store_id=store_id))
             continue
         try:
             entries = discover_media(folder, cancelled=cancelled, system=system)
@@ -495,10 +522,16 @@ def sync_card(library, marker, *, cancelled=None, catalogue=None, progress=None)
             continue
         try:
             if item.system == "pc":
-                game = library.add_pc_game(item.path, title=item.title)
+                game = library.add_pc_game(item.path, title=item.title, store_id=item.store_id or None)
                 if item.arguments or item.working_directory:
                     library.configure_pc_game(game["id"], list(item.arguments), item.working_directory or None)
-                _apply_card_art(library, game, item.folder)
+                game = _apply_card_art(library, game, item.folder)
+                # The shipped database knows GOG games by product id: fill the facts the card does not carry.
+                try:
+                    from .gamedb_link import link_game
+                    link_game(library, game, serial=item.store_id or None)
+                except (OSError, ValueError):
+                    pass
                 if already:
                     result.existing += 1
                 else:

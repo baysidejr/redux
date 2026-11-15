@@ -180,9 +180,9 @@ class ConsoleGameDatabase:
         total = sum(info["games"] for info in built)
         self.panel(X, 524, W, 104, PANEL, 3)
         self.icon("info", X + 21, 546, 25, ACCENT)
-        self.text(X + 66, 545, f"{total} North American releases across {len(built)} system{'' if len(built) == 1 else 's'}, ready before you insert a disc", 16, WHITE, "bold")
-        self.text(X + 66, 576, "Redux recognises a disc by the serial in its header, then shows the database's box art, banner and game "
-                  "information. Covers and banners for the larger systems download from the Redux release on GitHub; A on a system offers it.", 13, MUTED, width=W - 100)
+        self.text(X + 66, 545, f"{total} games across {len(built)} system{'' if len(built) == 1 else 's'}: North American CD releases and the Windows games on GOG", 16, WHITE, "bold")
+        self.text(X + 66, 576, "Redux recognises a disc by the serial in its header and a GOG game by its product id, then shows the database's box art, banner "
+                  "and information. Covers and banners for the larger systems download from the Redux release on GitHub; A on a system offers it.", 13, MUTED, width=W - 100)
 
     # ------------------------------------------------------------------ a system's games
 

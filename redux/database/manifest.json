@@ -1,6 +1,6 @@
 {
  "version": 1,
- "generated": "2026-11-14",
+ "generated": "2026-11-15",
  "release": "database",
  "systems": {
   "3do": {
@@ -26,6 +26,25 @@
    "asset": "gamedb-neo_geo_cd-art.zip",
    "bytes": 12994472,
    "sha256": "e423a30efda28baa84651692dc6b97785d2b394850127ca110b71e35365d1381"
+  },
+  "pc": {
+   "label": "PC (GOG)",
+   "games": 7718,
+   "art_files": 23011,
+   "parts": [
+    {
+     "asset": "gamedb-pc-art-1.zip",
+     "bytes": 473364612,
+     "sha256": "dcb2ce10514d0b8adfd07310963792e776d805055e8c7a6aa59d2589e49d6bc5"
+    },
+    {
+     "asset": "gamedb-pc-art-2.zip",
+     "bytes": 391254041,
+     "sha256": "a6b38fef3308f7d30d888f7fb4ab602f98618ad0e451be2e3b7ec83e879e3b6f"
+    }
+   ],
+   "bytes": 864618653,
+   "sha256": "fb675bf10114500296286f9409036216ddff1533ca8f90e090155a9fcf2f4059"
   },
   "pce_cd": {
    "label": "PC Engine CD",

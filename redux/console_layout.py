@@ -163,11 +163,11 @@ class ReferenceLayout:
         database=getattr(self,"gamedb",None)
         if database is None:return None
         from .gamedb_link import database_game,art_for
-        key=(game.get("id"),game.get("system"),game.get("title"),game.get("game_id"))
+        key=(game.get("id"),game.get("system"),game.get("title"),game.get("game_id"),game.get("store_id"))
         cache=self.__dict__.setdefault("_database_links",{})
         if key not in cache:
             if len(cache)>2048:cache.clear()
-            cache[key]=database_game(database,game["system"],serial=game.get("game_id"),title=game.get("title"))
+            cache[key]=database_game(database,game["system"],serial=game.get("game_id") or game.get("store_id"),title=game.get("title"))
         return art_for(database,cache[key],role)
 
     def _captured_game_screenshot(self,game):

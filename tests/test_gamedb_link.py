@@ -2,6 +2,7 @@
 from pathlib import Path
 from types import SimpleNamespace
 import importlib.util
+import json
 import tempfile
 import unittest
 
@@ -73,6 +74,43 @@ class CollectionLinkTests(unittest.TestCase):
         self.assertIsNone(ReferenceLayout._game_artwork(app, game, "tile"))
         unknown = self.library.import_game(self.media("Mystery.chd"), system="sega_cd", linked=True)[0]
         self.assertIsNone(ReferenceLayout._game_artwork(app, unknown, "cover"))
+
+
+class GogLinkTests(unittest.TestCase):
+    """PC games from a GOG cartridge are matched to the database by product id, then by title."""
+    def setUp(self):
+        self.database = GameDatabase()
+        if not self.database.available("pc"):
+            self.skipTest("the PC database is not built in this checkout")
+
+    def test_a_product_id_finds_the_game_and_the_title_is_the_fallback(self):
+        fallout = database_game(self.database, "pc", serial="2")
+        self.assertEqual((fallout["title"], fallout["year"], fallout["developer"]), ("Fallout 2 Classic", 1998, "Black Isle Studios"))
+        self.assertEqual(metadata_fields(fallout)["genre"], "Role-playing, Turn-based, Sci-fi")
+        self.assertTrue(metadata_fields(fallout)["description"].startswith("You are the Chosen One"))
+        self.assertIs(database_game(self.database, "pc", serial="no-such-id", title="Fallout 2 Classic"), fallout)
+        self.assertIsNone(database_game(self.database, "pc", serial="no-such-id", title="Not A Game On GOG 77"))
+        self.assertTrue(len(self.database.games("pc")) > 7000)
+        self.assertNotIn("region", metadata_fields(fallout))
+
+    def test_a_gog_cartridge_game_is_filled_in_at_sync(self):
+        from redux import game_cards
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary);library = Library(root / "library");drive = root / "card";drive.mkdir()
+            folder = drive / "Fallout 2";folder.mkdir();(folder / "fallout2.exe").write_bytes(b"MZ..")
+            (folder / "goggame-2.info").write_text(json.dumps({"gameId": "2", "rootGameId": "2", "name": "Fallout 2 Classic",
+                "playTasks": [{"isPrimary": True, "category": "game", "path": "fallout2.exe"}]}), encoding="utf-8")
+            game_cards.prepare_card(drive, "gog")
+            result = game_cards.sync_card(library, drive / game_cards.MARKER)
+            self.assertEqual(len(result.added), 1, result.errors)
+            game = library.games()[0]
+            self.assertEqual((game["title"], game["store_id"], game["year"], game["developer"]), ("Fallout 2 Classic", "2", 1998, "Black Isle Studios"))
+            self.assertTrue(game["description"].startswith("You are the Chosen One"))
+            self.assertEqual(backfill(library, self.database), 0, "nothing left to fill after sync")
+            # The screens ask the database for art by the same id (the art itself is a download).
+            app = object.__new__(ConsoleApp);app.library = library;app._game_database = self.database
+            ReferenceLayout._game_artwork(app, game, "cover")
+            self.assertEqual(app.__dict__["_database_links"][(game["id"], "pc", game["title"], None, "2")]["id"], "2")
 
 
 class ScraperGoneTests(unittest.TestCase):

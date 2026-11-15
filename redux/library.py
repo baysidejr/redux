@@ -317,6 +317,8 @@ class Library:
                 "artwork_provenance": "TEXT NOT NULL DEFAULT '{}'",
                 "pc_arguments": "TEXT NOT NULL DEFAULT '[]'",
                 "pc_working_directory": "TEXT NOT NULL DEFAULT ''",
+                # The store's own id for a game: a GOG product id for a PC game from a GOG cartridge.
+                "store_id": "TEXT NOT NULL DEFAULT ''",
             }
             for name, declaration in additions.items():
                 if name not in columns:
@@ -464,8 +466,11 @@ class Library:
             return resolved
         return path
 
-    def add_pc_game(self, executable, *, title=None, game_id=None):
-        """Link an installed Windows EXE without copying or hashing its game data."""
+    def add_pc_game(self, executable, *, title=None, game_id=None, store_id=None):
+        """Link an installed Windows EXE without copying or hashing its game data.
+
+        ``store_id`` is the store's id for the game (GOG product id); it is kept so the
+        shipped database can match the game exactly, and never overwritten once set."""
         from .pc_games import validate_executable
         path=validate_executable(executable)
         name=_name(title or path.parent.name or path.stem,"Title",500)
@@ -474,6 +479,8 @@ class Library:
         key=hashlib.sha256(("pc-exe\0"+os.path.normcase(stored)+uuid.uuid4().hex).encode("utf-8")).hexdigest()
         if game_id is not None and self.game(game_id)["system"]!="pc":
             raise ValueError("Only a PC game shortcut can be relocated")
+        store=str(store_id or "").strip()[:64]
+        if store and not re.fullmatch(r"[A-Za-z0-9_.:-]+",store):store=""
         with self.connect() as db:
             duplicate=db.execute("SELECT id FROM games WHERE system='pc' AND path=? COLLATE NOCASE",(stored,)).fetchone()
             if duplicate and game_id is not None and duplicate["id"]!=game_id:
@@ -483,9 +490,10 @@ class Library:
                     (stored,str(path),path.stat().st_size,game_id))
             elif duplicate:game_id=duplicate["id"]
             else:
-                cursor=db.execute("INSERT INTO games(title,system,storage,path,source_path,bundle_hash,size) VALUES(?,?,?,?,?,?,?)",
-                    (name,"pc","linked",stored,str(path),key,path.stat().st_size))
+                cursor=db.execute("INSERT INTO games(title,system,storage,path,source_path,bundle_hash,size,store_id) VALUES(?,?,?,?,?,?,?,?)",
+                    (name,"pc","linked",stored,str(path),key,path.stat().st_size,store))
                 game_id=cursor.lastrowid
+            if store:db.execute("UPDATE games SET store_id=? WHERE id=? AND store_id=''",(store,game_id))
         return self.game(game_id)
 
     def configure_pc_game(self,game_id,arguments,working_directory=None):

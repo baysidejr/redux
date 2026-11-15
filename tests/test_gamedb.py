@@ -4,11 +4,13 @@ from types import SimpleNamespace
 import json
 import tempfile
 import unittest
+import zipfile
+import hashlib
 
 from redux.console_ui import ConsoleApp
 from redux.console_secondary import SecondaryScreens
 from redux.console_gamedb import ConsoleGameDatabase, PAGE_SIZE
-from redux.gamedb import GameDatabase, title_key, serial_variants, players_text, database_root, SYSTEM_ORDER
+from redux.gamedb import GameDatabase, DownloadError, title_key, serial_variants, players_text, database_root, SYSTEM_ORDER
 from redux.ui_model import ScreenHistory
 
 SHIPPED = database_root()
@@ -133,12 +135,60 @@ class ShippedDatabaseTests(unittest.TestCase):
                 kept = {k for k, v in (json.loads(overrides_path.read_text(encoding="utf-8")).items() if overrides_path.is_file() else []) if v.get("keep")}
                 for game in games:
                     regions = {part.strip().casefold() for r in game["releases"] for part in (r.get("region") or "").split(",")}
+                    if info["system"] == "pc":
+                        # GOG games have no region; their one release carries the product id as the serial.
+                        self.assertEqual(regions, {"gog"});self.assertEqual(game["releases"][0]["serials"], [game["id"]])
+                        continue
                     self.assertTrue(regions & {"usa", "canada", "world", "north america"} or game["id"] in kept, f"{game['id']} is not a North American release")
 
     def test_every_planned_system_is_listed_even_when_unbuilt(self):
         systems = GameDatabase().systems()
         self.assertEqual(systems[0]["label"], "Sega CD");self.assertTrue(systems[0]["available"])
         self.assertEqual(len(systems), len(SYSTEM_ORDER))
+
+
+class SplitArtDownloadTests(unittest.TestCase):
+    """A large system's art comes in several zips; all must arrive before any is used."""
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory();self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name)
+        (self.root / "db" / "pc").mkdir(parents=True)
+        (self.root / "db" / "pc" / "games.json").write_text(json.dumps({"system": "pc", "label": "PC (GOG)", "games": [
+            {"id": "1", "title": "One", "system": "pc", "art": {"boxart": "art/1/boxart.jpg"}},
+            {"id": "2", "title": "Two", "system": "pc", "art": {"boxart": "art/2/boxart.jpg"}}]}), encoding="utf-8")
+        self.parts = []
+        for index in (1, 2):
+            path = self.root / f"gamedb-pc-art-{index}.zip"
+            with zipfile.ZipFile(path, "w") as archive:
+                archive.writestr(f"art/{index}/boxart.jpg", b"JPEG" * index)
+            data = path.read_bytes()
+            self.parts.append(dict(asset=path.name, bytes=len(data), sha256=hashlib.sha256(data).hexdigest()))
+        combined = hashlib.sha256("\n".join(p["sha256"] for p in self.parts).encode()).hexdigest()
+        self.manifest = {"version": 1, "release": "database", "systems": {"pc": {"label": "PC (GOG)", "games": 2, "parts": self.parts,
+                                                                             "bytes": sum(p["bytes"] for p in self.parts), "sha256": combined}}}
+        (self.root / "db" / "manifest.json").write_text(json.dumps(self.manifest), encoding="utf-8")
+        self.db = GameDatabase(self.root / "db", downloads=self.root / "downloads")
+
+    def opener(self, url):
+        return open(self.root / url.rsplit("/", 1)[-1], "rb")
+
+    def test_every_part_is_fetched_verified_and_unpacked_into_one_art_folder(self):
+        self.assertEqual(self.db.art_status("pc"), "available");self.assertEqual(self.db.art_size("pc"), self.manifest["systems"]["pc"]["bytes"])
+        seen = []
+        art = self.db.download_art("pc", progress=lambda done, total: seen.append((done, total)), opener=self.opener)
+        self.assertTrue((art / "1" / "boxart.jpg").is_file());self.assertTrue((art / "2" / "boxart.jpg").is_file())
+        self.assertEqual(seen[-1], (self.manifest["systems"]["pc"]["bytes"], self.manifest["systems"]["pc"]["bytes"]))
+        self.assertEqual(self.db.art_status("pc"), "installed")
+        self.assertEqual(self.db.art(self.db.game("pc", "2"), "boxart"), art / "2" / "boxart.jpg")
+
+    def test_a_bad_part_discards_everything(self):
+        self.parts[1]["sha256"] = "0" * 64
+        (self.root / "db" / "manifest.json").write_text(json.dumps(self.manifest), encoding="utf-8")
+        db = GameDatabase(self.root / "db", downloads=self.root / "downloads")
+        with self.assertRaises(DownloadError):
+            db.download_art("pc", opener=self.opener)
+        self.assertFalse((self.root / "downloads" / "pc" / "art").exists());self.assertFalse((self.root / "downloads" / "pc" / "art.new").exists())
+        self.assertEqual(db.art_status("pc"), "available")
 
 
 class DatabasePagesTests(unittest.TestCase):

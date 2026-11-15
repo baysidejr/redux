@@ -1,8 +1,9 @@
 # Redux game database
 
-Preloaded art and facts for the CD systems Redux plays. Redux never scrapes:
-when a disc or disc image is recognised, everything on the game screen comes
-from here. The database is plain files on purpose, so it can be modded.
+Preloaded art and facts for the CD systems Redux plays and for the PC games
+sold on GOG. Redux never scrapes: when a disc or disc image is recognised, or a
+GOG game arrives on a GOG cartridge, everything on the game screen comes from
+here. The database is plain files on purpose, so it can be modded.
 
 ## Layout
 
@@ -21,7 +22,7 @@ redux/database/
 ```
 
 `<system>` is Redux's system id: `sega_cd`, `psx`, `saturn`, `pce_cd`,
-`neo_geo_cd`, `3do`, `jaguar_cd`.
+`neo_geo_cd`, `3do`, `jaguar_cd`, and `pc` for GOG.
 
 ## games.json
 
@@ -66,21 +67,38 @@ redux/database/
   `gameimage.png` or `hero.jpg` into a game's folder and the next rebuild keeps
   it (the source is recorded as `local`).
 
+## PC games (GOG)
+
+`pc/games.json` holds every game GOG sells for Windows, one entry per product.
+Its `id` is the GOG product id, which a GOG install carries in its
+`goggame-<id>.info` file and Redux copies into `game.json` on a GOG cartridge
+and into the library's `store_id`; the entry's single release is
+`{"region": "GOG", "serials": ["<id>"]}` so the normal serial match finds it.
+Facts (`year`, `developer`, `publisher`, up to three genre tags, the store
+description as plain text) come from GOG's own catalogue through the GOG DB
+dump (gogdb.org, a daily archive of GOG's catalogue API). Art is the product's
+own vertical cover (`boxart.jpg`), background banner (`hero.jpg`) and first
+screenshot (`gameimage.jpg`, a JPEG here). Built by `tools/gamedb/fetch_gogdb.py`.
+
 ## Art that is downloaded
 
 Only Sega CD's art ships inside the installer. The other systems' `art/`
-folders are packed into one zip each (`gamedb-<system>-art.zip`) and attached
-to the GitHub release tagged `database`; `manifest.json` records each zip's
-size and SHA-256. System → Database offers the download per system; Redux
+folders are packed into zips (`gamedb-<system>-art.zip`, or
+`gamedb-<system>-art-1.zip`, `-2.zip`, … when a system's art is larger than
+about 450 MB, whole games per zip) and attached to the GitHub release tagged
+`database`; `manifest.json` records each zip's size and SHA-256 (a split
+system lists its `parts` and a combined hash). Redux downloads every part,
+verifies each one, and swaps the art in only when all have arrived. System → Database offers the download per system; Redux
 checks the hash, unpacks into `%LOCALAPPDATA%\ReduxMediaLibrary\database\<system>\art`
 and reads art from there as well as from the bundle. The catalogs and facts
 work without any download. In git, `art/` is ignored for every system but Sega CD.
 
 ## Where it comes from
 
-Catalog: Redump disc lists as mirrored by libretro-database. Box art and game
-images: libretro-thumbnails. Descriptions and facts: TheGamesDB. Hero banners:
-SteamGridDB first, TheGamesDB fan art where it has none. The build script lives
+CD systems: catalog from Redump disc lists as mirrored by libretro-database;
+box art and game images from libretro-thumbnails; descriptions and facts from
+TheGamesDB; hero banners from SteamGridDB first, TheGamesDB fan art where it has
+none. PC: GOG's catalogue through the GOG DB dump, pictures from GOG's image CDN. The build script lives
 outside the repository history (`tools/gamedb/`, gitignored) because it needs a
 developer's TheGamesDB and SteamGridDB keys; the output here is what ships.
 
@@ -90,4 +108,4 @@ developer's TheGamesDB and SteamGridDB keys; the output here is what ships.
 
 ## How the app uses it
 
-Since 0.13 the database is the only source of game facts and art besides the user's own files. `redux/gamedb_link.py` matches collection games (serial, then title) and fills empty description, year, publisher, developer and genre; the screens show the database's box art, banner and game image for any game without its own, and inserted discs get the same treatment on the home banner. Nothing is copied into the library, so art downloaded later from System → Database shows up at once.
+Since 0.13 the database is the only source of game facts and art besides the user's own files. `redux/gamedb_link.py` matches collection games (serial or GOG product id, then title) and fills empty description, year, publisher, developer and genre; the screens show the database's box art, banner and game image for any game without its own, and inserted discs get the same treatment on the home banner. Nothing is copied into the library, so art downloaded later from System → Database shows up at once.

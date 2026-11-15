@@ -155,6 +155,28 @@ class GameCardTests(unittest.TestCase):
         self.assertEqual(len(result.added),1);self.assertEqual(len(result.errors),1)
         self.assertTrue(result.errors[0].startswith(cue.name))
 
+    def test_a_gog_install_keeps_its_product_id_and_store_title(self):
+        folder,exe=self.installed("Expedition 33","bin/game.exe",gog=True)
+        (folder/"goggame-1.info").write_text(json.dumps({"gameId":"1903020710","rootGameId":"1903020710","name":"Clair Obscur: Expedition 33",
+            "playTasks":[{"isPrimary":True,"category":"game","path":"bin\\game.exe"}]}),encoding="utf-8")
+        (folder/"goggame-2.info").write_text(json.dumps({"gameId":"2222","rootGameId":"1903020710","name":"Expedition 33 - Soundtrack","playTasks":[]}),encoding="utf-8")
+        self.assertEqual(game_cards.gog_info(folder),("1903020710","Clair Obscur: Expedition 33"))
+        self.assertEqual(game_cards.gog_info(self.root),("",""))
+        game_cards.prepare_card(self.drive,"gog")
+        document=json.loads((self.marker/"PC"/"Expedition 33"/"game.json").read_text(encoding="utf-8"))
+        self.assertEqual((document["gog_id"],document["title"]),("1903020710","Clair Obscur: Expedition 33"))
+        found=game_cards.scan_card(self.marker)
+        self.assertEqual([(g.title,g.store_id) for g in found],[("Clair Obscur: Expedition 33","1903020710")])
+        game_cards.sync_card(self.library,self.marker)
+        game=self.library.games()[0]
+        self.assertEqual((game["title"],game["store_id"]),("Clair Obscur: Expedition 33","1903020710"))
+        # A plain folder has no id; the id is never overwritten once set.
+        self.library.add_pc_game(exe,store_id="9999")
+        self.assertEqual(self.library.games()[0]["store_id"],"1903020710")
+        plain,plain_exe=self.installed("Plain")
+        added=self.library.add_pc_game(plain_exe,store_id="not a valid id!")
+        self.assertEqual(added["store_id"],"")
+
     def test_a_card_label_names_its_kind(self):
         game_cards.prepare_card(self.drive,"gog")
         self.assertTrue(game_cards.sync_card(self.library,self.marker).summary.startswith("GOG cartridge"))

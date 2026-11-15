@@ -1,7 +1,7 @@
 """Link the collection and inserted discs to the shipped game database.
 
 The database replaces artwork scraping: a game that arrives from a disc or a game
-card is matched by serial, then by title, and whatever facts it lacks (description,
+card is matched by serial (a disc's product code, a GOG game's product id), then by title, and whatever facts it lacks (description,
 year, publisher, developer, genre) are filled from the database. Art is not
 copied: the screens fall back to the database's box art, banner and game image
 whenever a game has no file of its own, so art downloaded later shows up at once.
@@ -69,7 +69,7 @@ def missing_fields(game, entry):
 def link_game(library, game, database=None, *, serial=None):
     """Fill a collection game's empty facts from the database. Returns the entry used, or None."""
     entry = database_game(database or shared_database(), game.get("system"),
-                          serial=serial or game.get("game_id"), title=game.get("title"))
+                          serial=serial or game.get("game_id") or game.get("store_id"), title=game.get("title"))
     if not entry:
         return None
     fields = missing_fields(game, entry)
@@ -92,7 +92,7 @@ def backfill(library, database=None, *, cancelled=None):
         if game.get("system") not in SYSTEM_ORDER or game.get("description"):
             continue
         try:
-            entry = database_game(database, game["system"], title=game.get("title"))
+            entry = database_game(database, game["system"], serial=game.get("store_id") or None, title=game.get("title"))
             if entry and missing_fields(game, entry):
                 library.update_metadata(game["id"], **missing_fields(game, entry))
                 changed += 1
