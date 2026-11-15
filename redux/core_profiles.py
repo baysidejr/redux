@@ -63,14 +63,35 @@ _SATURN_OPTIONS = {"beetle_saturn_horizontal_overscan": "0"}
 _PCE_CD_OPTIONS = {"pce_cddavolume": "150"}
 
 # Mupen64Plus-Next's custom/mupen64plus-next_common.h defines CORE_NAME as
-# "mupen64plus". libretro/libretro_core_options.h declares these keys/values
-# under HAVE_THR_AL and HAVE_LLE respectively. These are a software host
-# selection, not a recovered exact reference application plugin configuration. The host
-# must reject missing declarations instead of falling back to a GPU plugin.
+# "mupen64plus". N64 draws with GLideN64 (OpenGL, high-level RSP) so it can render at a
+# multiple of the console's resolution; the host gives the core an OpenGL context.
+# Angrylion + CXD4 (software, native 320x240 only) remain the fallback for a PC without
+# OpenGL 3.3. The host rejects options the installed build does not declare.
+_N64_OPTIONS = {
+    "mupen64plus-rdp-plugin": "gliden64",
+    "mupen64plus-rsp-plugin": "hle",
+}
 _N64_SOFTWARE_OPTIONS = {
     "mupen64plus-rdp-plugin": "angrylion",
     "mupen64plus-rsp-plugin": "cxd4",
 }
+
+# Internal resolution, chosen per system in the game menu's Display panel: factor -> options.
+# Mupen64Plus-Next renders at nativeResFactor x 320x240 and outputs at 43screensize, so both
+# move together (an output smaller than the render would throw the extra detail away).
+RESOLUTIONS: Mapping[str, Mapping[int, Mapping[str, str]]] = MappingProxyType({
+    "n64": MappingProxyType({factor: MappingProxyType({"mupen64plus-EnableNativeResFactor": str(factor),
+                                                       "mupen64plus-43screensize": f"{320 * factor}x{240 * factor}"})
+                             for factor in range(1, 9)}),
+    "psx": MappingProxyType({1: MappingProxyType({"beetle_psx_internal_resolution": "1x(native)"}),
+                             2: MappingProxyType({"beetle_psx_internal_resolution": "2x"}),
+                             4: MappingProxyType({"beetle_psx_internal_resolution": "4x"})}),
+    "3do": MappingProxyType({1: MappingProxyType({"opera_high_resolution": "disabled"}),
+                             2: MappingProxyType({"opera_high_resolution": "enabled"})}),
+})
+# N64 renders on the graphics card, where 4x costs nothing a gaming PC notices; PlayStation's
+# upscaling runs on the processor, so it starts at the console's own resolution.
+DEFAULT_RESOLUTIONS = MappingProxyType({"n64": 4})
 
 # FinalBurn Neo declares fbneo-neogeo-mode (DIPSWITCH|MVS|AES|UNIBIOS). Redux presents the home
 # console, so games boot as an AES cartridge rather than an arcade cabinet.
@@ -118,8 +139,8 @@ _profiles = (
                           "PicoDrive is an explicit replacement; Genesis Plus GX does not implement 32X."),
                 original_system_ids=(6,)),
     CoreProfile("n64", "mupen64plus_next_libretro.dll", "Mupen64Plus-Next", "mupen64plus",
-                "upstream_family", _N64_SOFTWARE_OPTIONS,
-                (_REVISION_UNKNOWN, "Installed build must declare Angrylion RDP and CXD4 RSP; software support is conditional.",
+                "upstream_family", _N64_OPTIONS,
+                (_REVISION_UNKNOWN, "GLideN64 needs OpenGL 3.3; without it Redux falls back to Angrylion RDP and CXD4 RSP at native resolution.",
                  "Original native custom plugin paths/configuration are not stock Windows libretro settings."), (3,)),
     CoreProfile("neo_geo", "fbneo_libretro.dll", "FinalBurn Neo", None, "redux_extension", _NEO_GEO_OPTIONS,
                 blockers=("The neogeo.zip BIOS set is required (bios/fbneo or beside the game); ROM sets must match the installed FinalBurn Neo revision.",)),
@@ -151,11 +172,32 @@ def get_profile(system: str | None) -> CoreProfile | None:
     return PROFILES.get(system.strip().lower())
 
 
-def default_options(system: str | None) -> dict[str, str]:
+def resolution_choices(system: str | None) -> tuple[int, ...]:
+    """The internal-resolution factors a system's emulator offers; (1,) when it draws natively only."""
+    table = RESOLUTIONS.get(system or "")
+    return tuple(sorted(table)) if table else (1,)
+
+
+def default_resolution(system: str | None) -> int:
+    return DEFAULT_RESOLUTIONS.get(system or "", 1)
+
+
+def default_options(system: str | None, *, resolution: int | None = None, opengl: bool = True) -> dict[str, str]:
     """Return an independent copy of requested, declared upstream defaults.
 
     No firmware override, game-dependent multitap or guessed region is forced.
     Validation against actual runtime declarations remains the host's job.
+    ``resolution`` picks an internal-resolution factor (the system default when omitted or
+    not offered); ``opengl=False`` gives N64 its software renderer, which is native only.
     """
     profile = get_profile(system)
-    return dict(profile.default_options) if profile else {}
+    if not profile:
+        return {}
+    if profile.system == "n64" and not opengl:
+        return dict(_N64_SOFTWARE_OPTIONS)
+    options = dict(profile.default_options)
+    table = RESOLUTIONS.get(profile.system)
+    if table:
+        factor = resolution if resolution in table else default_resolution(profile.system)
+        options.update(table[factor])
+    return options

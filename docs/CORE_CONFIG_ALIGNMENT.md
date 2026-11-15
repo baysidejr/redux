@@ -52,7 +52,7 @@ The original load methods set options programmatically. There is no single recov
 
 Public option keys and supported values can change. The 0.5.0 host enumerates and validates actual declarations before applying requested values; absent keys and unsupported values fail explicitly. The 0.4.0 baseline selected only the default value.
 
-For the current software video host, the N64 profile requests `mupen64plus-rdp-plugin=angrylion` and `mupen64plus-rsp-plugin=cxd4`. The public source declares these values only when built with `HAVE_THR_AL` and `HAVE_LLE`. They must be present in the installed core's runtime declarations; unsupported selections must not silently revert to a GPU renderer. This is a public software plugin selection, not an exact copy of reference application's custom plugin configuration.
+Since 0.29.0 the host offers OpenGL hardware rendering, and the N64 profile requests `mupen64plus-rdp-plugin=gliden64` and `mupen64plus-rsp-plugin=hle`, with `mupen64plus-EnableNativeResFactor` and `mupen64plus-43screensize` set together from the chosen resolution (the core renders at the factor but outputs at the screen size, so both must match). On a PC without OpenGL 3.3 it requests `angrylion` and `cxd4`, which the public source declares only when built with `HAVE_THR_AL` and `HAVE_LLE`. Requested values must be present in the installed core's runtime declarations. This is a public software plugin selection, not an exact copy of reference application's custom plugin configuration.
 
 ## Files and settings that are not drop-in configurations
 

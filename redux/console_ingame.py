@@ -29,16 +29,16 @@ class ConsoleIngame:
         message=str(overlay.get("message","")).replace("\n","  ·  ")
         if message:self.display(80,352,self.fit_text(message,1120,16),16,MUTED)
         items=overlay.get("items",())
-        selected=_selected(self.focus,len(items));start=(selected//10)*10
-        for offset,(label,callback) in enumerate(items[start:start+10]):
-            index=start+offset;column,row=divmod(offset,5)
-            x=80+column*580;y=379+row*50;key=f"overlay:{index}"
+        selected=_selected(self.focus,len(items));start=(selected//12)*12
+        for offset,(label,callback) in enumerate(items[start:start+12]):
+            index=start+offset;column,row=divmod(offset,6)
+            x=80+column*580;y=376+row*48;key=f"overlay:{index}"
             focused=self.focus==key
             self.panel(x,y,540,44,"#303036" if focused else "#202023",2,WHITE if focused else None)
             if focused:self.rect(x,y+8,3,28,ACCENT)
             self.display(x+16,y+11,self.fit_text(label,505,21),21,WHITE if focused else MUTED)
             self.target(key,(x,y,x+540,y+44),self._overlay_run(overlay,callback),label)
-        if len(items)>10:self.display(1200,644,f"{start+1}–{min(start+10,len(items))} / {len(items)}",15,DIM,anchor="ne")
+        if len(items)>12:self.display(1200,666,f"{start+1}–{min(start+12,len(items))} / {len(items)}",15,DIM,anchor="ne")
         self._controller_hint("B","Back",80,675,"#d75b78")
         self._controller_hint("A","Select",245,675,"#35a4c6")
 

@@ -64,6 +64,7 @@ class ReferenceLayout:
         self._footer()
         if self.overlay:self._overlay()
         self._toast()
+        self._sync_video_surface()
         if self.targets and self.focus not in self.callbacks:
             self.focus=self.targets[0].key;self.root.after_idle(self.schedule_draw)
 
@@ -504,11 +505,31 @@ class ReferenceLayout:
             self.display(872,109,self.fit_text(status,356,16),16,"#c6c6cb")
 
 
+    def _sync_video_surface(self):
+        """Show the OpenGL game surface while a game runs with no menu over it; hand it the display settings."""
+        surface=getattr(self,"video_surface",None)
+        if surface is None:return
+        host=self.embedded.host if self.embedded else None
+        presenting=bool(host and getattr(host,"presenting",False))
+        if presenting:
+            profile=getattr(self,"game_display",None)
+            host.set_presentation(dict(filter=profile.filter_id if profile else getattr(self,"game_filter","clean"),
+                scanlines=profile.scanlines if profile else 40,shape=profile.shape if profile else "auto",
+                zoom=profile.zoom if profile else 100,offset_x=profile.offset_x if profile else 0,
+                offset_y=profile.offset_y if profile else 0,brightness=profile.brightness if profile else 100))
+        show=presenting and self.screen=="gameplay" and not self.overlay
+        if show and not self.video_surface_shown:
+            surface.place(x=0,y=0,relwidth=1,relheight=1);surface.lift();self.video_surface_shown=True
+        elif not show and self.video_surface_shown:
+            surface.place_forget();self.video_surface_shown=False
+
     def _gameplay(self):
         if not self.embedded:return
         from PIL import Image,ImageTk
         from .video_filters import render_frame,fit_size
-        frame=self.embedded.host.latest_frame()
+        host=self.embedded.host
+        # The OpenGL surface covers the canvas while nothing is over the game: skip the canvas copy.
+        frame=None if getattr(host,"presenting",False) and not self.overlay else host.latest_frame()
         # Nothing but the game: black to the window's edges, no button or hint bar (Home/Guide or Select + Start opens the menu).
         width_px,height_px,_,_,_=self.device_frame()
         self.device_rect(0,0,width_px,height_px,"#000000")

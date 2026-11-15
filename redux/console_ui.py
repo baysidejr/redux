@@ -183,6 +183,13 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleSta
         self.canvas.bind("<Button-1>",self._click)
         self.canvas.bind("<MouseWheel>",self._wheel)
         self.canvas.focus_set()
+        # The game surface: an OpenGL window over the canvas while a game runs without a menu.
+        # Tk never paints it (no background); the emulation thread draws and swaps into it.
+        self.video_surface=tk.Frame(self.root,bg="",bd=0,highlightthickness=0,takefocus=0)
+        try:self.video_surface.configure(cursor="none")
+        except tk.TclError:pass
+        self.video_surface.bind("<Button-1>",lambda _:(self.canvas.focus_set(),self.game_menu()))
+        self.video_surface_shown=False
         self.art=Artwork(self.canvas,self.preferences.get("reference_assets"))
         from .ui_sounds import MenuSounds
         self.sounds=MenuSounds(enabled=self.preferences.get("menu_sounds",True))
@@ -1006,9 +1013,15 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleSta
                       [("Choose firmware folder",self.choose_firmware),("Copy BIOS files from a drive",self.copy_firmware_menu),("Back",lambda:None)],
                       message=message+" Disc installation does not require firmware.")
             return
+        from .display_preferences import DisplayPreferences,effective_resolution
+        try:resolution=effective_resolution(DisplayPreferences(library.root).get(game["system"]),game["system"])
+        except (OSError,ValueError,RuntimeError):resolution=None
+        try:video_window=int(self.video_surface.winfo_id())
+        except (tk.TclError,AttributeError):video_window=None
         def work():
             from .embedded import EmbeddedGame
-            session=EmbeddedGame(library,game,core,firmware=firmware,audio=not self.preferences.get("mute",False))
+            session=EmbeddedGame(library,game,core,firmware=firmware,audio=not self.preferences.get("mute",False),
+                                 video_window=video_window,resolution=resolution)
             return session.start()
         self.show_stage(game.get("system"),display_title(game))
         def started(session):
@@ -1177,10 +1190,14 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleSta
         from .display_preferences import DisplayPreferences
         self.game_display=DisplayPreferences(self.library.root).get(self.embedded_game["system"])
         profile=self.game_display
-        values=[("FILTER",profile.filter_id.upper()),("SCANLINES","—" if profile.filter_id=="clean" else f"{profile.scanlines}%"),
+        from .core_profiles import resolution_choices
+        system=self.embedded_game["system"]
+        current=getattr(self.embedded,"resolution",1)
+        resolution="NATIVE ONLY" if len(resolution_choices(system))<2 else "NATIVE" if current==1 else f"{current}X"
+        values=[("RESOLUTION",resolution),("FILTER",profile.filter_id.upper()),("SCANLINES","—" if profile.filter_id=="clean" else f"{profile.scanlines}%"),
                 ("SHAPE",profile.shape.upper()),("ZOOM",f"{profile.zoom}%"),("MOVE LEFT / RIGHT",f"{profile.offset_x:+}"),
                 ("MOVE UP / DOWN",f"{profile.offset_y:+}"),("BRIGHTNESS",f"{profile.brightness}%")]
-        fields=("filter_id","scanlines","shape","zoom","offset_x","offset_y","brightness")
+        fields=("resolution","filter_id","scanlines","shape","zoom","offset_x","offset_y","brightness")
         items=[(f"{label}   ·   {value}",lambda field=field:self._adjust_display(field,1)) for (label,value),field in zip(values,fields)]
         fullscreen_index=len(fields)
         fullscreen=bool(self.root.attributes("-fullscreen")) if getattr(self,"root",None) else False
@@ -1190,7 +1207,7 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleSta
             self.focus=f"overlay:{fullscreen_index}"
         items.append(("FULLSCREEN   ·   "+("ON" if fullscreen else "OFF"),toggle_fullscreen))
         items.extend([("RESET TO DEFAULTS",self._reset_game_display),("Back to game menu",self.game_menu)])
-        self.menu("Display",items,message="Picture settings saved per system • A or D-pad left / right changes a setting")
+        self.menu("Display",items,message="Picture settings saved per system • A or D-pad left / right changes a setting • Resolution restarts the emulator where you are")
         self.overlay.update(kind="display_panel",fields=(*fields,"fullscreen"))
 
     def _adjust_display_focused(self,delta):
@@ -1204,6 +1221,8 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleSta
     def _adjust_display(self,field,delta):
         if not self.embedded:return
         from .display_preferences import DisplayPreferences
+        if field=="resolution":
+            self._adjust_resolution(delta);return
         profile=self.game_display;value=getattr(profile,field)
         choices={"filter_id":("clean","scanlines","crt","composite"),"shape":("auto","4:3","pixel","stretch")}
         if field in choices:
@@ -1212,14 +1231,39 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleSta
             if field=="scanlines" and profile.filter_id=="clean":return
             low,high,step={"scanlines":(0,100,10),"zoom":(50,150,5),"offset_x":(-200,200,5),"offset_y":(-200,200,5),"brightness":(25,200,5)}[field]
             value=max(low,min(high,value+step*delta))
-        focus=f"overlay:{('filter_id','scanlines','shape','zoom','offset_x','offset_y','brightness').index(field)}"
+        focus=f"overlay:{('resolution','filter_id','scanlines','shape','zoom','offset_x','offset_y','brightness').index(field)}"
         self.game_display=DisplayPreferences(self.library.root).set(self.embedded_game["system"],**{field:value})
         self.game_photo_key=None;self.video_filter_menu();self.focus=focus
 
-    def _reset_game_display(self):
+    def _adjust_resolution(self,delta):
+        """Step the internal resolution through what the emulator offers; the core restarts where the game is."""
+        from .core_profiles import resolution_choices
         from .display_preferences import DisplayPreferences
-        self.game_display=DisplayPreferences(self.library.root).reset(self.embedded_game["system"])
-        self.game_photo_key=None;self.video_filter_menu()
+        system=self.embedded_game["system"];choices=resolution_choices(system)
+        if len(choices)<2 or self.busy:return
+        current=getattr(self.embedded,"resolution",choices[0])
+        index=choices.index(current) if current in choices else 0
+        target=choices[(index+delta)%len(choices)]
+        self.game_display=DisplayPreferences(self.library.root).set(system,resolution=target)
+        self._apply_resolution(target)
+
+    def _apply_resolution(self,target):
+        session=self.embedded
+        if not session or getattr(session,"resolution",target)==target:
+            self.video_filter_menu();self.focus="overlay:0";return
+        label="native" if target==1 else f"{target}x"
+        def done(_):
+            self.game_photo_key=None;self.frame_sequence=-1
+            if self.embedded is session:self.video_filter_menu();self.focus="overlay:0"
+            self.status.set(f"Resolution {label}")
+        self.task(lambda:session.change_resolution(target),done,f"Restarting the emulator at {label} resolution…",cancellable=False)
+
+    def _reset_game_display(self):
+        from .display_preferences import DisplayPreferences,effective_resolution
+        system=self.embedded_game["system"]
+        self.game_display=DisplayPreferences(self.library.root).reset(system)
+        self.game_photo_key=None
+        self._apply_resolution(effective_resolution(self.game_display,system))
 
     def _select_video_filter(self,value):
         from .game_preferences import GamePreferences
@@ -1321,9 +1365,12 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleSta
             except queue.Empty:pass
             if self.embedded:
                 self._embedded_input()
-                frame=self.embedded.host.latest_frame()
-                if frame and frame.sequence!=self.frame_sequence:
-                    self.frame_sequence=frame.sequence;self.schedule_draw()
+                host=self.embedded.host
+                count=host.frame_count
+                if count!=self.frame_sequence:
+                    self.frame_sequence=count
+                    # The OpenGL surface shows frames itself; the canvas only redraws for menus.
+                    if self.overlay or not getattr(host,"presenting",False):self.schedule_draw()
                 if self.embedded.host.error and not self.busy:
                     self._stop_embedded(failure=str(self.embedded.host.error))
             if self.busy:self.schedule_draw()

@@ -29,10 +29,25 @@ class CoreProfileTests(unittest.TestCase):
     def test_saturn_shows_horizontal_overscan_without_forcing_a_four_mb_cart(self):
         self.assertEqual(default_options("saturn"), {"beetle_saturn_horizontal_overscan": "0"})
 
-    def test_n64_requires_optional_software_plugins_instead_of_gpu_default(self):
+    def test_n64_draws_with_gliden64_at_4x_and_falls_back_to_software_without_opengl(self):
         self.assertEqual(default_options("n64"), {
+            "mupen64plus-rdp-plugin": "gliden64", "mupen64plus-rsp-plugin": "hle",
+            "mupen64plus-EnableNativeResFactor": "4", "mupen64plus-43screensize": "1280x960"})
+        self.assertEqual(default_options("n64", resolution=2)["mupen64plus-43screensize"], "640x480")
+        self.assertEqual(default_options("n64", opengl=False), {
             "mupen64plus-rdp-plugin": "angrylion", "mupen64plus-rsp-plugin": "cxd4"})
-        self.assertTrue(any("conditional" in item for item in get_profile("n64").blockers))
+        self.assertTrue(any("OpenGL 3.3" in item for item in get_profile("n64").blockers))
+
+    def test_resolution_choices_come_from_what_each_emulator_offers(self):
+        from redux.core_profiles import resolution_choices, default_resolution
+        self.assertEqual(resolution_choices("n64"), tuple(range(1, 9)))
+        self.assertEqual(resolution_choices("psx"), (1, 2, 4))
+        self.assertEqual(resolution_choices("3do"), (1, 2))
+        self.assertEqual(resolution_choices("saturn"), (1,))
+        self.assertEqual((default_resolution("n64"), default_resolution("psx"), default_resolution("nes")), (4, 1, 1))
+        self.assertEqual(default_options("psx", resolution=4)["beetle_psx_internal_resolution"], "4x")
+        self.assertEqual(default_options("psx", resolution=3)["beetle_psx_internal_resolution"], "1x(native)", "an unoffered factor falls back")
+        self.assertEqual(default_options("3do", resolution=2), {"opera_high_resolution": "enabled"})
 
     def test_32x_replacement_is_not_mislabeled_as_the_original_engine(self):
         profile = get_profile("32x")

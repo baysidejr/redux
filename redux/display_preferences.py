@@ -27,6 +27,7 @@ class DisplayProfile:
     offset_x: int = 0
     offset_y: int = 0
     brightness: int = 100
+    resolution: int = 0  # internal-resolution factor; 0 means the system's default
 
     @property
     def scanline_strength(self):
@@ -53,6 +54,8 @@ def _validate(profile):
         value = getattr(profile, name)
         if isinstance(value, bool) or not isinstance(value, int) or not low <= value <= high:
             raise ValueError(f"Display {name} must be an integer from {low} to {high}")
+    if isinstance(profile.resolution, bool) or not isinstance(profile.resolution, int) or not 0 <= profile.resolution <= 16:
+        raise ValueError("Display resolution must be a factor from 0 (system default) to 16")
     if profile.zoom % 5:
         raise ValueError("Display zoom must use 5 percent steps")
     return profile
@@ -180,3 +183,10 @@ class DisplayPreferences:
             finally:
                 temporary.unlink(missing_ok=True)
             return profile
+
+
+def effective_resolution(profile, system):
+    """The internal-resolution factor to run: the saved choice when the emulator offers it, else the system default."""
+    from .core_profiles import default_resolution, resolution_choices
+    choice = getattr(profile, "resolution", 0)
+    return choice if choice in resolution_choices(system) else default_resolution(system)

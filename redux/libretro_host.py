@@ -1,7 +1,10 @@
-"""An original software-video libretro frontend, using the public C ABI.
+"""An original libretro frontend, using the public C ABI.
 
 Native core operations run on one worker thread. Callbacks and ROM buffers remain
-alive until retro_unload_game/retro_deinit finish. GPU callbacks are not supported.
+alive until retro_unload_game/retro_deinit finish. Software frames are uploaded to an
+OpenGL window when Redux gives the session one (``video_window``); OpenGL cores
+(libretro hardware rendering) draw into a framebuffer on the same context. Without a
+window, frames stay in memory as packed RGB for the canvas renderer and tools.
 """
 from __future__ import annotations
 
@@ -73,6 +76,22 @@ class _Message(C.Structure):
     _fields_ = [("msg", C.c_char_p), ("frames", C.c_uint)]
 
 
+class _HWRender(C.Structure):
+    """struct retro_hw_render_callback"""
+    _fields_ = [("context_type", C.c_int), ("context_reset", C.c_void_p),
+                ("get_current_framebuffer", C.c_void_p), ("get_proc_address", C.c_void_p),
+                ("depth", C.c_bool), ("stencil", C.c_bool), ("bottom_left_origin", C.c_bool),
+                ("version_major", C.c_uint), ("version_minor", C.c_uint), ("cache_context", C.c_bool),
+                ("context_destroy", C.c_void_p), ("debug_context", C.c_bool)]
+
+
+_GetFramebuffer = C.CFUNCTYPE(C.c_size_t)
+_GetProcAddress = C.CFUNCTYPE(C.c_void_p, C.c_char_p)
+_ContextCall = C.CFUNCTYPE(None)
+_HW_FRAME = C.c_void_p(-1).value
+_RAW_MODES = {0: "BGR;15", 1: "BGRX", 2: "BGR;16"}
+
+
 _Environment = C.CFUNCTYPE(C.c_bool, C.c_uint, C.c_void_p)
 _Video = C.CFUNCTYPE(None, C.c_void_p, C.c_uint, C.c_uint, C.c_size_t)
 _Audio = C.CFUNCTYPE(None, C.c_int16, C.c_int16)
@@ -124,16 +143,31 @@ def _convert_video(data: int, width: int, height: int, pitch: int, pixel_format:
     pixel_bytes = 4 if pixel_format == 1 else 2
     if pitch < width * pixel_bytes or pitch > 64 * 1024 * 1024:
         raise EmbeddedError("The core supplied an invalid video row pitch.")
+    if pixel_format not in (0, 1, 2):
+        raise EmbeddedError("The core requested an unsupported software pixel format.")
+    return _decode_raw(C.string_at(data, pitch * (height - 1) + width * pixel_bytes), width, height, pitch, pixel_format)
+
+
+def _decode_raw(raw: bytes, width: int, height: int, pitch: int, pixel_format: int) -> bytes:
+    """Packed RGB888 from a core's software frame bytes (rows ``pitch`` apart)."""
+    try:
+        from PIL import Image
+    except ImportError:
+        return _decode_raw_slow(raw, width, height, pitch, pixel_format)
+    if len(raw) < pitch * height:
+        raw = raw + bytes(pitch * height - len(raw))
+    return Image.frombuffer("RGB", (width, height), raw, "raw", _RAW_MODES[pixel_format], pitch, 1).tobytes()
+
+
+def _decode_raw_slow(raw, width, height, pitch, pixel_format):
     if pixel_format == 1:
         output = bytearray(width * height * 3)
         for row in range(height):
-            source = C.string_at(data + row * pitch, width * 4)
+            source = raw[row * pitch:row * pitch + width * 4]
             offset, end = row * width * 3, (row + 1) * width * 3
             output[offset:end:3], output[offset + 1:end:3], output[offset + 2:end:3] = (
                 source[2::4], source[1::4], source[0::4])
         return bytes(output)
-    if pixel_format not in (0, 2):
-        raise EmbeddedError("The core requested an unsupported software pixel format.")
     if pixel_format not in _RGB_TABLES:
         if pixel_format == 2:
             _RGB_TABLES[2] = tuple(bytes((((v >> 11) & 31) * 255 // 31,
@@ -146,11 +180,19 @@ def _convert_video(data: int, width: int, height: int, pitch: int, pixel_format:
     table = _RGB_TABLES[pixel_format]
     rows = []
     for row in range(height):
-        pixels = array("H", C.string_at(data + row * pitch, width * 2))
+        pixels = array("H", raw[row * pitch:row * pitch + width * 2])
         if os.sys.byteorder != "little":
             pixels.byteswap()
         rows.append(b"".join(table[v] for v in pixels))
     return b"".join(rows)
+
+
+def _rotate(rgb, width, height, rotation):
+    from PIL import Image
+    image = Image.frombytes("RGB", (width, height), rgb)
+    image = image.transpose({1: Image.Transpose.ROTATE_90, 2: Image.Transpose.ROTATE_180,
+                             3: Image.Transpose.ROTATE_270}[rotation])
+    return image.width, image.height, image.tobytes()
 
 
 class EmbeddedSession:
@@ -162,7 +204,7 @@ class EmbeddedSession:
     """
 
     def __init__(self, core_path, game_path, system_directory, save_directory,
-                 *, audio=True, core_options=None, _loader=None, _audio_factory=None):
+                 *, audio=True, core_options=None, video_window=None, scale_factor=1, _loader=None, _audio_factory=None):
         self.core_path = Path(core_path).resolve()
         self.game_path = Path(game_path).resolve()
         self.system_directory = Path(system_directory).resolve()
@@ -208,6 +250,21 @@ class EmbeddedSession:
         self._sample_buffer = bytearray()
         self._core = None
         self._sram_mismatch = False
+        # OpenGL video: the game surface window (an HWND) when Redux shows one, the GL context
+        # (made on the worker thread), the core's hardware-render request, and what the UI chose.
+        self.video_window = int(video_window) if video_window else None
+        self.scale_factor = max(1, int(scale_factor or 1))
+        self.video_backend = "software"
+        self.gl_error = None
+        self.gl_description = ""
+        self._gl = None
+        self._hw = None
+        self._hw_frame = None
+        self._raw = None
+        self._readback_requested = False
+        self._presentation = {}
+        self._max_size = (0, 0)
+        self._hw_callbacks = (_GetFramebuffer(self._current_framebuffer), _GetProcAddress(self._proc_address))
         self._callbacks = (_Environment(self._environment), _Video(self._video),
                            _Audio(self._audio_sample), _AudioBatch(self._audio_batch),
                            _InputPoll(lambda: None), _InputState(self._input_state))
@@ -225,8 +282,34 @@ class EmbeddedSession:
         return self._sequence
 
     def latest_frame(self) -> VideoFrame | None:
+        """The newest frame as packed RGB, converted on demand.
+
+        Software frames keep the core's bytes and convert when asked. OpenGL frames are read
+        back from the GPU by the worker: asking requests a read, and while the game runs the
+        answer can be a frame old; a paused session's frame is read when it pauses."""
         with self._lock:
-            return self._frame
+            frame, raw = self._frame, self._raw
+            if self._hw_frame is not None and (frame is None or frame.sequence != self._hw_frame[0]):
+                self._readback_requested = True
+        if raw is not None and (frame is None or frame.sequence != raw[0]):
+            sequence, data, width, height, pitch, pixel_format, rotation = raw
+            rgb = _decode_raw(data, width, height, pitch, pixel_format)
+            if rotation:
+                width, height, rgb = _rotate(rgb, width, height, rotation)
+            frame = VideoFrame(width, height, rgb, sequence)
+            with self._lock:
+                if self._raw is raw:
+                    self._frame = frame
+        return frame
+
+    def set_presentation(self, settings: dict):
+        """How the OpenGL window draws the game: filter, scanlines, shape, zoom, offsets, brightness."""
+        self._presentation = dict(settings or {})
+
+    @property
+    def presenting(self):
+        """True while frames go straight to the OpenGL game surface."""
+        return self._gl is not None and self.video_window is not None
 
     def set_input(self, port: int, button_mask: int):
         if not 0 <= port < 8 or not 0 <= button_mask <= 0xFFFF:
@@ -416,6 +499,8 @@ class EmbeddedSession:
             stage = "assigning game controllers"
             for port in range(4):
                 self._core.retro_set_controller_port_device(port, 1)
+            stage = "starting OpenGL video"
+            self._start_video()
             self._sram_path = self.save_directory / (self._core_hash[:12] + "-" + self._game_hash + ".srm")
             stage = "loading battery-save memory"
             self._load_sram()
@@ -432,6 +517,8 @@ class EmbeddedSession:
                 if self._stop.is_set():
                     break
                 if self._paused:
+                    if self._readback_requested:
+                        self._readback()
                     self._wake.wait(.05)
                     self._wake.clear()
                     deadline = time.perf_counter()
@@ -441,8 +528,10 @@ class EmbeddedSession:
                 now = time.perf_counter()
                 if now - deadline > .25:
                     deadline = now
-                self._wake.wait(max(0, deadline - now))
-                self._wake.clear()
+                elif deadline > now:
+                    # time.sleep uses a high-resolution timer on Windows; an Event wait rounds
+                    # to the 15.6 ms system tick and makes frames bunch up.
+                    time.sleep(deadline - now)
         except Exception as exc:
             self.error = f"While {stage}: {type(exc).__name__}: {exc}"
         finally:
@@ -455,11 +544,22 @@ class EmbeddedSession:
                     self._core.retro_unload_game()
                 except Exception as exc:
                     self.error = self.error or str(exc)
+            # The core's context_destroy and retro_deinit both still use GL: the context goes last.
+            try:
+                self._release_hw_context(initialized)
+            except Exception as exc:
+                self.messages.append(f"OpenGL context_destroy failed: {exc}")
             if initialized:
                 try:
                     self._core.retro_deinit()
                 except Exception as exc:
                     self.error = self.error or str(exc)
+            try:
+                self._stop_video()
+            except Exception as exc:
+                self.messages.append(f"OpenGL video did not close cleanly: {exc}")
+            if initialized:
+                self._unload_core()
             if self._audio_sink:
                 try:
                     self._audio_sink.close()
@@ -493,6 +593,8 @@ class EmbeddedSession:
                 if operation == "pause":
                     self._paused = argument
                     if argument:
+                        if self._hw_frame is not None:
+                            self._readback()
                         with self._lock:
                             self._inputs = [0] * 8
                             self._pending_inputs = [0] * 8
@@ -510,6 +612,8 @@ class EmbeddedSession:
                         raise EmbeddedError("Pause the game before stepping exact frames.")
                     for _ in range(argument):
                         self._run_frame()
+                    if self._hw_frame is not None:
+                        self._readback()
                     value = self.latest_frame()
                 elif operation == "reset":
                     self._core.retro_reset()
@@ -531,6 +635,9 @@ class EmbeddedSession:
                 event.set()
 
     def _apply_av(self, av):
+        self._max_size = (max(av.geometry.max_width, av.geometry.base_width), max(av.geometry.max_height, av.geometry.base_height))
+        if self._gl and self._hw and self._max_size[0] and self._max_size[1]:
+            self._gl.ensure_framebuffer(*self._max_size, self._hw["depth"], self._hw["stencil"])
         if not math.isfinite(av.timing.fps) or not 1 <= av.timing.fps <= 1000:
             raise EmbeddedError("The core supplied an invalid frame rate.")
         if not math.isfinite(av.timing.sample_rate) or not 8000 <= av.timing.sample_rate <= 192000:
@@ -558,9 +665,22 @@ class EmbeddedSession:
                     return False
                 self._pixel_format = value
                 return True
-            if command == 14 or command == 0x1002B:
-                self._callback_error = "This frontend supports software-rendered libretro cores; GPU context requests are unsupported."
+            if command == 14:  # SET_HW_RENDER
+                return self._set_hw_render(data)
+            if command == 0x1002B or command == 43:  # Vulkan context negotiation: not offered
                 return False
+            if command == 44:  # SET_HW_SHARED_CONTEXT
+                return True
+            if command == 37 and data:  # SET_GEOMETRY
+                geometry = C.cast(data, C.POINTER(_Geometry)).contents
+                aspect = float(geometry.aspect_ratio)
+                if math.isfinite(aspect) and .125 <= aspect <= 8:
+                    self.display_aspect = aspect
+                if self._gl and self._hw:
+                    self._gl.ensure_framebuffer(max(geometry.max_width, geometry.base_width, self._max_size[0]),
+                                                max(geometry.max_height, geometry.base_height, self._max_size[1]),
+                                                self._hw["depth"], self._hw["stencil"])
+                return True
             if command == 1:
                 rotation = C.cast(data, C.POINTER(C.c_uint))[0]
                 if rotation > 3:
@@ -630,7 +750,7 @@ class EmbeddedSession:
             if command == 7:
                 self._stop.set()
                 return True
-            if command in (8, 11, 18, 35, 37):
+            if command in (8, 11, 18, 35):
                 return True
             return False
         except Exception as exc:
@@ -639,9 +759,33 @@ class EmbeddedSession:
 
     def _video(self, data, width, height, pitch):
         try:
-            if data == C.c_void_p(-1).value:
-                raise EmbeddedError("Hardware-rendered video frames are unsupported.")
+            if data == _HW_FRAME:
+                if not self._gl or not self._hw:
+                    raise EmbeddedError("The core sent an OpenGL frame without an OpenGL context.")
+                width, height = min(width, self._gl.fbo_size[0]), min(height, self._gl.fbo_size[1])
+                with self._lock:
+                    self._sequence += 1
+                    self._hw_frame = (self._sequence, width, height)
+                self._present()
+                if self._readback_requested:
+                    self._readback()
+                return
             if not data:
+                if self._gl:
+                    self._present()
+                return
+            if self._gl:
+                if not (0 < width <= 4096 and 0 < height <= 4096):
+                    raise EmbeddedError("The core supplied invalid software-video dimensions.")
+                pixel_bytes = 4 if self._pixel_format == 1 else 2
+                if pitch < width * pixel_bytes or pitch > 64 * 1024 * 1024:
+                    raise EmbeddedError("The core supplied an invalid video row pitch.")
+                self._gl.upload(data, width, height, pitch, self._pixel_format)
+                raw = C.string_at(data, pitch * (height - 1) + width * pixel_bytes)
+                with self._lock:
+                    self._sequence += 1
+                    self._raw = (self._sequence, raw, width, height, pitch, self._pixel_format, self._rotation)
+                self._present()
                 return
             rgb = _convert_video(data, width, height, pitch, self._pixel_format)
             if self._rotation:
@@ -657,6 +801,123 @@ class EmbeddedSession:
                 self._frame = VideoFrame(width, height, rgb, self._sequence)
         except Exception as exc:
             self._callback_error = str(exc)
+
+    # ------------------------------------------------------------ OpenGL
+    def _set_hw_render(self, data):
+        from . import gl_video
+        if not data:
+            return False
+        request = C.cast(data, C.POINTER(_HWRender)).contents
+        if request.context_type not in (gl_video.HW_CONTEXT_OPENGL, gl_video.HW_CONTEXT_OPENGL_CORE):
+            return False
+        available, detail = gl_video.probe()
+        if not available:
+            self.gl_error = detail
+            return False
+        request.get_current_framebuffer = C.cast(self._hw_callbacks[0], C.c_void_p).value
+        request.get_proc_address = C.cast(self._hw_callbacks[1], C.c_void_p).value
+        self._hw = {"type": request.context_type, "major": request.version_major, "minor": request.version_minor,
+                    "depth": bool(request.depth), "stencil": bool(request.stencil),
+                    "bottom_left": bool(request.bottom_left_origin), "debug": bool(request.debug_context),
+                    "reset": request.context_reset, "destroy": request.context_destroy}
+        return True
+
+    def _current_framebuffer(self):
+        return self._gl.fbo if self._gl else 0
+
+    def _proc_address(self, name):
+        try:
+            from . import gl_video
+            return gl_video._Native.get().proc_address(name) or None
+        except Exception:
+            return None
+
+    def _start_video(self):
+        """Make the OpenGL context on this (the worker) thread once the game is loaded."""
+        from . import gl_video
+        if not self._hw and not self.video_window:
+            return
+        try:
+            video = gl_video.GLVideo(self.video_window)
+            try:
+                if self._hw:
+                    video.create(self._hw["type"], self._hw["major"], self._hw["minor"], self._hw["debug"])
+                else:
+                    video.create()
+            except Exception:
+                video.destroy()
+                raise
+        except Exception as error:
+            if self._hw:
+                raise EmbeddedError(f"This emulator draws with OpenGL, and OpenGL did not start: {error}") from error
+            self.gl_error = str(error)
+            return
+        self._gl = video
+        self.gl_description = video.description
+        self.video_backend = "opengl"
+        if self._hw:
+            width, height = self._max_size
+            video.ensure_framebuffer(width or 640, height or 480, self._hw["depth"], self._hw["stencil"])
+            if self._hw["reset"]:
+                _ContextCall(self._hw["reset"])()
+
+    def _unload_core(self):
+        """Unload the core's DLL after retro_deinit, as RetroArch does between games.
+
+        Some cores (Mupen64Plus-Next among them) keep global state that retro_init does not reset;
+        a second game in the same process then runs on stale state and crashes. Unloading gives
+        the next session a fresh copy."""
+        handle = getattr(self._core, "_handle", None)
+        if os.name != "nt" or not isinstance(handle, int) or not handle:
+            return
+        try:
+            kernel32 = C.WinDLL("kernel32", use_last_error=True)
+            kernel32.FreeLibrary.argtypes = [C.c_void_p]
+            kernel32.FreeLibrary.restype = C.c_int
+            kernel32.FreeLibrary(handle)
+        except OSError as exc:
+            self.messages.append(f"The core DLL was not unloaded: {exc}")
+        self._core = None
+
+    def _release_hw_context(self, initialized):
+        if self._gl is not None and self._hw and self._hw["destroy"] and initialized:
+            self._gl.make_current()
+            _ContextCall(self._hw["destroy"])()
+
+    def _stop_video(self):
+        if self._gl is None:
+            return
+        video, self._gl = self._gl, None
+        video.destroy()
+
+    def _present(self):
+        if not self._gl or self.video_window is None:
+            return
+        settings = self._presentation
+        if self._hw_frame is not None:
+            _, width, height = self._hw_frame
+            hardware = True
+        else:
+            raw = self._raw
+            if raw is None:
+                return
+            width, height, hardware = raw[2], raw[3], False
+        if self.scale_factor > 1 and "native_height" not in settings:
+            settings = dict(settings, native_height=max(1, round(height / self.scale_factor)))
+        self._gl.present("fbo" if hardware else "texture", width, height, settings, self.display_aspect,
+                         hardware=hardware, bottom_left=self._hw["bottom_left"] if self._hw else True,
+                         rotation=self._rotation)
+
+    def _readback(self):
+        self._readback_requested = False
+        if not self._gl or self._hw_frame is None:
+            return
+        sequence, width, height = self._hw_frame
+        rgb = self._gl.read_framebuffer(width, height, self._hw["bottom_left"])
+        if self._rotation:
+            width, height, rgb = _rotate(rgb, width, height, self._rotation)
+        with self._lock:
+            self._frame = VideoFrame(width, height, rgb, sequence)
 
     def _refusal_reason(self):
         """The core's own last error line, when it logged one, behind the generic refusal."""

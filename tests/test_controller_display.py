@@ -117,10 +117,11 @@ class ControllerDisplayTests(unittest.TestCase):
         self.assertIn("ON", self.app.overlay["items"][index][0])
         self.assertEqual(self.app.focus, f"overlay:{index}")
 
-    def test_display_back_returns_to_pause_menu_and_all_ten_actions_fit_one_panel(self):
+    def test_display_back_returns_to_pause_menu_and_all_eleven_actions_fit_one_panel(self):
         self.paused_display()
-        self.assertEqual(len(self.app.overlay["items"]), 10)
-        self.assertEqual(len(self.app.targets), 10)
+        self.assertEqual(len(self.app.overlay["items"]), 11)
+        self.assertEqual(len(self.app.targets), 11)
+        self.assertTrue(self.app.overlay["items"][0][0].startswith("RESOLUTION"))
         self.assertTrue(all(0 <= t.bounds[0] < t.bounds[2] <= 1280 and
                             292 <= t.bounds[1] < t.bounds[3] <= 720 for t in self.app.targets))
         self.app.game_menu = Mock()

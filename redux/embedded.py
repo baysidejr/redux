@@ -50,8 +50,7 @@ def find_core(root,system):
 
 
 class EmbeddedGame:
-    def __init__(self,library,game,core,*,firmware=None,audio=True,_clock=None):
-        from .libretro_host import EmbeddedSession
+    def __init__(self,library,game,core,*,firmware=None,audio=True,video_window=None,resolution=None,_clock=None):
         key=game["bundle_hash"]
         if not isinstance(key,str) or not re.fullmatch(r"[a-f0-9]{64}",key):raise ValueError("Invalid game identity")
         if isinstance(game["id"],bool) or not isinstance(game["id"],int) or game["id"]<1:raise ValueError("Invalid game ID")
@@ -65,10 +64,61 @@ class EmbeddedGame:
         for folder in (self.states,self.screenshots):
             if not folder.resolve().is_relative_to(self.directory):raise ValueError("Game output resolves outside its directory")
             folder.mkdir(parents=True,exist_ok=True)
-        self.host=EmbeddedSession(self.core,library.path_for(game),firmware or self.directory/"system",self.directory/"battery"/self.core.stem,audio=audio,core_options=default_options(game.get("system")))
+        self._content=library.path_for(game);self._firmware=firmware or self.directory/"system"
+        self._audio=audio;self.video_window=video_window
+        self.resolution=self._resolution(resolution)
+        self.host=self._make_host()
         self.started=None;self.paused_at=None;self.pause_seconds=0;self.finished_seconds=None
         self._clock=_clock or time.monotonic
         self._lock=threading.RLock()
+
+    def _resolution(self,resolution):
+        from .core_profiles import default_resolution,resolution_choices
+        system=self.game.get("system")
+        return resolution if resolution in resolution_choices(system) else default_resolution(system)
+
+    def _make_host(self):
+        from .libretro_host import EmbeddedSession
+        system=self.game.get("system")
+        opengl=True
+        if system=="n64":
+            from .gl_video import probe
+            opengl=probe()[0]
+        options=default_options(system,resolution=self.resolution,opengl=opengl)
+        factor=self.resolution if opengl or system!="n64" else 1
+        return EmbeddedSession(self.core,self._content,self._firmware,self.directory/"battery"/self.core.stem,audio=self._audio,
+                               core_options=options,video_window=self.video_window,scale_factor=factor)
+
+    @_serialized
+    def change_resolution(self,resolution):
+        """Restart the emulator at another internal resolution and carry on from the same moment.
+
+        The running game is saved to a temporary state, the core stops (battery saves are written),
+        and a new session starts with the new options, loads that state and keeps the pause it had."""
+        resolution=self._resolution(resolution)
+        if resolution==self.resolution:return self.resolution
+        if self.started is None or self.finished_seconds is not None:raise RuntimeError("No embedded game is running")
+        snapshot=self.states/(".resolution-"+uuid.uuid4().hex+".state")
+        previous=self.resolution;paused=self.host.paused
+        try:
+            self.host.save_state(snapshot)
+            self.host.stop()
+            for attempt in (resolution,previous):
+                self.resolution=attempt;self.host=self._make_host()
+                try:
+                    self.host.start()
+                    break
+                except Exception:
+                    if attempt==previous:raise
+            if paused:self.host.pause()
+            self.host.load_state(snapshot)
+            # A paused session has not drawn the restored moment yet; three frames (50 ms of game
+            # time) let the renderer catch up so the menu's preview shows the game, not black.
+            if paused:self.host.step(3)
+            if self.resolution!=resolution:raise RuntimeError("The emulator did not start at that resolution; it is back at the previous one")
+            return self.resolution
+        finally:
+            snapshot.unlink(missing_ok=True)
 
     @_serialized
     def start(self):

@@ -42,7 +42,10 @@ class FakeCore:
         pixel = C.c_int(1)
         assert cb(10, C.addressof(pixel))
         if self.rejected_hardware:
+            from redux.libretro_host import _HWRender
             assert not cb(14, None)
+            vulkan = _HWRender(); vulkan.context_type = 6
+            assert not cb(14, C.addressof(vulkan)), "only OpenGL hardware rendering is offered"
         variables = (_Variable * 2)(_Variable(b"test_option", b"Test; Enabled|Disabled"), _Variable())
         assert cb(16, C.addressof(variables))
         query = _Variable(b"test_option", None)
@@ -260,11 +263,14 @@ class EmbeddedHostTests(unittest.TestCase):
         s.step(1)
         self.assertEqual(self.fake.input_value, 0)
 
-    def test_hardware_request_refused_explicitly(self):
+    def test_a_non_opengl_hardware_request_is_declined_and_the_core_keeps_software_video(self):
         self.fake.rejected_hardware = True
-        with self.assertRaisesRegex(EmbeddedError, "GPU context requests are unsupported"):
-            self.start(audio=False)
-        self.assertFalse(self.fake.loaded or self.fake.initialized)
+        s = self.start(audio=False)
+        self.assertTrue(self.fake.loaded)
+        self.assertEqual(s.video_backend, "software")
+        self.assertFalse(s.presenting)
+        s.step(1)
+        self.assertEqual(s.latest_frame().rgb[:3], bytes((s.frame_count % 256, 2, 3)))
 
     def test_bad_video_is_caught_without_escaping_callback(self):
         s = self.start(audio=False)

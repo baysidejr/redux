@@ -85,7 +85,8 @@ class GameFilterPreferenceTests(unittest.TestCase):
         app.focus="overlay:0";app.overlay=None;app.schedule_draw=Mock()
         app.video_filter_menu()
         previous=app.game_display.filter_id
-        label,callback=app.overlay["items"][0]
+        self.assertEqual(app.overlay["items"][0][0],"RESOLUTION   ·   NATIVE ONLY","the NES draws at its own resolution")
+        label,callback=app.overlay["items"][1]
         self.assertTrue(label.startswith("FILTER"));callback()
         self.assertNotEqual(app.game_display.filter_id,previous);self.assertIsNone(app.game_photo_key)
         self.assertEqual(DisplayPreferences(self.root).get("nes").filter_id,app.game_display.filter_id)
@@ -93,7 +94,7 @@ class GameFilterPreferenceTests(unittest.TestCase):
         self.assertEqual(self.preferences.path.read_bytes(),original_preferences)
         self.assertEqual(app.overlay["title"],"Display")
         self.assertEqual(app.overlay["kind"],"display_panel")
-        self.assertIn(app.game_display.filter_id.upper(),app.overlay["items"][0][0])
+        self.assertIn(app.game_display.filter_id.upper(),app.overlay["items"][1][0])
 
 
 if __name__=="__main__":unittest.main()
