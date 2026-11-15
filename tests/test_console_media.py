@@ -213,7 +213,7 @@ class ConsoleMediaTests(unittest.TestCase):
         self.deliver(app, event("inserted", identity()))
         app.discs.update("G:", "saturn-one", artwork={"hero_path": "saturn-game.png"})
         app.focus = "hero:play"
-        app.art = SimpleNamespace(path=lambda system, kind: f"{system}-{kind}.png", welcome=lambda kind="hero": f"welcome-{kind}.jpg")
+        app.art = SimpleNamespace(path=lambda system, kind: f"{system}-{kind}.png", hero=lambda: "hero-banner.jpg")
         app.picture = Mock(return_value=False)
         app.rect = Mock()
         app.display = Mock()
@@ -229,7 +229,7 @@ class ConsoleMediaTests(unittest.TestCase):
         app.installed_disc_game = Mock(return_value=None)
         app.play = Mock(side_effect=AssertionError("Hero must not play Diablo"))
         app._home()
-        self.assertEqual(app.picture.call_args_list[0].args[0], "saturn-hero.png")
+        self.assertEqual(app.picture.call_args_list[0].args[0], "hero-banner.jpg")
         self.assertTrue(any("WORLD SERIES BASEBALL 2" in str(call) for call in app.display.call_args_list))
         self.assertTrue(any("Not installed" in str(call) for call in app.display.call_args_list))
         app.callbacks["hero:play"]()

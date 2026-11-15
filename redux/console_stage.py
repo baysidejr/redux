@@ -23,22 +23,12 @@ from pathlib import Path
 from .library import SYSTEMS
 from .ui_theme import WHITE, MUTED, ACCENT
 
-ZOOM_SECONDS = 0.55
 AUTOPLAY_DELAY = 0.4      # seconds after the insert event before Play fires on its own
 AUTOPLAY_STAGE = 0.9      # seconds of stage animation before the install or load starts
 LIGHTS = 8
 HOME_ORDER = ("nes", "snes", "n64", "genesis", "32x", "sega_cd", "saturn", "sms", "game_gear", "psx", "pce", "pce_cd", "supergrafx",
               "neo_geo", "neo_geo_cd", "3do", "atari2600", "atari7800", "jaguar", "jaguar_cd", "gb", "gbc", "gba", "pc")
 _PERCENT = re.compile(r"(\d{1,3})%")
-
-
-def _ease(t):
-    t = max(0.0, min(1.0, t))
-    return 1 - (1 - t) ** 3
-
-
-def _lerp(a, b, t):
-    return a + (b - a) * t
 
 
 class FrameAnimation:
@@ -160,24 +150,15 @@ class ConsoleStage:
                 self.disc_autoplay = None
                 if self.screen != "home":
                     self.navigate("home", remember=False)
-                # The disc's console grows out of the shelf into the stage, then the disc loads.
                 self.home_system = disc.system
                 self.focus = "hero:play"
-                self.start_stage(disc.system, disc.title, origin=self._shelf_tile_rect(disc.system))
+                self.start_stage(disc.system, disc.title)
                 self._later(int(AUTOPLAY_STAGE * 1000), self.play_disc)
         if animation and now - animation["started"] > 20 and not self.busy:
             self.stage_animation = None
         if (animation or self.busy) and self.screen == "home" and now - getattr(self, "_stage_frame_at", 0) >= 0.1:
             self._stage_frame_at = now
             self.schedule_draw()
-
-    def _shelf_tile_rect(self, system):
-        """Where a console's tile sits on the shelf page that shows it, for the zoom into the stage."""
-        systems = self.home_systems()
-        if system not in systems:
-            return None
-        index = systems.index(system) % 8
-        return (360 + (index % 4) * 226.5, 348 + (index // 4) * 176, 213, 149)
 
     def _stage_idle(self):
         playing = bool(self.embedded) or bool(self.playback and self.playback.active())
@@ -233,18 +214,9 @@ class ConsoleStage:
     def _stage(self, x, y, w, h, disc, focused_system, counts):
         animation = getattr(self, "stage_animation", None)
         system = disc.system if disc and disc.system else (animation or {}).get("system") or focused_system
-        picture = self.art.path(system, "hero") if system else None
         loading = bool(animation) or self.busy
-        if animation and animation.get("origin") and time.monotonic() - animation["started"] < ZOOM_SECONDS:
-            # The tile grows out of the shelf into the stage; the shelf fades behind it.
-            t = _ease((time.monotonic() - animation["started"]) / ZOOM_SECONDS)
-            ox, oy, ow, oh = animation["origin"]
-            self.panel(x, 0, w, 720, "#080909%02x" % int(200 * t), 0)
-            rx, ry, rw, rh = _lerp(ox, x, t), _lerp(oy, y, t), _lerp(ow, w, t), _lerp(oh, h, t)
-            if not self.picture(picture, rx, ry, rw, rh):
-                self.rect(rx, ry, rw, rh, "#17121f")
-            return
-        if not self.picture(picture, x, y, w, h, shade=loading or bool(disc)):
+        # One Redux hero banner, whatever is focused or loading; the console appears in its animation.
+        if not self.picture(self.art.hero(), x, y, w, h, shade=loading or bool(disc)):
             self.rect(x, y, w, h, "#17121f")
         label = SYSTEMS.get(system, "Redux") if system else "Redux"
         if loading:
@@ -255,15 +227,13 @@ class ConsoleStage:
             self.display(x + 36, 92, disc.title.upper(), 38, WHITE, "bold", width=w - 70)
             self.display(x + 36, 197, label + "  ·  " + disc.drive, 18, "#dedbe3")
             self.display(x + 36, 227, "Installed  ·  A to play" if self.installed_disc_game(disc) else "Not installed  ·  A to install and play", 16, "#b4b0bb")
-        else:
-            count = counts.get(system, 0)
-            self.display(x + 36, h - 92, label.upper(), 30, WHITE, "bold", width=w - 70)
-            self.display(x + 36, h - 50, f"{count} game{'' if count == 1 else 's'}  ·  A to open" if count else "No games yet  ·  " + self._how_games_arrive(system), 15, "#b4b0bb", width=w - 70)
         strip_y = h - 29
         self.rect(x, strip_y, w, 29, "#080808")
         badge_width = self._badge(system or "welcome", x + 12, strip_y + 4)
         strip_title = (animation or {}).get("title") if loading else None
-        self.display(x + max(65, 24 + badge_width), strip_y + 7, self.fit_text((strip_title or (disc.title if disc else label)).upper(), 540, 15), 15, WHITE)
+        count = counts.get(system, 0)
+        idle_label = label + (f"  ·  {count} game{'' if count == 1 else 's'}" if count else "")
+        self.display(x + max(65, 24 + badge_width), strip_y + 7, self.fit_text((strip_title or (disc.title if disc else idle_label)).upper(), 540, 15), 15, WHITE)
         if loading:
             cancel = getattr(self, "cancelled", None)
             if self.busy and cancel is not None and getattr(self, "task_cancellable", True):
@@ -271,10 +241,10 @@ class ConsoleStage:
             else:
                 self.display(1240, strip_y + 7, "LOADING", 13, "#9a9aa2", "bold", anchor="ne")
         else:
-            self._controller_hint("A", "Play" if disc else "Open", 1080, strip_y + 6, "#35a4c6")
+            self._controller_hint("A", "Play" if disc else "About", 1080, strip_y + 6, "#35a4c6")
             if disc:
                 self._controller_hint("Y", "Info", 1180, strip_y + 6, "#d6bb34")
-        self.target("hero:play", (x + 2, 2, 1278, h - 2), self.play_disc if disc else (lambda s=system: self._open_system(s)), "Play disc" if disc else label)
+        self.target("hero:play", (x + 2, 2, 1278, h - 2), self.play_disc if disc else (lambda s=system: self.open_console(s)), "Play disc" if disc else label)
         if disc:
             self.target("hero:details", (1174, strip_y, 1279, h), self.inserted_disc_information, "Disc information")
         if self.focus in {"hero:play", "hero:details"}:
@@ -295,7 +265,7 @@ class ConsoleStage:
         percent = _PERCENT.search(status or "")
         sheet = self.sheet_animation(system)
         if sheet:
-            # The owner's animation on the right, the words on the left, the console's art behind.
+            # The owner's animation on the right, the words on the left, the hero banner behind.
             self._top_shade(x, y, w, h - 29)
             sprite_h = h - 29 - 8
             sprite_w = sprite_h * sheet.width / sheet.height

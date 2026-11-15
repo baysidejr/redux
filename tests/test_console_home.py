@@ -31,7 +31,7 @@ class HomeShelfTests(unittest.TestCase):
         app._identity = lambda *a, **k: None;app._badge = lambda system, x, y: 40;app._controller_hint = lambda *a, **k: None
         app.fit_text = lambda value, *a, **k: str(value)
         app.picture = lambda path, *a, **k: (app.pictures.append(str(path) if path else None), bool(path))[1]
-        app.art = SimpleNamespace(path=lambda system, kind="hero", custom=None: f"{system}-{kind}.png", bundled=lambda *parts: None)
+        app.art = SimpleNamespace(path=lambda system, kind="hero", custom=None: f"{system}-{kind}.png", bundled=lambda *parts: None, hero=lambda: "hero-banner.jpg")
         app.target = lambda key, bounds, callback, label="": (app.targets.append(key), app.callbacks.__setitem__(key, callback))
         app.schedule_draw = lambda: app.calls.append("draw");app.refresh = lambda: app.calls.append("refresh")
         app.status = SimpleNamespace(set=lambda text: app.calls.append(("status", text)), get=lambda: "")
@@ -52,8 +52,9 @@ class HomeShelfTests(unittest.TestCase):
         self.assertEqual(len(app.home_systems()), len(SYSTEMS) - 1, "every console, nothing hidden")
         self.assertIn("Consoles", app.texts);self.assertIn("2", app.texts, "the NES tile carries its count")
         self.assertNotIn("welcome:card", app.targets);self.assertFalse(any("Welcome" in t for t in app.texts))
-        self.assertEqual(app.home_focused_system(), "nes", "the stage starts on the first console you own")
-        self.assertIn("nes-hero.png", app.pictures);self.assertIn("NES", app.texts);self.assertIn("2 games  ·  A to open", app.texts)
+        self.assertEqual(app.home_focused_system(), "nes", "the strip names the first console you own")
+        self.assertEqual(app.pictures[0], "hero-banner.jpg", "the stage shows the Redux banner, not the console's art")
+        self.assertNotIn("nes-hero.png", app.pictures);self.assertIn("NES  ·  2 GAMES", app.texts)
         self.assertEqual(app.targets[0], "hero:play")
 
     def test_moving_on_the_shelf_pages_by_index_and_reaches_the_stage(self):
@@ -70,16 +71,26 @@ class HomeShelfTests(unittest.TestCase):
         app.focus = f"home-system:{systems[4]}"
         self.assertFalse(ConsoleApp._home_shelf_move(app, "left"), "left from the first column leaves the shelf for the lane")
 
-    def test_a_console_tile_zooms_into_the_stage_and_then_opens_its_games(self):
+    def test_a_console_tile_opens_the_consoles_page_not_a_game_list(self):
+        from redux.console_about import console_facts
         app = self.app()
         ReferenceLayout._home(app)
-        app.callbacks["home-system:snes"]()
-        self.assertEqual(app.stage_animation["system"], "snes");self.assertEqual(app.stage_animation["kind"], "zoom")
-        self.assertIsNotNone(app.stage_animation["origin"])
-        delay, land = [c for c in app.calls if isinstance(c, tuple) and c[0] == "after"][-1][1:]
-        self.assertGreater(delay, 300)
-        land()
-        app.navigate.assert_called_once_with("library", system="snes", view="all", reset_scope=True);self.assertIsNone(app.stage_animation)
+        app.callbacks["home-system:sega_cd"]()
+        app.navigate.assert_called_once_with("console");self.assertEqual((app.console_system, app.home_system), ("sega_cd", "sega_cd"))
+        self.assertIsNone(app.stage_animation, "no zoom: the stage keeps the banner")
+        entry = console_facts("sega_cd")
+        self.assertEqual(entry["title"], "Sega CD");self.assertEqual(entry["facts"]["release_na"], "October 15, 1992");self.assertIn("CC BY-SA", entry["license"])
+        app.texts = [];app.targets = [];app.focus = "console:back";app.back = lambda: None;app.all_games = [{"id": 1, "system": "sega_cd"}]
+        ConsoleApp._console(app)
+        self.assertIn("SEGA CD", app.texts);self.assertIn("Made by", app.texts);self.assertIn("Sega", app.texts);self.assertIn("North America", app.texts)
+        self.assertIn("1 game on your cartridges", app.texts);self.assertTrue(any("Wikipedia" in t and "CC BY-SA" in t for t in app.texts))
+        self.assertTrue(any(t.startswith("The Sega CD, known as Mega-CD") for t in app.texts));self.assertEqual(app.targets, ["console:back"])
+        self.assertEqual(console_facts("no_such_system"), {})
+        for system in HOME_ORDER:
+            page = console_facts(system)
+            self.assertTrue(page.get("summary") and page.get("url"), f"{system} has a Wikipedia summary")
+            if system != "pc":
+                self.assertTrue(page["facts"], f"{system} has facts")
 
     def test_a_game_tile_plays_instead_of_opening_a_page(self):
         app = self.app();app.play = Mock()
@@ -91,7 +102,7 @@ class HomeShelfTests(unittest.TestCase):
         app = self.app();app.discs.active = disc()
         ReferenceLayout._home(app)
         self.assertIn("DISC INSERTED", app.texts);self.assertIn("ETERNAL CHAMPIONS", app.texts);self.assertIn("Not installed  ·  A to install and play", app.texts)
-        self.assertIn("sega_cd-hero.png", app.pictures);self.assertEqual(app.callbacks["hero:play"], app.play_disc)
+        self.assertEqual(app.pictures[0], "hero-banner.jpg");self.assertNotIn("sega_cd-hero.png", app.pictures);self.assertEqual(app.callbacks["hero:play"], app.play_disc)
         app.texts = [];app.busy = True;app.status = SimpleNamespace(get=lambda: "Installing disc • Reading and checking • 42%", set=lambda t: None)
         ConsoleStage.start_stage(app, "sega_cd", "Eternal Champions")
         ReferenceLayout._home(app)
@@ -112,7 +123,7 @@ class HomeShelfTests(unittest.TestCase):
         app.busy = False;app.screen = "library";ConsoleStage._stage_tick(app)
         self.assertIsNone(app.disc_autoplay);app.navigate.assert_called_with("home", remember=False)
         self.assertEqual(app.stage_animation["title"], "Eternal Champions");self.assertEqual(app.focus, "hero:play")
-        self.assertEqual(app.home_system, "sega_cd");self.assertEqual(app.stage_animation["origin"], (360 + 226.5, 348 + 176, 213, 149), "the Sega CD tile grows into the stage")
+        self.assertEqual(app.home_system, "sega_cd");self.assertIsNone(app.stage_animation["origin"])
         delay, callback = [c for c in app.calls if isinstance(c, tuple) and c[0] == "after"][-1][1:]
         self.assertIs(callback, app.play_disc)
         # A disc swapped out before the delay elapsed is forgotten.
@@ -137,7 +148,7 @@ class HomeShelfTests(unittest.TestCase):
         self.assertEqual((sheet.index_at(9, finishing_since=0), sheet.index_at(9, finishing_since=9)), (48, 59), "the outro plays once the load is done and holds its last frame")
         self.assertEqual(sheet.box(9), (480, 270, 960, 540))
         # The stage draws the sheet on the right and keeps the words on the left.
-        app = self.app();app.art = SimpleNamespace(path=lambda system, kind="hero", custom=None: f"{system}-{kind}.png", bundled=Artwork.bundled)
+        app = self.app();app.art = SimpleNamespace(path=lambda system, kind="hero", custom=None: f"{system}-{kind}.png", bundled=Artwork.bundled, hero=lambda: "hero-banner.jpg")
         drawn = [];app.sprite = lambda sheet_path, box, x, y, w, h: drawn.append((Path(sheet_path).name, box, round(w), round(h))) or True
         app.busy = True;app.status = SimpleNamespace(get=lambda: "Installing disc • Saving to library • 7 MiB", set=lambda t: None)
         ConsoleStage.start_stage(app, "sega_cd", "Eternal Champions")

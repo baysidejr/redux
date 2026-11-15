@@ -1,0 +1,396 @@
+{
+ "source": "Wikipedia",
+ "license": "CC BY-SA 4.0",
+ "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+ "generated": "2026-11-15",
+ "systems": {
+  "nes": {
+   "title": "Nintendo Entertainment System",
+   "description": "Home video game console",
+   "summary": "The Nintendo Entertainment System (NES) is a home video game console developed and marketed by Nintendo. It was released as the  Family Computer (Famicom) in Japan on July 15, 1983, and as the NES in test markets in the United States on October 18, 1985, followed by a nationwide launch on September 27, 1986. The NES was distributed in Europe, Australia, and parts of Asia throughout the 1980s. It was Nintendo's first programmable home console, succeeding the Color TV-Game line of dedicated consoles, and primarily competed with Sega's Master System in the third generation of video game consoles.",
+   "url": "https://en.wikipedia.org/wiki/Nintendo_Entertainment_System",
+   "facts": {
+    "manufacturer": "Nintendo",
+    "developer": "Nintendo R&D2",
+    "release_na": "October 18, 1985{{efn",
+    "release_first": "July 15, 1983 (JP)",
+    "generation": "Third",
+    "units_sold": "61.91 million",
+    "media": "Nintendo Entertainment System Game Pak",
+    "price": "US$180"
+   }
+  },
+  "snes": {
+   "title": "Super Nintendo Entertainment System",
+   "description": "Home video game console",
+   "summary": "The Super Nintendo Entertainment System is a home video game console developed and marketed by Nintendo. It was released as the Super Famicom (SFC) in Japan on November 21, 1990, as the Super NES in North America on August 23, 1991, and internationally throughout 1992. It was Nintendo's second programmable home console, following the Nintendo Entertainment System (NES). A fourth-generation console, the SNES primarily competed with the Sega Genesis in the console war, a fierce battle for market share in the United States and Europe.",
+   "url": "https://en.wikipedia.org/wiki/Super_Nintendo_Entertainment_System",
+   "facts": {
+    "manufacturer": "Nintendo",
+    "developer": "Nintendo R&D2",
+    "release_first": "November 21, 1990{{cite magazine (JP)",
+    "generation": "Fourth",
+    "units_sold": "* Worldwide: 49.10 million ** North America: 23.35 million ** Japan: 17.17 million ** Other: 8.58 million",
+    "media": "Super NES Game Pak",
+    "cpu": "Ricoh 5A22 @ 3.58MHz"
+   }
+  },
+  "n64": {
+   "title": "Nintendo 64",
+   "description": "Home video game console",
+   "summary": "The Nintendo 64 (N64) is a home video game console developed and marketed by Nintendo. It was released in Japan on June 23, 1996, in North America on September 29, 1996, and in Europe and Australia on March 1, 1997. It was Nintendo's third major home console, following the Super Nintendo Entertainment System, and competed with Sony's PlayStation and the Sega Saturn in the fifth generation of consoles.",
+   "url": "https://en.wikipedia.org/wiki/Nintendo_64",
+   "facts": {
+    "manufacturer": "Nintendo",
+    "developer": "Nintendo R&D3",
+    "release_first": "",
+    "generation": "Fifth",
+    "units_sold": "* : 32.93 million (details) ** NA: 20.63 million ** JP: 5.54 million ** EU/AU: 6.75 million",
+    "media": "Nintendo 64 Game Pak; 64DD magnetic disc",
+    "cpu": "NEC VR4300",
+    "cpu_speed": "93.75 MHz",
+    "top_game": "Super Mario 64 (11.62 million) (list)"
+   }
+  },
+  "genesis": {
+   "title": "Sega Genesis",
+   "description": "Home video game console",
+   "summary": "The Sega Genesis, known as the Mega Drive outside North America, is a 16-bit fourth generation home video game console developed and sold by Sega. It was Sega's third console and the successor to the Master System. Sega released it in October 1988 in Japan as the Mega Drive, and in August 1989 in North America as the Genesis. In 1990, it was distributed as the Mega Drive by Virgin Mastertronic in Europe, Sega Ozisoft in Australasia, and Tectoy in Brazil. In South Korea, it was distributed by Samsung Electronics as the Super Gam*Boy and later the Super Aladdin Boy.",
+   "url": "https://en.wikipedia.org/wiki/Sega_Genesis",
+   "facts": {
+    "manufacturer": "Sega",
+    "release_na": "August 1989{{efn",
+    "lifespan": "* 1988–1997 (Sega) * 1998–1999 (Majesco) * 1990–present (Tectoy)",
+    "generation": "Fourth",
+    "units_sold": "* Sega: 30.75 million * Majesco: 1.5 million (projected) * Tectoy: 3 million",
+    "media": "ROM cartridge",
+    "cpu": "* Motorola 68000 @ 7.6 MHz * Zilog Z80 @ 3.58 MHz",
+    "top_game": "*Sonic the Hedgehog (1991 video game); Sonic the Hedgehog (15 million, pack-in) *Sonic the Hedgehog 2 (6 million) (List of best-selling Sega Genesis video games",
+    "price": "US$189"
+   }
+  },
+  "32x": {
+   "title": "32X",
+   "description": "Video game console add-on",
+   "summary": "The 32X is an add-on for the Sega Genesis video game console. Codenamed \"Project Mars\", it was designed to expand the power of the Genesis and serve as a transitional console into the 32-bit era until the release of the Sega Saturn. The 32X uses its own ROM cartridges and has its own library of games. It was distributed under the name Super 32X in Japan and South Korea, Genesis 32X in North America, Mega 32X in Brazil, and Mega Drive 32X in all other regions.",
+   "url": "https://en.wikipedia.org/wiki/32X",
+   "facts": {
+    "manufacturer": "Sega",
+    "release_na": "November 21, 1994",
+    "release_first": "December 3, 1994 (JP)",
+    "generation": "Fifth",
+    "units_sold": "665,000",
+    "media": "ROM cartridge,; CD-ROM (with Sega CD)",
+    "cpu": "2× SH-2 32-bit RISC",
+    "cpu_speed": "23 MHz",
+    "price": "US$159.99"
+   }
+  },
+  "sega_cd": {
+   "title": "Sega CD",
+   "description": "Video game console add-on",
+   "summary": "The Sega CD, known as Mega-CD in most regions outside North America and Brazil, is a CD-ROM peripheral and format for the Sega Genesis produced by Sega as part of the fourth generation of video game consoles. Originally released in Japan on December 12, 1991, it came to North America on October 15, 1992, and the rest of the world in 1993. The Sega CD plays CD-based games and adds hardware functionality such as a faster CPU and a custom graphics chip for enhanced sprite scaling and rotation. It can also play audio CDs and CD+G discs.",
+   "url": "https://en.wikipedia.org/wiki/Sega_CD",
+   "facts": {
+    "manufacturer": "Sega",
+    "release_na": "October 15, 1992",
+    "release_first": "December 12, 1991 (JP)",
+    "lifespan": "1991–1996",
+    "generation": "Fourth",
+    "units_sold": "2.24 million",
+    "media": "CD-ROM, CD+G",
+    "cpu": "Motorola 68000",
+    "cpu_speed": "12.5 MHz",
+    "top_game": "Sonic CD, 1.5 million",
+    "price": "US$299"
+   }
+  },
+  "saturn": {
+   "title": "Sega Saturn",
+   "description": "Home video game console",
+   "summary": "The Sega Saturn is a home video game console developed by Sega and released on November 22, 1994, in Japan, May 11, 1995, in North America, and July 8, 1995, in Europe. Part of the fifth generation of video game consoles, it is the successor to the successful Genesis. The Saturn has a dual-CPU architecture and eight processors. Its games are in CD-ROM format, including several ports of arcade games and original games.",
+   "url": "https://en.wikipedia.org/wiki/Sega_Saturn",
+   "facts": {
+    "manufacturer": "Sega",
+    "release_na": "May 11, 1995",
+    "release_first": "November 22, 1994 (JP)",
+    "lifespan": "1994–2000",
+    "generation": "Fifth",
+    "units_sold": "* Worldwide: 9.26 million ** Japan: 5.75 million ** United States: 1.8 million ** Europe: 1 million ** Elsewhere: 530,000",
+    "media": "CD-ROM, CD+G, CD+EG, Video CD, Mini CD, Photo CD, e-book",
+    "cpu": "2× Hitachi SH-2 @ 28.6 MHz",
+    "top_game": "Virtua Fighter 2, 1.7 million (list)"
+   }
+  },
+  "sms": {
+   "title": "Master System",
+   "description": "Home video game console",
+   "summary": "The Master System is an 8-bit home video game console manufactured and developed by Sega. It was originally a remodeled export version of the Sega Mark III, the third iteration of the SG-1000 series of consoles, released in Japan on October 20, 1985. The Master System was launched in North America in September 1986, followed by Europe in August 1987, South Korea in April 1989, and Brazil in September 1989. A Japanese version was launched on October 23, 1987, with additions including a built-in FM audio chip, a rapid-fire switch, and a dedicated port for the 3D glasses. The Master System II, a cheaper model, was released in 1990 in North America, Australasia, and Europe.",
+   "url": "https://en.wikipedia.org/wiki/Master_System",
+   "facts": {
+    "manufacturer": "Sega",
+    "generation": "Third",
+    "units_sold": "Sega: 13million; Tectoy: 8 million",
+    "media": "ROM cartridge, Sega Card",
+    "cpu": "Zilog Z80A",
+    "cpu_speed": "3.58 MHz",
+    "price": "US$200"
+   }
+  },
+  "game_gear": {
+   "title": "Game Gear",
+   "description": "Handheld game console by Sega",
+   "summary": "The Game Gear is a handheld game console developed and marketed by Sega. It was released in Japan on October 6, 1990, in North America and Europe in April 1991, and in Australia in 1992. The Game Gear was the first handheld console by Sega and competed with Game Boy from Nintendo, Lynx from Atari, and TurboExpress from NEC in the fourth generation of video game consoles.",
+   "url": "https://en.wikipedia.org/wiki/Game_Gear",
+   "facts": {
+    "manufacturer": "Sega",
+    "release_first": "October 6, 1990 (JP)",
+    "generation": "Fourth",
+    "units_sold": "14 million units",
+    "media": "ROM cartridge",
+    "cpu": "Zilog Z80",
+    "cpu_speed": "3.5 MHz",
+    "top_game": "Sonic the Hedgehog 2 (400,000)",
+    "price": "US$149.99"
+   }
+  },
+  "psx": {
+   "title": "PlayStation (console)",
+   "description": "Home video game console by Sony",
+   "summary": "The PlayStation is a home video game console developed and marketed by Sony Computer Entertainment. It was released in Japan on 3 December 1994, followed by North America on 9 September 1995, Europe on 29 September 1995, and other regions following thereafter. As a fifth-generation console, the PlayStation primarily competed with the Nintendo 64 and the Sega Saturn.",
+   "url": "https://en.wikipedia.org/wiki/PlayStation_(console)",
+   "facts": {
+    "manufacturer": "Sony Electronics",
+    "developer": "Sony Computer Entertainment",
+    "release_first": "{{Collapsible list",
+    "generation": "Fifth",
+    "units_sold": "* Worldwide: 102.49 million ** North America: 40.78 million ** Europe: 40.12 million ** Asia: 21.59 million",
+    "media": "CD",
+    "cpu": "R3000",
+    "cpu_speed": "33.87 MHz",
+    "top_game": "Gran Turismo (10.85 million) (list)"
+   }
+  },
+  "pce": {
+   "title": "TurboGrafx-16",
+   "description": "Fourth-generation home video game console",
+   "summary": "The TurboGrafx-16, known as the PC Engine outside North America, is a home video game console developed by Hudson Soft and manufactured by NEC. It was released in Japan in 1987 and in North America in 1989. The first console of the fourth generation, it launched in Japan to compete with Nintendo's Family Computer, but its delayed U.S. debut placed it against the more advanced Sega Genesis and later the Super NES.",
+   "url": "https://en.wikipedia.org/wiki/TurboGrafx-16",
+   "facts": {
+    "manufacturer": "NEC; Hudson Soft",
+    "release_na": "August 29, 1989",
+    "release_first": "October 30, 1987 (JP)",
+    "lifespan": "1987–1994",
+    "generation": "Fourth",
+    "units_sold": "10 million (HuCard only); 1.92 million (CD-ROM + Duo)",
+    "media": "HuCard",
+    "cpu": "HuC6280",
+    "cpu_speed": "7.16 MHz",
+    "top_game": "Bonk's Adventure"
+   }
+  },
+  "pce_cd": {
+   "title": "TurboGrafx-16",
+   "description": "Fourth-generation home video game console",
+   "summary": "The TurboGrafx-16, known as the PC Engine outside North America, is a home video game console developed by Hudson Soft and manufactured by NEC. It was released in Japan in 1987 and in North America in 1989. The first console of the fourth generation, it launched in Japan to compete with Nintendo's Family Computer, but its delayed U.S. debut placed it against the more advanced Sega Genesis and later the Super NES.",
+   "url": "https://en.wikipedia.org/wiki/TurboGrafx-16",
+   "facts": {
+    "manufacturer": "NEC; Hudson Soft",
+    "release_na": "August 29, 1989",
+    "release_first": "October 30, 1987 (JP)",
+    "lifespan": "1987–1994",
+    "generation": "Fourth",
+    "units_sold": "10 million (HuCard only); 1.92 million (CD-ROM + Duo)",
+    "media": "HuCard",
+    "cpu": "HuC6280",
+    "cpu_speed": "7.16 MHz",
+    "top_game": "Bonk's Adventure"
+   }
+  },
+  "supergrafx": {
+   "title": "PC Engine SuperGrafx",
+   "description": "1989 home video game console",
+   "summary": "The PC Engine SuperGrafx , also known as simply the SuperGrafx, is a fourth-generation home video game console manufactured by NEC Home Electronics and released in Japan in 1989. It is the successor system to the PC Engine, released two years prior. Originally known as the PC Engine 2 during production stages, it has improved graphics and audio capabilities over its predecessor.",
+   "url": "https://en.wikipedia.org/wiki/PC_Engine_SuperGrafx",
+   "facts": {
+    "manufacturer": "NEC Home Electronics",
+    "release_first": "{{vgrelease|JP|8 December 1989",
+    "generation": "Fourth generation",
+    "media": "HuCard, CD-ROM²",
+    "cpu": "Hudson Soft HuC6280A",
+    "cpu_speed": "1.79 or 7.16 MHz",
+    "top_game": "Daimakaimura{{Citation needed|date=October 2011"
+   }
+  },
+  "neo_geo": {
+   "title": "Neo Geo",
+   "description": "Arcade system and home video game console",
+   "summary": "The Neo Geo, stylized as NEO•GEO, is a video game platform released in 1990 by Japanese game company SNK Corporation. It was initially released in two ROM cartridge-based formats: an arcade system board and a home video game console. A CD-ROM-based home console iteration, the Neo Geo CD, was released in 1994. The arcade system can hold multiple cartridges that can be exchanged out, a unique feature that contrasted to the dedicated single-game arcade cabinets of its time, making it popular with arcade operators.",
+   "url": "https://en.wikipedia.org/wiki/Neo_Geo",
+   "facts": {
+    "manufacturer": "SNK Corporation",
+    "release_na": "August 22, 1990 (MVS)",
+    "release_first": "April 16, 1990 (MVS) (JP)",
+    "generation": "Fourth",
+    "units_sold": "1 million (MVS); 410,000 (AES)",
+    "media": "ROM cartridge",
+    "cpu": "Motorola 68000 @ 12 MHz; Zilog Z80A @ 4 MHz",
+    "top_game": "Samurai Shodown"
+   }
+  },
+  "neo_geo_cd": {
+   "title": "Neo Geo CD",
+   "description": "Home video game console",
+   "summary": "The Neo Geo CD  also called as NeoCD is a home video game console produced by SNK Corporation, released on September 9, 1994. The system is the same platform as the cartridge-based Neo Geo released four years earlier, but converted to the cheaper CD media format which retailed at $49 to 79 per title compared to up to $300 for the equivalent cartridge.",
+   "url": "https://en.wikipedia.org/wiki/Neo_Geo_CD",
+   "facts": {
+    "manufacturer": "SNK",
+    "release_na": "January 15, 1996",
+    "release_first": "September 9, 1994 (JP)",
+    "generation": "Fourth",
+    "units_sold": "570,000",
+    "media": "CD-ROM",
+    "cpu": "Motorola 68000 @ 12 MHz"
+   }
+  },
+  "3do": {
+   "title": "3DO",
+   "description": "Video gaming format",
+   "summary": "3DO is a video gaming hardware format developed by The 3DO Company and conceived by Electronic Arts founder Trip Hawkins. The specifications were originally designed by Dave Needle and RJ Mical of New Technology Group, and were licensed by third parties; most hardware were packaged as home video game consoles under the name Interactive Multiplayer, and Panasonic produced the first models in 1993 with further renditions released afterwards by manufacturers GoldStar, Sanyo, Creative Labs, and Samsung Electronics.",
+   "url": "https://en.wikipedia.org/wiki/3DO",
+   "facts": {
+    "manufacturer": "Panasonic, Sanyo, GoldStar, Creative Technology",
+    "developer": "The 3DO Company",
+    "release_na": "October 4, 1993",
+    "release_first": "March 20, 1994 (JP)",
+    "generation": "Fifth",
+    "units_sold": "2 million units",
+    "media": "CD-ROM",
+    "cpu": "32-bit custom RISC CPU (ARM60)",
+    "cpu_speed": "12.5 MHz",
+    "top_game": "Gex (1+ million){{refn|group=note|Sales figures for Gex remain unclear. Although the October and November 1995 issues of GamePro and Electronic Gaming Monthly b",
+    "price": "US$699.99"
+   }
+  },
+  "atari2600": {
+   "title": "Atari 2600",
+   "description": "Home video game console",
+   "summary": "The Atari 2600 is a home video game console developed and produced by Atari, Inc. Released c. September 1977 as the Atari Video Computer System, it popularized microprocessor-based hardware and games stored on swappable ROM cartridges, a format first used with the Fairchild Channel F in 1976. The VCS was bundled with two joystick controllers, a conjoined pair of paddle controllers, and a game cartridge—initially Combat and later Pac-Man. Sears sold the system as the Tele-Games Video Arcade. Atari rebranded the VCS as the Atari 2600 in November 1982, alongside the release of the Atari 5200.",
+   "url": "https://en.wikipedia.org/wiki/Atari_2600",
+   "facts": {
+    "manufacturer": "Atari, Inc.",
+    "release_na": "{{circa",
+    "generation": "Second",
+    "units_sold": "30 million",
+    "media": "ROM cartridge",
+    "cpu": "MOS Technology 6507",
+    "cpu_speed": "1.19 MHz",
+    "top_game": "Pac-Man, 8 million (list)",
+    "price": "US$189.95"
+   }
+  },
+  "atari7800": {
+   "title": "Atari 7800",
+   "description": "Home video game console",
+   "summary": "The Atari 7800 ProSystem, or simply the Atari 7800, is a home video game console released by Atari Corporation in May 1986 as the successor to both the Atari 2600 and Atari 5200. It can run almost all Atari 2600 cartridges, making it the first console with backward compatibility. It shipped with a two button controller, instead of the 2600-standard Atari CX40 joystick, and with Pole Position II as the pack-in game. The European model has a gamepad instead of a joystick. Most of the early releases for the system are ports of 1981–1983 arcade video games. The final wave of 7800 cartridges is closer in style to what was available on other late 1980s consoles, such as Scrapyard Dog and Midnight Mutants.",
+   "url": "https://en.wikipedia.org/wiki/Atari_7800",
+   "facts": {
+    "manufacturer": "Atari, Inc.; Atari Corporation",
+    "developer": "General Computer Corporation",
+    "generation": "Third",
+    "media": "ROM cartridge",
+    "cpu": "Atari SALLY @ 1.19-1.79 MHz",
+    "top_game": "Pole Position II (pack-in)",
+    "price": "US$140"
+   }
+  },
+  "jaguar": {
+   "title": "Atari Jaguar",
+   "description": "Home video game console",
+   "summary": "The Atari Jaguar is a home video game console developed by Atari Corporation and released in North America in November 1993. Atari marketed it as the world's first 64-bit game system, drawing controversy as some argued that this configuration did not meet the definition of a 64-bit system. The Jaguar launched with Cybermorph as the pack-in game. A total of 63 licensed games were released for the system prior to its discontinuation in 1996.",
+   "url": "https://en.wikipedia.org/wiki/Atari_Jaguar",
+   "facts": {
+    "manufacturer": "IBM",
+    "developer": "Atari Corporation",
+    "release_first": "",
+    "generation": "Fifth",
+    "units_sold": "250,000",
+    "media": "ROM cartridge",
+    "cpu": "Motorola 68000 @ 13.295 MHz, 2 custom RISC processors @ 26.591 MHz each",
+    "top_game": "Alien vs Predator (52,223)"
+   }
+  },
+  "jaguar_cd": {
+   "title": "Atari Jaguar CD",
+   "description": "Peripheral for the Atari Jaguar video game console",
+   "summary": "The Atari Jaguar CD is a CD-ROM peripheral for the Atari Jaguar video game console. Only 13 games were released for the Jaguar CD. However, previously unfinished and homebrew games have since been released.",
+   "url": "https://en.wikipedia.org/wiki/Atari_Jaguar_CD",
+   "facts": {
+    "manufacturer": "Atari Corporation",
+    "release_first": "September 21, 1995",
+    "generation": "Fifth",
+    "media": "CD-ROM"
+   }
+  },
+  "gb": {
+   "title": "Game Boy",
+   "description": "Handheld Nintendo game console",
+   "summary": "The Game Boy is a handheld game console developed and marketed by Nintendo. It was released in Japan on April 21, 1989, followed by North America on July 31, 1989 and Europe on September 28, 1990. Nintendo's first handheld to use ROM cartridges, it succeeded the Game & Watch line of handheld electronic games and competed with Sega's Game Gear, Atari's Lynx, and NEC's TurboExpress in the fourth generation of video game consoles.",
+   "url": "https://en.wikipedia.org/wiki/Game_Boy",
+   "facts": {
+    "manufacturer": "Nintendo",
+    "developer": "Nintendo R&D1",
+    "release_first": "{{Collapsible list",
+    "generation": "Fourth",
+    "units_sold": "118.69 million (including all variants and Game Boy Color)",
+    "media": "Game Boy Game Pak",
+    "cpu": "Sharp SM83",
+    "cpu_speed": "4.2 MHz",
+    "top_game": "Pokémon Red, Blue, and Yellow (46 million) (list)"
+   }
+  },
+  "gbc": {
+   "title": "Game Boy Color",
+   "description": "Handheld game console by Nintendo",
+   "summary": "The Game Boy Color is an 8-bit handheld game console developed by Nintendo. It was released in Japan on October 21, 1998, and in international markets the following month. It shipped with red, blue, green, yellow, cyan, and atomic purple. Compared with the original Game Boy, the Game Boy Color features a color TFT screen instead of monochrome, a CPU running at up to twice the speed, and four times as much memory. It is backward compatible with games developed for its predecessor. The Game Boy Color was released during the fifth generation of video game consoles and competed with Bandai's Japan-only WonderSwan and SNK's Neo Geo Pocket Color.",
+   "url": "https://en.wikipedia.org/wiki/Game_Boy_Color",
+   "facts": {
+    "manufacturer": "Nintendo",
+    "developer": "Nintendo Research & Engineering",
+    "release_na": "November 18, 1998",
+    "release_first": "October 21, 1998 (JP)",
+    "generation": "Fifth",
+    "units_sold": "118.69 million (including all Game Boy variants)",
+    "media": "Game Boy Color Game Pak; Game Boy Game Pak",
+    "cpu": "Sharp SM83",
+    "cpu_speed": "4.2 / 8.4 MHz",
+    "top_game": "Pokémon Gold and Silver (23 million) (list)",
+    "price": "US$79.95"
+   }
+  },
+  "gba": {
+   "title": "Game Boy Advance",
+   "description": "Handheld game console by Nintendo",
+   "summary": "The Game Boy Advance (GBA) is a handheld game console developed and marketed by Nintendo, which was released in Japan on March 21, 2001, and in other regions in June. It was later released in mainland China in 2004, under the name iQue Game Boy Advance. Compared to the Game Boy Color it succeeded, the console offered a significantly more powerful ARM7 processor and improved graphics, while retaining backward compatibility with games initially developed for its predecessor.",
+   "url": "https://en.wikipedia.org/wiki/Game_Boy_Advance",
+   "facts": {
+    "manufacturer": "Nintendo",
+    "developer": "Nintendo Research & Engineering",
+    "release_first": "March 21, 2001{{Cite web (JP)",
+    "generation": "Sixth",
+    "units_sold": "81.51 million",
+    "media": "Game Boy Game Pak; Game Boy Color Game Pak; Game Boy Advance Game Pak",
+    "cpu": "ARM7TDMI @ 16.8 MHz; Sharp SM83 @ 4.2 / 8.4 MHz",
+    "top_game": "Pokémon Ruby and Sapphire (16 million) (list)",
+    "price": "US$99.99"
+   }
+  },
+  "pc": {
+   "title": "PC game",
+   "description": "Video game for a personal computer",
+   "summary": "A PC game, historically also known as a computer game, is a video game played on a personal computer (PC). The term PC game has been popularly used specifically to games on Windows software with Intel hardware known as Wintel, which has dominated the computer industry since the 1990s.",
+   "url": "https://en.wikipedia.org/wiki/PC_game",
+   "facts": {}
+  }
+ }
+}

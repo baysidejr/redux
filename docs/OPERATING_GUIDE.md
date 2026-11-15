@@ -16,7 +16,7 @@ No reference application hardware, account, resource pack, or internet check is 
 
 ## Navigate the desktop
 
-The left navigation opens **Home**, **Wishlist**, **Media**, and **System**. Home is a shelf: the stage above, where a disc or a loading game is shown with that console's pixel art, and every console below with the number of games you have for it. A on a console opens its games; A on a game plays it. There is no game page, no Manage menu and no box art on the shelf: the database under System is where you browse games, and the shelf is where you play them.
+The left navigation opens **Home**, **Wishlist**, **Media**, and **System**. Home is a shelf: the stage above, the Redux hero banner where a disc or a loading game is shown, and every console below with the number of games you have for it. A on a console opens a page about that console: what it was, who made it, when it reached North America, how many it sold, what it ran on, from Wikipedia (CC BY-SA 4.0). There is no game list to pick from and no game page: a disc plays itself, a cartridge's games are read from the card, and the database under System is where you browse games.
 
 The Collection filter bar offers **A–Z** sorting, **Genre**, **Players**, **Year**, **Rating**, and **System**. Genre and year use saved metadata; Rating uses your own local stars. Players currently reports that player counts have not been assigned. Select **All Systems** below the bar to switch between All Games, Continue Playing, Favorites, Wishlist, and Completed Games. A game's details screen provides **Play**, **Manage**, and **Rate** tabs. Manage opens game information, artwork, playlists, saves, and more options. Rate saves 1–5 stars or clears the rating.
 

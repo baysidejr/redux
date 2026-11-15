@@ -102,6 +102,10 @@ class Artwork:
             if candidate.is_file():return candidate
         return None
 
+    def hero(self):
+        """The Redux hero banner the stage shows, whatever is focused."""
+        return self.bundled("hero","banner.jpg")
+
     def path(self,system,kind="hero",custom=None):
         if custom and Path(custom).is_file():return Path(custom)
         # Original system tiles ship with the frontend (owner-made pixel art, plus the PC

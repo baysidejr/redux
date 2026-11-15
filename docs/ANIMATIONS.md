@@ -2,7 +2,7 @@
 
 The stage is the banner area of Home. While a disc installs or a game starts, it shows
 that console loading the game: the owner's pixel-art sprite sheet on the right, the
-game's name and the progress on the left, the console's art behind.
+game's name and the progress on the left, the Redux hero banner behind.
 
 ## The sheets that ship
 

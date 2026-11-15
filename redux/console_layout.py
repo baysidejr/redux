@@ -59,7 +59,7 @@ class ReferenceLayout:
             "text":self._text_editor,"screenshots":self._screenshots,"screenshot":self._screenshot,
             "media":self._media,"metadata_editor":self._metadata_editor,"disc_info":self._disc_info,
             "controller_setup":self._controller_setup,"controller_test":self._controller_test,
-            "gamedb":self._gamedb,"gamedb_game":self._gamedb_game}.get(self.screen)
+            "gamedb":self._gamedb,"gamedb_game":self._gamedb_game,"console":self._console}.get(self.screen)
         if screen:screen()
         self._footer()
         if self.overlay:self._overlay()
@@ -202,8 +202,7 @@ class ReferenceLayout:
         return owned[0] if owned else systems[0]
 
     def _home(self):
-        """Home: the stage above, every console below. A console opens its games; a disc plays."""
-        from .console_stage import ZOOM_SECONDS
+        """Home: the stage above, every console below. A console opens its page; a disc plays."""
         disc=self.inserted_disc()
         systems=self.home_systems()
         counts={}
@@ -211,8 +210,7 @@ class ReferenceLayout:
         focused=self.home_focused_system(systems)
         x=LANE;w=1280-x;h=w*437/1400
         animation=getattr(self,"stage_animation",None)
-        zooming=bool(animation and animation.get("origin") and time.monotonic()-animation["started"]<ZOOM_SECONDS)
-        if not zooming:self._stage(x,0,w,h,disc,focused,counts)
+        self._stage(x,0,w,h,disc,focused,counts)
         if not (animation or self.busy):self._identity(1090,27)
         self.display(360,315,"Consoles",21,"#a2a2a4")
         index=systems.index(focused) if focused in systems else 0
@@ -220,12 +218,11 @@ class ReferenceLayout:
         self.display(1248,322,f"{page+1} / {pages}   ·   LB  RB",13,"#8b8b91",anchor="ne")
         for i,s in enumerate(systems[page*8:page*8+8]):
             sx=360+(i%4)*226.5;sy=348+(i//4)*176;key=f"home-system:{s}"
-            self._system_tile(s,key,sx,sy,213,149,lambda value=s,rect=(sx,sy,213,149):self._open_system(value,origin=rect))
+            self._system_tile(s,key,sx,sy,213,149,lambda value=s:self.open_console(value))
             count=counts.get(s,0)
             if count:
                 self.rect(sx+213-46,sy+149-26,46,26,"#080808")
                 self.display(sx+213-23,sy+149-13,str(count),14,WHITE,"bold",anchor="center")
-        if zooming:self._stage(x,0,w,h,disc,focused,counts)
 
     def _open_media(self):
         """Where games come from: the System → Storage page."""
@@ -449,7 +446,7 @@ class ReferenceLayout:
     def _footer(self):
         if self.screen!="home":
             self.rect(0,684,1280,36,"#09090a")
-            left=140 if self.screen in {"settings","gamedb"} else 370 if self.screen in LANE_SCREENS else 80
+            left=140 if self.screen in {"settings","gamedb","console"} else 370 if self.screen in LANE_SCREENS else 80
             if self.screen=="gameplay" and not self.overlay:
                 self.display(80,694,"Home / Guide or Select + Start (hold 1s) opens the game menu",15,"#9898a1")
             else:

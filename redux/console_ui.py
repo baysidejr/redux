@@ -27,6 +27,7 @@ from .console_controllers import ConsoleControllers
 from .console_pc_games import ConsolePCGames
 from .console_cards import ConsoleGameCards
 from .console_stage import ConsoleStage
+from .console_about import ConsoleAbout
 from .console_controller_test import ConsoleControllerTest
 from .console_gamedb import ConsoleGameDatabase
 from .console_updates import ConsoleUpdates
@@ -51,7 +52,7 @@ def display_title(game):
 from .console_cores import ConsoleCores
 from .console_redux_controller import ConsoleReduxController
 
-class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleStage,ConsoleControllerTest,ConsoleGameDatabase,ConsoleUpdates,ConsolePCGames,ConsoleWindows,ConsoleFileBrowser,ConsoleIngame,ConsoleControllers,ConsoleMedia,ConsoleEditors,OverlayScreens,ReferenceLayout,SecondaryScreens,ToolsApp):
+class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleStage,ConsoleAbout,ConsoleControllerTest,ConsoleGameDatabase,ConsoleUpdates,ConsolePCGames,ConsoleWindows,ConsoleFileBrowser,ConsoleIngame,ConsoleControllers,ConsoleMedia,ConsoleEditors,OverlayScreens,ReferenceLayout,SecondaryScreens,ToolsApp):
     def __init__(self,root,library_root=None,*,activation=None):
         from .windows_activation import parse_activation
         from .windows_gaming import WindowsGamingExperience
@@ -496,6 +497,7 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleSta
         elif screen=="saves":self.focus="saves:create"
         elif screen=="gamedb":self.focus=f"gamedb:{self.pages.get('gamedb',0)*27}"
         elif screen=="gamedb_game":self.focus="gamedb:back"
+        elif screen=="console":self.focus="console:back"
 
     def back(self):
         if self.busy:
@@ -610,16 +612,8 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleSta
         self.library.wishlist_remove(item["system"],item["database_id"])
         entries=self.library.wishlist();self.focus=f"wish:{entries[0]['id']}" if entries else "wishlist:database";self.refresh()
 
-    def _open_system(self,system,origin=None):
-        """Open a console's games. From the shelf the tile grows into the stage first."""
-        from .console_stage import ZOOM_SECONDS
-        if origin and self.screen=="home" and not getattr(self,"_zoom_pending",False):
-            self._zoom_pending=True
-            self.start_stage(system,kind="zoom",origin=origin)
-            def land():
-                self._zoom_pending=False;self.clear_stage()
-                self.navigate("library",system=system,view="all",reset_scope=True)
-            self._later(int(ZOOM_SECONDS*1000),land);return
+    def _open_system(self,system):
+        """A console's game list, reached from search and the Database; Home opens the console's page instead."""
         self.navigate("library",system=system,view="all",reset_scope=True)
 
 
