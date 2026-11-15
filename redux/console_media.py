@@ -158,7 +158,7 @@ class ConsoleMedia:
                 self.selected_id=game["id"];self.__dict__.pop("_disc_installed",None)
                 self.refresh();self.status.set("Installed to library • ready to play")
                 if game.get("_install_warning"):self.notice("Game installed • saves need attention",game["_install_warning"])
-                elif then_play:self.play_installed(game)
+                elif then_play:self.finish_stage();self.play_installed(game)
             else:self.status.set("Disc installation cancelled")
         self.task(work,done,"Installing disc • it starts when the copy is done…" if then_play else "Installing disc to library…")
 

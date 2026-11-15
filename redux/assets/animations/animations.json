@@ -1,0 +1,396 @@
+{
+  "fps": 12,
+  "frame": {
+    "width": 480,
+    "height": 270
+  },
+  "transparent": true,
+  "pixelScale": 2,
+  "previewBackground": "#0a0816",
+  "loadingBar": {
+    "rect": [
+      34,
+      236,
+      412,
+      26
+    ],
+    "mode": "indeterminate",
+    "segments": 20
+  },
+  "systems": {
+    "sega_cd": {
+      "sheet": "sega_cd.png",
+      "columns": 8,
+      "intro": [
+        0,
+        23
+      ],
+      "loop": [
+        24,
+        47
+      ],
+      "outro": [
+        48,
+        59
+      ],
+      "mechanism": "front tray"
+    },
+    "psx": {
+      "sheet": "psx.png",
+      "columns": 8,
+      "intro": [
+        0,
+        23
+      ],
+      "loop": [
+        24,
+        47
+      ],
+      "outro": [
+        48,
+        59
+      ],
+      "mechanism": "top-loading CD"
+    },
+    "saturn": {
+      "sheet": "saturn.png",
+      "columns": 8,
+      "intro": [
+        0,
+        23
+      ],
+      "loop": [
+        24,
+        47
+      ],
+      "outro": [
+        48,
+        59
+      ],
+      "mechanism": "top-loading CD"
+    },
+    "pce_cd": {
+      "sheet": "pce_cd.png",
+      "columns": 8,
+      "intro": [
+        0,
+        23
+      ],
+      "loop": [
+        24,
+        47
+      ],
+      "outro": [
+        48,
+        59
+      ],
+      "mechanism": "top-loading CD"
+    },
+    "neo_geo_cd": {
+      "sheet": "neo_geo_cd.png",
+      "columns": 8,
+      "intro": [
+        0,
+        23
+      ],
+      "loop": [
+        24,
+        47
+      ],
+      "outro": [
+        48,
+        59
+      ],
+      "mechanism": "top-loading CD"
+    },
+    "3do": {
+      "sheet": "3do.png",
+      "columns": 8,
+      "intro": [
+        0,
+        23
+      ],
+      "loop": [
+        24,
+        47
+      ],
+      "outro": [
+        48,
+        59
+      ],
+      "mechanism": "front tray"
+    },
+    "jaguar_cd": {
+      "sheet": "jaguar_cd.png",
+      "columns": 8,
+      "intro": [
+        0,
+        23
+      ],
+      "loop": [
+        24,
+        47
+      ],
+      "outro": [
+        48,
+        59
+      ],
+      "mechanism": "top-loading CD"
+    },
+    "nes": {
+      "sheet": "nes.png",
+      "columns": 8,
+      "intro": [
+        0,
+        23
+      ],
+      "loop": [
+        24,
+        47
+      ],
+      "outro": [
+        48,
+        59
+      ],
+      "mechanism": "front-loading cartridge"
+    },
+    "snes": {
+      "sheet": "snes.png",
+      "columns": 8,
+      "intro": [
+        0,
+        23
+      ],
+      "loop": [
+        24,
+        47
+      ],
+      "outro": [
+        48,
+        59
+      ],
+      "mechanism": "top cartridge"
+    },
+    "n64": {
+      "sheet": "n64.png",
+      "columns": 8,
+      "intro": [
+        0,
+        23
+      ],
+      "loop": [
+        24,
+        47
+      ],
+      "outro": [
+        48,
+        59
+      ],
+      "mechanism": "top cartridge"
+    },
+    "genesis": {
+      "sheet": "genesis.png",
+      "columns": 8,
+      "intro": [
+        0,
+        23
+      ],
+      "loop": [
+        24,
+        47
+      ],
+      "outro": [
+        48,
+        59
+      ],
+      "mechanism": "top cartridge"
+    },
+    "32x": {
+      "sheet": "32x.png",
+      "columns": 8,
+      "intro": [
+        0,
+        23
+      ],
+      "loop": [
+        24,
+        47
+      ],
+      "outro": [
+        48,
+        59
+      ],
+      "mechanism": "top cartridge"
+    },
+    "sms": {
+      "sheet": "sms.png",
+      "columns": 8,
+      "intro": [
+        0,
+        23
+      ],
+      "loop": [
+        24,
+        47
+      ],
+      "outro": [
+        48,
+        59
+      ],
+      "mechanism": "top cartridge"
+    },
+    "game_gear": {
+      "sheet": "game_gear.png",
+      "columns": 8,
+      "intro": [
+        0,
+        23
+      ],
+      "loop": [
+        24,
+        47
+      ],
+      "outro": [
+        48,
+        59
+      ],
+      "mechanism": "rear cartridge"
+    },
+    "pce": {
+      "sheet": "pce.png",
+      "columns": 8,
+      "intro": [
+        0,
+        23
+      ],
+      "loop": [
+        24,
+        47
+      ],
+      "outro": [
+        48,
+        59
+      ],
+      "mechanism": "HuCard"
+    },
+    "supergrafx": {
+      "sheet": "supergrafx.png",
+      "columns": 8,
+      "intro": [
+        0,
+        23
+      ],
+      "loop": [
+        24,
+        47
+      ],
+      "outro": [
+        48,
+        59
+      ],
+      "mechanism": "HuCard"
+    },
+    "atari2600": {
+      "sheet": "atari2600.png",
+      "columns": 8,
+      "intro": [
+        0,
+        23
+      ],
+      "loop": [
+        24,
+        47
+      ],
+      "outro": [
+        48,
+        59
+      ],
+      "mechanism": "top cartridge"
+    },
+    "atari7800": {
+      "sheet": "atari7800.png",
+      "columns": 8,
+      "intro": [
+        0,
+        23
+      ],
+      "loop": [
+        24,
+        47
+      ],
+      "outro": [
+        48,
+        59
+      ],
+      "mechanism": "top cartridge"
+    },
+    "jaguar": {
+      "sheet": "jaguar.png",
+      "columns": 8,
+      "intro": [
+        0,
+        23
+      ],
+      "loop": [
+        24,
+        47
+      ],
+      "outro": [
+        48,
+        59
+      ],
+      "mechanism": "top cartridge"
+    },
+    "gb": {
+      "sheet": "gb.png",
+      "columns": 8,
+      "intro": [
+        0,
+        23
+      ],
+      "loop": [
+        24,
+        47
+      ],
+      "outro": [
+        48,
+        59
+      ],
+      "mechanism": "rear cartridge"
+    },
+    "gbc": {
+      "sheet": "gbc.png",
+      "columns": 8,
+      "intro": [
+        0,
+        23
+      ],
+      "loop": [
+        24,
+        47
+      ],
+      "outro": [
+        48,
+        59
+      ],
+      "mechanism": "rear cartridge"
+    },
+    "neo_geo": {
+      "sheet": "neo_geo.png",
+      "columns": 8,
+      "intro": [
+        0,
+        23
+      ],
+      "loop": [
+        24,
+        47
+      ],
+      "outro": [
+        48,
+        59
+      ],
+      "mechanism": "top cartridge"
+    }
+  }
+}

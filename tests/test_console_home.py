@@ -120,6 +120,41 @@ class HomeShelfTests(unittest.TestCase):
         app.discs.active = disc(fingerprint="b" * 64, title="Another");ConsoleStage._stage_tick(app)
         self.assertIsNone(app.disc_autoplay)
 
+    def test_the_owners_sprite_sheets_play_intro_loop_and_outro(self):
+        from redux.console_stage import SpriteSheetAnimation
+        from redux.ui_assets import Artwork
+        import json
+        manifest = Artwork.bundled("animations", "animations.json")
+        self.assertIsNotNone(manifest, "the sheets ship with the app")
+        settings = json.loads(Path(manifest).read_text(encoding="utf-8"))
+        for system in HOME_ORDER:
+            if system in ("gba", "pc"):
+                continue
+            self.assertIn(system, settings["systems"], f"{system} has a sheet");self.assertTrue(Artwork.bundled("animations", settings["systems"][system]["sheet"]), system)
+        sheet = SpriteSheetAnimation(Artwork.bundled("animations", "sega_cd.png"), settings["systems"]["sega_cd"], settings)
+        self.assertTrue(sheet);self.assertEqual((sheet.fps, sheet.columns, sheet.width, sheet.height), (12, 8, 480, 270))
+        self.assertEqual([sheet.index_at(t) for t in (0, 1.0, 1.99, 2.0, 3.99, 4.0)], [0, 12, 23, 24, 47, 24], "intro once, then the loop")
+        self.assertEqual((sheet.index_at(9, finishing_since=0), sheet.index_at(9, finishing_since=9)), (48, 59), "the outro plays once the load is done and holds its last frame")
+        self.assertEqual(sheet.box(9), (480, 270, 960, 540))
+        # The stage draws the sheet on the right and keeps the words on the left.
+        app = self.app();app.art = SimpleNamespace(path=lambda system, kind="hero", custom=None: f"{system}-{kind}.png", bundled=Artwork.bundled)
+        drawn = [];app.sprite = lambda sheet_path, box, x, y, w, h: drawn.append((Path(sheet_path).name, box, round(w), round(h))) or True
+        app.busy = True;app.status = SimpleNamespace(get=lambda: "Installing disc • Saving to library • 7 MiB", set=lambda t: None)
+        ConsoleStage.start_stage(app, "sega_cd", "Eternal Champions")
+        ReferenceLayout._home(app)
+        self.assertEqual(drawn[0][0], "sega_cd.png");self.assertEqual(drawn[0][1], (0, 0, 480, 270), "the intro starts at cell 0")
+        self.assertEqual(round(drawn[0][2] / drawn[0][3], 2), 1.78, "cells keep their 16:9 shape")
+        self.assertIn("NOW LOADING", app.texts);self.assertIn("ETERNAL CHAMPIONS", app.texts)
+        # A second start for the same console carries the running animation on; finishing switches to the outro.
+        started = app.stage_animation["started"]
+        ConsoleStage.start_stage(app, "sega_cd", "Eternal Champions")
+        self.assertEqual(app.stage_animation["started"], started)
+        ConsoleStage.finish_stage(app)
+        drawn.clear();ReferenceLayout._home(app)
+        self.assertEqual(drawn[0][1], sheet.box(48), "the outro begins at its first cell")
+        ConsoleStage.start_stage(app, "nes", "Mario")
+        self.assertNotEqual(app.stage_animation["started"], started, "another console starts its own animation")
+
     def test_frame_animations_loop_from_their_marked_frame(self):
         with tempfile.TemporaryDirectory() as temporary:
             folder = Path(temporary)

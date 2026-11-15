@@ -1,4 +1,6 @@
-# Project status — 0.18.1, 2026-11-15
+# Project status — 0.19.0, 2026-11-15
+
+Release 0.19.0 (2026-11-15) ships the owner's loading animations: 22 sprite sheets in `redux/assets/animations` (3840x2160, 8 columns of 480x270 cells, 60 frames: intro 0-23, loop 24-47, outro 48-59, 12 fps, transparent) described by `animations.json`. `console_stage.SpriteSheetAnimation` maps elapsed time to a cell (intro once, loop while loading, outro once `finish_stage` is called, which the install-then-play handover does) and `Artwork.sprite` crops and scales cells with nearest-neighbour sampling. The stage draws the sheet on the right with the title, status and progress on the left; while it loads, the task panel and clock stay out of the banner and Cancel sits in the strip. A second start for the same console carries the running animation on instead of replaying the intro. Game Boy Advance and PC keep the drawn animation. `docs/ANIMATIONS.md` documents the sheet format.
 
 Release 0.18.1 (2026-11-15) polishes the stage after a rendered walk-through of every new screen: a disc's console tile zooms into the stage on insert (`_shelf_tile_rect`), the stage redraws ten times a second while a game loads instead of twenty, and its strip shows the loading game's name with a LOADING mark instead of the console's Open hint.
 

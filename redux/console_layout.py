@@ -104,6 +104,14 @@ class ReferenceLayout:
             return True
         return False
 
+    def sprite(self,sheet,box,x,y,w,h):
+        photo=self.art.sprite(sheet,box,round(w*self.scale),round(h*self.scale))
+        if photo:
+            self.photos.append(photo)
+            self.canvas.create_image(self.offset_x+x*self.scale,self.offset_y+y*self.scale,anchor="nw",image=photo)
+            return True
+        return False
+
     def button_canvas(self,key,label,x,y,w,h,callback,primary=False,active=False):
         focused=self.focus==key
         fill=ACCENT if primary or active else "#252629" if focused else "#191a1c"
@@ -205,7 +213,7 @@ class ReferenceLayout:
         animation=getattr(self,"stage_animation",None)
         zooming=bool(animation and animation.get("origin") and time.monotonic()-animation["started"]<ZOOM_SECONDS)
         if not zooming:self._stage(x,0,w,h,disc,focused,counts)
-        self._identity(1090,27)
+        if not (animation or self.busy):self._identity(1090,27)
         self.display(360,315,"Consoles",21,"#a2a2a4")
         index=systems.index(focused) if focused in systems else 0
         page=index//8;pages=max(1,(len(systems)+7)//8)
@@ -449,7 +457,8 @@ class ReferenceLayout:
                 self._controller_hint("B","Back",left+110,693,"#d75b78")
             self.display(1200,694,"Fullscreen: Pause → Display" if self.screen=="gameplay" else "Fullscreen: System → About",15,"#777780",anchor="ne")
         status=self.status.get()
-        if self.busy:
+        if self.busy and not (self.screen=="home" and getattr(self,"stage_animation",None)):
+            # On Home the stage shows the load itself, with Cancel in its strip.
             self.panel(860,103,380,43,"#222225",radius=2)
             self.display(872,109,self.fit_text(status,356,16),16,"#d0d0d5")
             self.rect(872,137,356,3,"#414146")

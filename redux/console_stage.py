@@ -5,10 +5,13 @@ first time) and starts it; the stage shows that system's pixel art with a small 
 loading animation while it happens, and "A to play" stays as a backup. No game box art,
 no facts: the database is a place to browse, not something the collection borrows from.
 
-Animations are drawn here with rectangles so they ship at no cost. An owner-made frame
-animation wins when one exists: ``redux/assets/animations/<name>/frame_000.png`` ...
-with an optional ``animation.json`` (see docs/ANIMATIONS.md). Names looked up, in order:
-``loading-<system>``, ``loading``.
+The owner's sprite sheets ship in ``redux/assets/animations``: one 3840x2160 PNG per
+console, 8 columns of 480x270 cells, described by ``animations.json`` (frame size, fps,
+intro / loop / outro ranges). The intro plays once (the tray opens, the game goes in),
+the loop runs while the game installs or starts, and the outro plays when the load is
+done. A frame folder (``<name>/frame_000.png`` ...) is also accepted, and a drawn
+animation of lights and a sliding disc covers any console without art. See
+docs/ANIMATIONS.md.
 """
 from __future__ import annotations
 
@@ -66,10 +69,58 @@ class FrameAnimation:
         return self.frames[index]
 
 
+class SpriteSheetAnimation:
+    """One console's cells on a sheet: intro once, loop while loading, outro when done."""
+
+    def __init__(self, sheet, entry, settings):
+        self.sheet = Path(sheet)
+        frame = settings.get("frame") or {}
+        self.width = int(frame.get("width", 480))
+        self.height = int(frame.get("height", 270))
+        self.fps = max(1, min(60, int(entry.get("fps", settings.get("fps", 12)))))
+        self.columns = max(1, int(entry.get("columns", 8)))
+        self.intro = tuple(entry.get("intro") or (0, -1))
+        self.loop = tuple(entry.get("loop") or self.intro)
+        self.outro = tuple(entry.get("outro") or ())
+        self.mechanism = str(entry.get("mechanism", ""))
+
+    def __bool__(self):
+        return self.sheet.is_file()
+
+    def index_at(self, seconds, *, finishing_since=None):
+        """The cell to show ``seconds`` into the load; the outro once ``finishing_since`` is given."""
+        step = int(max(0.0, seconds) * self.fps)
+        intro_length = self.intro[1] - self.intro[0] + 1
+        if finishing_since is not None and self.outro:
+            offset = int(max(0.0, finishing_since) * self.fps)
+            return min(self.outro[0] + offset, self.outro[1])
+        if step < intro_length:
+            return self.intro[0] + step
+        span = max(1, self.loop[1] - self.loop[0] + 1)
+        return self.loop[0] + (step - intro_length) % span
+
+    def box(self, index):
+        row, column = divmod(max(0, int(index)), self.columns)
+        left, top = column * self.width, row * self.height
+        return (left, top, left + self.width, top + self.height)
+
+    @property
+    def outro_seconds(self):
+        return ((self.outro[1] - self.outro[0] + 1) / self.fps) if self.outro else 0.0
+
+
 class ConsoleStage:
     # ------------------------------------------------------------------ state
     def start_stage(self, system, title="", *, kind="load", origin=None):
-        """Begin a stage animation: the system's picture grows from ``origin`` (a tile rect) into the stage."""
+        """Begin a stage animation: the system's picture grows from ``origin`` (a tile rect) into the stage.
+
+        A load that is already showing for the same console carries on (an install handing
+        over to the core keeps its outro) instead of starting its intro again."""
+        current = getattr(self, "stage_animation", None)
+        if current and kind == "load" and current.get("kind") == "load" and current.get("system") == (system or "unknown") and origin is None:
+            if title:
+                current["title"] = title
+            return
         self.stage_animation = dict(kind=kind, system=system or "unknown", title=title or "", started=time.monotonic(), origin=origin)
         draw = getattr(self, "schedule_draw", None)
         if draw:
@@ -83,6 +134,15 @@ class ConsoleStage:
             self.start_stage(system, title)
         except (AttributeError, TypeError):
             self.stage_animation = None
+
+    def finish_stage(self):
+        """The load is done: play the outro (the bar completes) until the screen changes."""
+        animation = getattr(self, "stage_animation", None)
+        if animation and animation.get("finishing_since") is None:
+            animation["finishing_since"] = time.monotonic()
+            draw = getattr(self, "schedule_draw", None)
+            if draw:
+                draw()
 
     def clear_stage(self):
         self.stage_animation = None
@@ -140,6 +200,26 @@ class ConsoleStage:
         self.disc_autoplay = dict(drive=event.drive, fingerprint=getattr(event, "fingerprint", None) or identity.fingerprint, at=time.monotonic())
 
     # ------------------------------------------------------------------ drawing
+    def sheet_animation(self, system):
+        """The owner's sprite-sheet animation for a console, from assets/animations/animations.json, or None."""
+        cache = self.__dict__.setdefault("_sheet_animations", {})
+        if system in cache:
+            return cache[system]
+        animation = None
+        manifest = self.art.bundled("animations", "animations.json")
+        if manifest:
+            try:
+                settings = json.loads(Path(manifest).read_text(encoding="utf-8"))
+                entry = (settings.get("systems") or {}).get(system)
+                if isinstance(entry, dict) and entry.get("sheet"):
+                    sheet = self.art.bundled("animations", str(entry["sheet"]))
+                    if sheet:
+                        animation = SpriteSheetAnimation(sheet, entry, settings)
+            except (OSError, ValueError, TypeError):
+                animation = None
+        cache[system] = animation or None
+        return cache[system]
+
     def frame_animation(self, *names):
         cache = self.__dict__.setdefault("_frame_animations", {})
         for name in names:
@@ -185,7 +265,11 @@ class ConsoleStage:
         strip_title = (animation or {}).get("title") if loading else None
         self.display(x + max(65, 24 + badge_width), strip_y + 7, self.fit_text((strip_title or (disc.title if disc else label)).upper(), 540, 15), 15, WHITE)
         if loading:
-            self.display(1240, strip_y + 7, "LOADING", 13, "#9a9aa2", "bold", anchor="ne")
+            cancel = getattr(self, "cancelled", None)
+            if self.busy and cancel is not None and getattr(self, "task_cancellable", True):
+                self.button_canvas("task:cancel", "Cancel", 1150, strip_y + 2, 100, 25, cancel.set)
+            else:
+                self.display(1240, strip_y + 7, "LOADING", 13, "#9a9aa2", "bold", anchor="ne")
         else:
             self._controller_hint("A", "Play" if disc else "Open", 1080, strip_y + 6, "#35a4c6")
             if disc:
@@ -207,13 +291,32 @@ class ConsoleStage:
     def _stage_loading(self, x, y, w, h, system, title):
         animation = getattr(self, "stage_animation", None) or {}
         elapsed = time.monotonic() - animation.get("started", time.monotonic())
+        status = self.status.get() if hasattr(self.status, "get") else ""
+        percent = _PERCENT.search(status or "")
+        sheet = self.sheet_animation(system)
+        if sheet:
+            # The owner's animation on the right, the words on the left, the console's art behind.
+            self._top_shade(x, y, w, h - 29)
+            sprite_h = h - 29 - 8
+            sprite_w = sprite_h * sheet.width / sheet.height
+            sprite_x = x + w - sprite_w - 10
+            finishing = animation.get("finishing_since")
+            index = sheet.index_at(elapsed, finishing_since=None if finishing is None else time.monotonic() - finishing)
+            self.sprite(sheet.sheet, sheet.box(index), sprite_x, y + 4, sprite_w, sprite_h)
+            text_w = sprite_x - x - 56
+            self.display(x + 36, 58, "NOW LOADING", 14, "#c7c1d1", "bold")
+            self.display(x + 36, 92, self.fit_text((title or SYSTEMS.get(system, "")).upper(), text_w, 30, "bold"), 30, WHITE, "bold", width=text_w)
+            self.display(x + 36, h - 92, self.fit_text(status or "Starting…", text_w, 15), 15, "#dedbe3")
+            if percent:
+                value = max(0, min(100, int(percent.group(1))))
+                self.rect(x + 36, h - 60, text_w, 6, "#2a2531")
+                self.rect(x + 36, h - 60, text_w * value / 100, 6, ACCENT)
+            return
         frames = self.frame_animation(f"loading-{system}", "loading")
         if frames:
             frame = frames.frame_at(elapsed)
             if frame and self.picture(frame, x, y, w, h - 29, mode="cover"):
                 return
-        status = self.status.get() if hasattr(self.status, "get") else ""
-        percent = _PERCENT.search(status or "")
         self._top_shade(x, y, w, h - 29)
         self.display(x + 36, 58, "NOW LOADING", 14, "#c7c1d1", "bold")
         self.display(x + 36, 92, (title or SYSTEMS.get(system, "")).upper(), 38, WHITE, "bold", width=w - 70)
