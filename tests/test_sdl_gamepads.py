@@ -71,6 +71,27 @@ class SDLGamepadTests(unittest.TestCase):
         self.assertIn((b"SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS",b"1"),native.hints)
         self.assertIsNone(api.state(1))
 
+    def test_a_physical_pad_is_player_one_ahead_of_the_redux_controllers_virtual_pad(self):
+        native=FakeSDL();native.present={7};native.mapped={7};native.buttons={};native.axes={}
+        virtual={7}
+        native.GetJoystickVendorForID=lambda instance:0x1209 if instance in virtual else 0x045e
+        native.GetJoystickProductForID=lambda instance:0x5244 if instance in virtual else 0x02ff
+        api,_=self.make(native)
+        self.assertEqual(api.slot_ids(),{0:7},"alone, the phone pad is player 1")
+        # The GameSir is plugged in: it becomes player 1 and the phone pad moves to player 2.
+        native.present={7,8};native.mapped={7,8};api.refresh()
+        self.assertEqual(api.slot_ids(),{0:8,1:7})
+        native.buttons={8:{0}};api.refresh()
+        self.assertTrue(api.state(0).buttons&0x1000,"player 1 reads the physical pad")
+        # A second physical pad goes behind the first, still ahead of the phone pad.
+        native.present={7,8,9};native.mapped={7,8,9};api.refresh()
+        self.assertEqual(api.slot_ids(),{0:8,1:9,2:7})
+        # Unplugging the GameSir leaves the second pad as player 1; slots without a change stay put.
+        native.present={7,9};native.mapped={7,9};api.refresh()
+        self.assertEqual(api.slot_ids(),{0:9,1:7})
+        api.assign_slot(7,0);api.refresh()
+        self.assertEqual(api.slot_ids(),{0:7,1:9},"a manual swap holds until pads change")
+
     def test_unknown_pad_exposes_read_only_raw_state_and_mapping_promotes_it(self):
         api,native=self.make()
         state=api.raw_state(42)

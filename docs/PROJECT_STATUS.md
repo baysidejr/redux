@@ -1,4 +1,6 @@
-# Project status — 0.25.1, 2026-11-15
+# Project status — 0.26.0, 2026-11-15
+
+Release 0.26.0 (2026-11-15). Physical controllers are player 1: the Redux Controller receiver keeps its virtual pad (vendor 0x1209, product 0x5244; the phone mouse is 0x5245) plugged in with no phone connected, SDL seated it first, and the owner's GameSir became player 2, which works in Redux's menus but not in games that listen to player 1 (World Series Baseball 2 on Saturn). `SDLGamepadAPI._seat_physical_first` now seats physical pads from player 1 with no gaps and the virtual pads after them whenever pads come or go and a virtual pad is present; relative order and manual swaps hold until the next change. Confirmed on the owner's PC (GameSir player 1, phone pad player 2) and by booting the game headlessly: player 1's Start skips to the title. The XInput fallback now passes the right stick and both triggers (it dropped them; the Saturn core maps its L/R to the triggers). A running game shows nothing but the game: the Pause / Menu button and the hint bar are gone and the frame uses the full window; Home/Guide or Select + Start held still opens the menu, and a mouse click anywhere does too.
 
 Release 0.25.1 (2026-11-15): the loaders' intro (the tray opening, taking the disc and closing, or the cartridge going in) plays at 75 % of the sheet's 12 fps, 2.7 s instead of 2.0 s (`INTRO_SPEED`, owner's first value to tweak from); the loop and outro keep the sheet's rate. Measured on the real Tk loop.
 

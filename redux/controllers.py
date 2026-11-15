@@ -294,7 +294,8 @@ class _XInputAPI:
         value=self.state_type()
         # XInput errors are returned directly, not through GetLastError.
         if self.get(index,self.c.byref(value))!=0:return None
-        return GamepadState(value.gamepad.buttons,value.gamepad.lx,value.gamepad.ly,value.packet)
+        pad=value.gamepad
+        return GamepadState(pad.buttons,pad.lx,pad.ly,value.packet,pad.rx,pad.ry,pad.left_trigger,pad.right_trigger)
 
 
 class XInputController:

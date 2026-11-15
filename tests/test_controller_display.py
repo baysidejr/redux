@@ -140,9 +140,7 @@ class ControllerDisplayTests(unittest.TestCase):
                 self.assertNotIn("F10", text)
                 self.assertNotIn("Esc", text)
                 if screen == "gameplay" and overlay is None:
-                    self.assertIn("Home / Guide", text)
-                    self.assertIn("Select + Start", text)
-                    self.assertIn("Pause → Display", text)
+                    self.assertEqual(text, "", "nothing is drawn over a running game")
                 elif screen != "home":
                     self.assertIn("Select", text)
                     self.assertIn("Back", text)

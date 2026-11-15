@@ -481,14 +481,11 @@ class ReferenceLayout:
         self.display(x+25,y+1,label,17,"#a5a5aa")
 
     def _footer(self):
-        if self.screen!="home":
+        if self.screen!="home" and not (self.screen=="gameplay" and not self.overlay):
             self.rect(0,684,1280,36,"#09090a")
             left=140 if self.screen in {"settings","gamedb","console"} else 370 if self.screen in LANE_SCREENS else 80
-            if self.screen=="gameplay" and not self.overlay:
-                self.display(80,694,"Home / Guide or Select + Start (hold 1s) opens the game menu",15,"#9898a1")
-            else:
-                self._controller_hint("A","Select",left,693,"#35a4c6")
-                self._controller_hint("B","Back",left+110,693,"#d75b78")
+            self._controller_hint("A","Select",left,693,"#35a4c6")
+            self._controller_hint("B","Back",left+110,693,"#d75b78")
             self.display(1200,694,"Fullscreen: Pause → Display" if self.screen=="gameplay" else "Fullscreen: System → About",15,"#777780",anchor="ne")
         status=self.status.get()
         if self.busy and not (self.screen=="home" and getattr(self,"stage_animation",None)):
@@ -512,11 +509,13 @@ class ReferenceLayout:
         from PIL import Image,ImageTk
         from .video_filters import render_frame,fit_size
         frame=self.embedded.host.latest_frame()
-        self.rect(0,0,1280,684,"#000000")
+        # Nothing but the game: black to the window's edges, no button or hint bar (Home/Guide or Select + Start opens the menu).
+        width_px,height_px,_,_,_=self.device_frame()
+        self.device_rect(0,0,width_px,height_px,"#000000")
         if frame:
             kind=self.overlay.get("kind") if self.overlay else None
             preview=kind in {"display_panel","controls_panel","state_slots"}
-            bounds_width,bounds_height=round((1120 if preview else 1210)*self.scale),round((145 if kind=="state_slots" else 235 if preview else 648)*self.scale)
+            bounds_width,bounds_height=round((1120 if preview else 1280)*self.scale),round((145 if kind=="state_slots" else 235 if preview else 720)*self.scale)
             profile=getattr(self,"game_display",None)
             shape=profile.shape if profile else "auto"
             aspect=frame.width/frame.height if shape=="pixel" else 4/3 if shape=="4:3" else bounds_width/bounds_height if shape=="stretch" else getattr(self.embedded.host,"display_aspect",4/3)
@@ -535,8 +534,9 @@ class ReferenceLayout:
                 self.game_photo=ImageTk.PhotoImage(surface,master=self.canvas)
                 self.game_photo_key=key
             self.photos.append(self.game_photo)
-            self.canvas.create_image(self.offset_x+640*self.scale,self.offset_y+(100 if kind=="state_slots" else 145 if preview else 342)*self.scale,image=self.game_photo,anchor="center")
-        self.button_canvas("gameplay:menu","Pause / Menu",1050,642,180,32,self.game_menu)
+            self.canvas.create_image(self.offset_x+640*self.scale,self.offset_y+(100 if kind=="state_slots" else 145 if preview else 360)*self.scale,image=self.game_photo,anchor="center")
+        # An invisible target keeps the focus key valid and lets a mouse click open the menu.
+        self.target("gameplay:menu",(0,0,1280,720),self.game_menu,"Game menu")
 
     def _pager(self,key,total,size,y=641):
         if total<=size:return

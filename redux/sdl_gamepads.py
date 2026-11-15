@@ -95,6 +95,16 @@ class _SDL:
             if pointer:self.free(pointer)
 
 
+# The Redux Controller receiver's virtual devices (phone pad and phone mouse). They stay plugged
+# in even with no phone connected, so they never take a player ahead of a physical controller.
+REDUX_VIRTUAL_VENDOR = 0x1209
+REDUX_VIRTUAL_PRODUCTS = frozenset({0x5244, 0x5245})
+
+
+def is_redux_virtual(info):
+    return int(info.get("vendor") or 0) == REDUX_VIRTUAL_VENDOR and int(info.get("product") or 0) in REDUX_VIRTUAL_PRODUCTS
+
+
 @dataclass
 class _Device:
     instance_id:int
@@ -154,6 +164,7 @@ class SDLGamepadAPI:
         self._check();n=self._native
         n.PumpEvents();n.UpdateGamepads()
         gamepad_ids=set(n.ids(True));joystick_ids=set(n.ids(False))
+        changed=bool(gamepad_ids^set(self._gamepads))
         for instance,device in list(self._gamepads.items()):
             if instance not in gamepad_ids:
                 n.CloseGamepad(device.handle);del self._gamepads[instance]
@@ -173,6 +184,7 @@ class SDLGamepadAPI:
             slot=preferred if preferred is not None and preferred not in occupied else next((i for i in range(4) if i not in occupied),None)
             if slot is not None:self._slot_history[key]=slot
             self._gamepads[instance]=_Device(instance,handle,info,slot)
+        if changed:self._seat_physical_first()
         for instance in sorted(joystick_ids-gamepad_ids-set(self._raw)):
             handle=n.OpenJoystick(instance)
             if handle:self._raw[instance]=_Device(instance,handle,self._info(instance,handle,False))
@@ -191,6 +203,23 @@ class SDLGamepadAPI:
         if len(self._slot_history)>256:
             # Only live devices need remembered slots; bound hotplug bookkeeping.
             self._slot_history={((d.info["guid"],d.info["serial"]) if d.info["serial"] else (d.info["guid"],d.instance_id)):d.slot for d in self._gamepads.values() if d.slot is not None}
+
+    def _seat_physical_first(self):
+        """Physical controllers take the first players; the Redux Controller's virtual pad follows.
+
+        Runs when pads come or go, and only while a Redux virtual pad is present (otherwise
+        slots stay where they were). Seats run from player 1 with no gaps; relative order within
+        each group is kept, and a manual swap holds until the next change."""
+        seated=[device for device in self._gamepads.values() if device.slot is not None]
+        physical=sorted((d for d in seated if not is_redux_virtual(d.info)),key=lambda d:d.slot)
+        virtual=sorted((d for d in seated if is_redux_virtual(d.info)),key=lambda d:d.slot)
+        if not virtual:return
+        order=physical+virtual
+        if [d.slot for d in order]==list(range(len(order))):return
+        for slot,device in enumerate(order):
+            device.slot=slot
+            key=(device.info["guid"],device.info["serial"]) if device.info["serial"] else (device.info["guid"],device.instance_id)
+            self._slot_history[key]=slot
 
     def state(self,index):
         if isinstance(index,bool) or not isinstance(index,int) or not 0<=index<4:raise ValueError("Controller index must be 0–3")
