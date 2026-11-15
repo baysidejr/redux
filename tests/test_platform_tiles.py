@@ -5,7 +5,7 @@ import unittest
 
 from redux.ui_assets import Artwork
 
-BUNDLED = {"genesis", "sega_cd", "nes", "snes", "pce", "pce_cd", "supergrafx", "neo_geo_cd", "psx", "32x", "saturn", "n64", "jaguar"}
+BUNDLED = {"genesis", "sega_cd", "nes", "snes", "pce", "pce_cd", "supergrafx", "neo_geo_cd", "psx", "32x", "saturn", "n64", "jaguar", "jaguar_cd", "3do"}
 
 
 class PlatformTileTests(unittest.TestCase):
@@ -19,7 +19,7 @@ class PlatformTileTests(unittest.TestCase):
                     self.assertEqual(path.name, f"{system}.png")
                     self.assertTrue(path.is_file())
             self.assertEqual(art.path("pc", "tile").name, "pc-games.png")
-            self.assertIsNone(art.path("3do", "tile"), "no tile for 3DO yet, and no reference pack")
+            self.assertIsNone(art.path("vectrex", "tile"), "no tile for an unknown system, and no reference pack")
 
     def test_tiles_are_real_images_of_one_shape(self):
         from PIL import Image

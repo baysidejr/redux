@@ -1,11 +1,13 @@
 {
   "purpose": "Original pixel-art system tiles for My Collection, the Database page and hero backdrops",
-  "author": "Project owner (baysidejr), supplied 2026-11-14",
+  "author": "Project owner (baysidejr), supplied 2026-11-14 (3DO and Jaguar CD added the same day)",
   "style": "Pixel art console on a dark violet backdrop with the system name in blocky lettering",
   "assets": [
     "32x.png",
+    "3do.png",
     "genesis.png",
     "jaguar.png",
+    "jaguar_cd.png",
     "n64.png",
     "neo_geo_cd.png",
     "nes.png",
