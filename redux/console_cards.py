@@ -1,5 +1,7 @@
 """Game cards in the console: a prepared drive is read on its own; preparing one is the player's choice.
 
+A cartridge (a console or GOG card) holds one game, like a disc: plugged in while Redux runs,
+it is read and its game starts on its own; one present at start-up waits for A on the stage.
 A drive that arrives with no ``Redux Games`` folder gets one question: console cartridge, GOG
 cartridge, extra storage, or not now. Nothing is written to it before the answer, and Not now
 keeps Redux from asking about that drive again. A drive that carries a ``bios`` folder with
@@ -26,6 +28,7 @@ class ConsoleGameCards:
         self.card_pending=[]
         self.card_offers=[]
         self.firmware_offers=[]
+        self.card_fresh=set()
         self.card_stopping=threading.Event()
         def watch():
             seen=None
@@ -50,7 +53,8 @@ class ConsoleGameCards:
         except (queue.Empty,AttributeError):current=None
         if current is not None:
             drives,cards=current
-            arrived_drives=set() if self.card_drives is None else set(drives)-set(self.card_drives)
+            startup=self.card_drives is None
+            arrived_drives=set() if startup else set(drives)-set(self.card_drives)
             self.card_drives=set(drives)
             cards=set(cards)
             card_drives={str(Path(card).parent) for card in cards}
@@ -66,6 +70,8 @@ class ConsoleGameCards:
             self.card_offers=[drive for drive in self.card_offers if drive in self.card_drives]
             self.firmware_offers=[offer for offer in getattr(self,"firmware_offers",[]) if offer[0] in self.card_drives]
             arrived=cards-self.card_roots;gone=self.card_roots-cards
+            if not startup:
+                fresh=self.__dict__.setdefault("card_fresh",set());fresh.update(arrived)
             self.card_roots=cards
             for card in sorted(arrived):
                 if card not in self.card_pending:self.card_pending.append(card)
@@ -224,6 +230,9 @@ class ConsoleGameCards:
         def done(result):
             self.refresh();self.status.set(result.summary)
             if result.errors:self.notice("Some games on the card were skipped","\n".join(result.errors[:4]))
+            fresh=self.__dict__.setdefault("card_fresh",set())
+            if card in fresh:
+                fresh.discard(card);self.note_card_insert(card)
         self.task(work,done,f"Reading game card {_letter(card)}…")
 
     def rescan_game_cards(self):

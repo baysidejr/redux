@@ -166,6 +166,39 @@ class HomeShelfTests(unittest.TestCase):
         ConsoleStage.start_stage(app, "nes", "Mario")
         self.assertNotEqual(app.stage_animation["started"], started, "another console starts its own animation")
 
+    def test_a_cartridge_holds_one_game_and_plays_it_like_a_disc(self):
+        from redux import game_cards
+        app = self.app();app._play_game = Mock()
+        with tempfile.TemporaryDirectory() as temporary:
+            drive = Path(temporary) / "stick";drive.mkdir()
+            game_cards.prepare_card(drive, "console")
+            card = str(drive / game_cards.MARKER)
+            app.card_roots = {card}
+            app.all_games = [{"id": 5, "title": "Super Mario Bros. 3", "system": "nes", "source_path": str(drive / "Redux Games" / "NES" / "smb3.nes"), "available": True}]
+            cartridge = ConsoleStage.inserted_cartridge(app)
+            self.assertEqual((cartridge["game"]["id"], cartridge["count"], cartridge["system"]), (5, 1, "nes"))
+            ReferenceLayout._home(app)
+            self.assertIn("CARTRIDGE INSERTED", app.texts);self.assertIn("SUPER MARIO BROS. 3", app.texts);self.assertIn("A to play", app.texts)
+            app.callbacks["hero:play"]();app._play_game.assert_called_once_with(5)
+            # Plugged in after start-up, it starts on its own after the stage begins.
+            ConsoleStage.note_card_insert(app, card)
+            self.assertEqual(app.card_autoplay["game_id"], 5)
+            app.card_autoplay["at"] -= AUTOPLAY_DELAY + 1;app.screen = "library"
+            ConsoleStage._stage_tick(app)
+            self.assertIsNone(app.card_autoplay);app.navigate.assert_called_with("home", remember=False)
+            self.assertEqual((app.stage_animation["system"], app.stage_animation["title"], app.home_system), ("nes", "Super Mario Bros. 3", "nes"))
+            delay, callback = [c for c in app.calls if isinstance(c, tuple) and c[0] == "after"][-1][1:]
+            app._play_game.reset_mock();callback();app._play_game.assert_called_once_with(5)
+            # Two games on one card: nothing starts, the stage says why.
+            app.all_games.append({"id": 6, "title": "Metroid", "system": "nes", "source_path": str(drive / "Redux Games" / "NES" / "metroid.nes"), "available": True})
+            ConsoleStage.note_card_insert(app, card);self.assertIsNone(getattr(app, "card_autoplay", None))
+            app.texts = [];app.stage_animation = None;ReferenceLayout._home(app)
+            self.assertIn("2 games on this cartridge", app.texts);self.assertIn("NES", app.texts)
+            # Extra storage is not a cartridge.
+            storage = Path(temporary) / "ssd";storage.mkdir();game_cards.prepare_card(storage, "storage")
+            app.card_roots = {str(storage / game_cards.MARKER)};app.all_games = [{"id": 9, "title": "Disc Game", "system": "psx", "source_path": str(storage / "Redux Games" / "PlayStation" / "d.chd"), "available": True}]
+            self.assertIsNone(ConsoleStage.inserted_cartridge(app))
+
     def test_frame_animations_loop_from_their_marked_frame(self):
         with tempfile.TemporaryDirectory() as temporary:
             folder = Path(temporary)

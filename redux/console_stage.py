@@ -154,6 +154,17 @@ class ConsoleStage:
                 self.focus = "hero:play"
                 self.start_stage(disc.system, disc.title)
                 self._later(int(AUTOPLAY_STAGE * 1000), self.play_disc)
+        cartridge = getattr(self, "card_autoplay", None)
+        if cartridge and now - cartridge["at"] >= AUTOPLAY_DELAY and self._stage_idle():
+            self.card_autoplay = None
+            game = next((g for g in getattr(self, "all_games", []) or [] if g["id"] == cartridge["game_id"]), None)
+            if game and cartridge["card"] in (getattr(self, "card_roots", ()) or ()) and game.get("available", True):
+                if self.screen != "home":
+                    self.navigate("home", remember=False)
+                self.home_system = game.get("system")
+                self.focus = "hero:play"
+                self.start_stage(game.get("system"), game.get("title", ""))
+                self._later(int(AUTOPLAY_STAGE * 1000), lambda identity=game["id"]: self._play_game(identity))
         if animation and now - animation["started"] > 20 and not self.busy:
             self.stage_animation = None
         if (animation or self.busy) and self.screen == "home" and now - getattr(self, "_stage_frame_at", 0) >= 0.1:
@@ -170,6 +181,40 @@ class ConsoleStage:
             root.after(milliseconds, callback)
         else:
             callback()
+
+    def cartridge_games(self, card):
+        """The collection games that live on a card (its drive)."""
+        import os
+        prefix = os.path.normcase(str(Path(card).parent))
+        return [game for game in getattr(self, "all_games", []) or []
+                if os.path.normcase(str(game.get("source_path") or game.get("path") or "")).startswith(prefix)]
+
+    def inserted_cartridge(self):
+        """The connected cartridge and its game: {'card', 'game', 'count', 'system'}, or None.
+
+        A console or GOG card is a cartridge; extra storage is not. One game is the rule; a card
+        with more reports its count so the player can see why nothing started."""
+        from .game_cards import card_kind
+        for card in sorted(getattr(self, "card_roots", ()) or ()):
+            try:
+                kind = card_kind(card)
+            except OSError:
+                continue
+            if kind not in ("console", "gog", "legacy"):
+                continue
+            games = self.cartridge_games(card)
+            if kind == "legacy" and len(games) != 1:
+                continue
+            if games:
+                game = games[0] if len(games) == 1 else None
+                return dict(card=card, game=game, count=len(games), system=(game or games[0]).get("system"))
+        return None
+
+    def note_card_insert(self, card):
+        """A cartridge read after start-up starts its one game on its own."""
+        games = self.cartridge_games(card)
+        if len(games) == 1:
+            self.card_autoplay = dict(card=card, game_id=games[0]["id"], at=time.monotonic())
 
     def note_disc_insert(self, event):
         """A disc that goes in while Redux runs plays on its own; one already in at start-up waits for A."""
@@ -213,14 +258,26 @@ class ConsoleStage:
 
     def _stage(self, x, y, w, h, disc, focused_system, counts):
         animation = getattr(self, "stage_animation", None)
-        system = disc.system if disc and disc.system else (animation or {}).get("system") or focused_system
+        cartridge = None if disc else self.inserted_cartridge()
+        system = disc.system if disc and disc.system else (cartridge or {}).get("system") or (animation or {}).get("system") or focused_system
         loading = bool(animation) or self.busy
         # One Redux hero banner, whatever is focused or loading; the console appears in its animation.
-        if not self.picture(self.art.hero(), x, y, w, h, shade=loading or bool(disc)):
+        if not self.picture(self.art.hero(), x, y, w, h, shade=loading or bool(disc) or bool(cartridge)):
             self.rect(x, y, w, h, "#17121f")
         label = SYSTEMS.get(system, "Redux") if system else "Redux"
         if loading:
             self._stage_loading(x, y, w, h, system, (animation or {}).get("title") or (disc.title if disc else ""))
+        elif cartridge:
+            self._top_shade(x, y, w, h - 29)
+            self.display(x + 36, 58, "CARTRIDGE INSERTED", 14, "#c7c1d1", "bold")
+            if cartridge["game"]:
+                self.display(x + 36, 92, str(cartridge["game"].get("title", "")).upper(), 38, WHITE, "bold", width=w - 70)
+                self.display(x + 36, 197, label, 18, "#dedbe3")
+                self.display(x + 36, 227, "A to play", 16, "#b4b0bb")
+            else:
+                self.display(x + 36, 92, label.upper(), 38, WHITE, "bold", width=w - 70)
+                self.display(x + 36, 197, f"{cartridge['count']} games on this cartridge", 18, "#dedbe3")
+                self.display(x + 36, 227, "A cartridge holds one game. Leave one file on it and plug it in again.", 16, "#b4b0bb", width=w - 70)
         elif disc:
             self._top_shade(x, y, w, h - 29)
             self.display(x + 36, 58, "DISC INSERTED" if not disc.is_virtual else "MOUNTED IMAGE", 14, "#c7c1d1", "bold")
@@ -233,6 +290,8 @@ class ConsoleStage:
         strip_title = (animation or {}).get("title") if loading else None
         count = counts.get(system, 0)
         idle_label = label + (f"  ·  {count} game{'' if count == 1 else 's'}" if count else "")
+        if cartridge and cartridge["game"]:
+            idle_label = str(cartridge["game"].get("title", label))
         self.display(x + max(65, 24 + badge_width), strip_y + 7, self.fit_text((strip_title or (disc.title if disc else idle_label)).upper(), 540, 15), 15, WHITE)
         if loading:
             cancel = getattr(self, "cancelled", None)
@@ -241,10 +300,16 @@ class ConsoleStage:
             else:
                 self.display(1240, strip_y + 7, "LOADING", 13, "#9a9aa2", "bold", anchor="ne")
         else:
-            self._controller_hint("A", "Play" if disc else "About", 1080, strip_y + 6, "#35a4c6")
+            self._controller_hint("A", "Play" if disc or (cartridge and cartridge["game"]) else "About", 1080, strip_y + 6, "#35a4c6")
             if disc:
                 self._controller_hint("Y", "Info", 1180, strip_y + 6, "#d6bb34")
-        self.target("hero:play", (x + 2, 2, 1278, h - 2), self.play_disc if disc else (lambda s=system: self.open_console(s)), "Play disc" if disc else label)
+        if disc:
+            action, name = self.play_disc, "Play disc"
+        elif cartridge and cartridge["game"]:
+            action, name = (lambda identity=cartridge["game"]["id"]: self._play_game(identity)), "Play cartridge"
+        else:
+            action, name = (lambda s=system: self.open_console(s)), label
+        self.target("hero:play", (x + 2, 2, 1278, h - 2), action, name)
         if disc:
             self.target("hero:details", (1174, strip_y, 1279, h), self.inserted_disc_information, "Disc information")
         if self.focus in {"hero:play", "hero:details"}:

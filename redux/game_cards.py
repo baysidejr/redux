@@ -323,11 +323,12 @@ def config_template(title, executable, drive, store_id=""):
 
 
 _README = {
-    "console": "Redux console cartridge\n\nPut each system's cartridge files in its folder: {folders}. Redux plays them from here; "
-               "nothing is copied. Other supported systems work by name too (PlayStation, Sega CD, ...).\n\n"
+    "console": "Redux console cartridge\n\nA cartridge holds one game. Put its file in its console's folder: {folders}. "
+               "Plug the cartridge in while Redux runs and the game starts; nothing is copied. "
+               "Other supported systems work by name too (PlayStation, Sega CD, ...).\n\n"
                "Neo Geo: zipped AES/MVS ROM sets named by set name (mslug.zip). The neogeo.zip BIOS goes in the bios/fbneo folder "
                "of Redux or next to the games.\n",
-    "gog": "Redux GOG cartridge\n\nInstall GOG games anywhere on this drive (at the root or under Games / GOG Games). Each time "
+    "gog": "Redux GOG cartridge\n\nA cartridge holds one game: install it on this drive (at the root or under Games / GOG Games). Each time "
            "Redux reads the drive it writes one folder per game under PC, with a game.json and an art folder; the game's own "
            "folder is never touched. Edit game.json to change the title, EXE or arguments; delete a game's folder under PC to "
            "leave it out. Drop header, boxart and gameimage images (png, jpg or webp) into art for your own artwork.\n",
