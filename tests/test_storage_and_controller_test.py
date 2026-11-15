@@ -6,6 +6,7 @@ import threading
 import unittest
 
 from redux.console_ui import ConsoleApp
+import redux.console_cards
 from redux.console_secondary import SecondaryScreens
 from redux.console_controller_test import pressed_names, axis_fraction, trigger_fraction, BUTTON_BITS
 from redux.controllers import GamepadState
@@ -28,6 +29,7 @@ class StoragePageTests(unittest.TestCase):
         app.button_canvas=lambda key,label,*a,**k:None
         app.refresh=lambda:app.calls.append("refresh");app.disc_dialog=lambda:app.calls.append("disc")
         app.install_destination=lambda:None;app.schedule_draw=lambda:None;app._save_preferences=lambda:app.calls.append("save")
+        app._storage_cache=None
         app.status=SimpleNamespace(set=lambda text:app.calls.append(("status",text)))
         app.menu=lambda title,items,message="":setattr(app,"overlay",{"title":title,"items":items,"message":message})
         app.storage_menu=lambda root:ConsoleApp.storage_menu(app,root)
@@ -35,35 +37,90 @@ class StoragePageTests(unittest.TestCase):
 
     def test_storage_page_lists_internal_then_every_external_drive_and_the_optical_drive(self):
         app=self.app()
-        app.storage_drives=lambda:[dict(root="F:\\",kind="fixed",label="GAMES",usage=(10*2**30,20*2**30),card=True,games=3,ignored=False,destination=True,optical=False),
-                                   dict(root="E:\\",kind="removable",label="",usage=None,card=False,games=0,ignored=False,destination=False,optical=False),
+        app.storage_drives=lambda:[dict(root="F:\\",kind="fixed",label="GAMES",usage=(10*2**30,20*2**30),card=True,card_kind="storage",games=3,ignored=False,destination=True,optical=False),
+                                   dict(root="E:\\",kind="removable",label="",usage=None,card=False,card_kind=None,games=0,ignored=False,destination=False,optical=False),
+                                   dict(root="H:\\",kind="removable",label="NES",usage=None,card=True,card_kind="console",games=1,ignored=False,destination=False,optical=False),
                                    dict(root="G:\\",kind="optical",label="",optical=True)]
         SecondaryScreens._settings(app)
-        self.assertEqual(app.targets[:4],["storage:internal","storage:F:","storage:E:","storage:G:"])
+        self.assertEqual(app.targets[:5],["storage:internal","storage:F:","storage:E:","storage:H:","storage:G:"])
         self.assertIn("STORAGE",app.texts);self.assertIn("GAMES (F:) · fixed",app.texts)
         self.assertIn("Extra storage • 3 games • discs install here",app.texts)
-        self.assertIn("A sets it up as extra storage",app.texts)
+        self.assertIn("Console cartridge • 1 game",app.texts)
+        self.assertIn("Not set up • A to choose: console cartridge, GOG cartridge or extra storage",app.texts)
         app.callbacks["storage:G:"]();self.assertEqual(app.calls[-1],"disc")
 
     def test_storage_menu_offers_what_fits_the_drive(self):
         app=self.app()
+        app.card_roots=set();app.card_pending=[];app.card_offers=[];app.notice=lambda *a:app.calls.append("notice")
+        app._poll_cards=lambda:app.calls.append("poll")
+        import redux.game_cards as cards
+        original=cards.can_prepare;cards.can_prepare=lambda drive:True;self.addCleanup(setattr,cards,"can_prepare",original)
         with tempfile.TemporaryDirectory() as temporary:
             root=Path(temporary)
             app.storage_menu(str(root))
-            self.assertEqual([label for label,_ in app.overlay["items"]],["Use as extra storage","Cancel"])
-            (root/game_cards.MARKER).mkdir()
+            self.assertEqual([label for label,_ in app.overlay["items"]],["Console cartridge","GOG cartridge","Extra storage","Cancel"])
+            self.assertEqual(app.overlay["title"],"Set up drive "+redux.console_cards._letter(root))
+            # Choosing writes that kind and queues the card for reading.
+            dict(app.overlay["items"])["Extra storage"]()
+            self.assertEqual(game_cards.card_kind(root/game_cards.MARKER),"storage")
+            self.assertEqual(app.card_pending,[str(root/game_cards.MARKER)]);self.assertIn("poll",app.calls)
+            self.assertTrue(any(isinstance(c,tuple) and "set up as extra storage" in c[1] for c in app.calls))
             app.storage_menu(str(root))
             labels=[label for label,_ in app.overlay["items"]]
-            self.assertEqual(labels,["Install discs here","Read its games again","Stop using as extra storage","Cancel"])
+            self.assertEqual(labels,["Install discs here","Read its games again","Stop using this drive","Cancel"])
+            self.assertTrue(app.overlay["title"].startswith("Extra storage"))
             dict(app.overlay["items"])["Install discs here"]()
             self.assertEqual(app.preferences["install_destination"],str(root))
             app.install_destination=lambda:root
             app.storage_menu(str(root))
             self.assertEqual([label for label,_ in app.overlay["items"]][0],"Install discs to internal storage instead")
-            dict(app.overlay["items"])["Stop using as extra storage"]()
+            dict(app.overlay["items"])["Stop using this drive"]()
             self.assertEqual(app.preferences["storage_ignored"],[str(root)]);self.assertEqual(app.preferences["install_destination"],"")
+            self.assertTrue(ConsoleApp._storage_ignored(app,root))
             app.storage_menu(str(root))
-            self.assertEqual([label for label,_ in app.overlay["items"]],["Use as extra storage","Cancel"])
+            self.assertEqual([label for label,_ in app.overlay["items"]],["Use this drive again","Cancel"])
+            dict(app.overlay["items"])["Use this drive again"]()
+            self.assertEqual(app.preferences["storage_ignored"],[])
+            self.assertEqual(game_cards.card_kind(root/game_cards.MARKER),"storage","a prepared card keeps its kind")
+            # A console cartridge never offers disc installs; a legacy card does.
+            console=root/"c";console.mkdir();app.storage_menu(str(console))
+            dict(app.overlay["items"])["Console cartridge"]()
+            app.storage_menu(str(console))
+            self.assertEqual([label for label,_ in app.overlay["items"]],["Read its games again","Stop using this drive","Cancel"])
+            legacy=root/"l";(legacy/game_cards.MARKER).mkdir(parents=True);app.storage_menu(str(legacy))
+            self.assertEqual([label for label,_ in app.overlay["items"]][0],"Install discs here")
+            self.assertTrue(app.overlay["title"].startswith("Game card"))
+
+    def test_a_new_bare_drive_is_offered_not_written_and_not_now_is_remembered(self):
+        app=self.app()
+        app.card_roots=set();app.card_pending=[];app.card_offers=[];app.card_drives={"C:\\"};app.busy=False;app.embedded=None;app.playback=None;app.text_prompt=None
+        app.card_events=__import__("queue").Queue()
+        with tempfile.TemporaryDirectory() as temporary:
+            root=str(Path(temporary))
+            import redux.game_cards as cards
+            original=cards.can_prepare;cards.can_prepare=lambda drive:True
+            try:
+                app.card_events.put((frozenset({"C:\\",root}),frozenset()))
+                ConsoleApp._poll_cards(app)
+                self.assertFalse((Path(root)/game_cards.MARKER).exists(),"nothing is written before the answer")
+                self.assertEqual(app.card_offers,[],"the offer was shown at once because the console was idle")
+                self.assertEqual(app.overlay["title"],"New drive • Drive "+redux.console_cards._letter(root))
+                self.assertEqual([label for label,_ in app.overlay["items"]],["Console cartridge","GOG cartridge","Extra storage","Not now"])
+                dict(app.overlay["items"])["Not now"]()
+                self.assertFalse((Path(root)/game_cards.MARKER).exists())
+                self.assertTrue(ConsoleApp._storage_ignored(app,root))
+                app.overlay=None;app.card_drives={"C:\\"}
+                app.card_events.put((frozenset({"C:\\",root}),frozenset()))
+                ConsoleApp._poll_cards(app)
+                self.assertIsNone(app.overlay,"a drive left alone is not asked about again")
+                # A drive that already carries a card is read, not asked about.
+                other=Path(temporary)/"card";(other/game_cards.MARKER).mkdir(parents=True)
+                started=[];app._sync_card=lambda card:started.append(card)
+                app.card_drives={"C:\\"};app.card_events.put((frozenset({"C:\\",str(other)}),frozenset({str(other/game_cards.MARKER)})))
+                ConsoleApp._poll_cards(app)
+                self.assertEqual(started,[str(other/game_cards.MARKER)]);self.assertIsNone(app.overlay)
+            finally:
+                cards.can_prepare=original
 
 
 class ExternalInstallTests(unittest.TestCase):

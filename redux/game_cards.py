@@ -27,22 +27,31 @@ and unsupported files are ignored.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 import json
 import os
 from pathlib import Path
 import string
 
+from . import __version__
 from .library import SYSTEMS, ImportCancelled, discover_media
 from .neo_geo import game_facts as neo_geo_facts
 
 MARKER = "Redux Games"
+CARD_FILE = "card.json"
 CONFIG_NAME = "game.json"
 ART_FOLDER = "art"
 ART_ROLES = (("header", "hero"), ("boxart", "cover"), ("gameimage", "screenshot"))
 ART_EXTENSIONS = (".png", ".jpg", ".jpeg", ".webp")
-CARD_SYSTEM_FOLDERS = ("PlayStation", "Saturn", "Sega CD", "PC Engine CD", "Neo Geo", "Neo Geo CD", "3DO", "Jaguar CD", "PC")
+KINDS = ("console", "gog", "storage")
+KIND_LABELS = {"console": "Console cartridge", "gog": "GOG cartridge", "storage": "Extra storage", "legacy": "Game card"}
+# Cartridge systems with an emulator; Game Boy Advance waits for one.
+CARTRIDGE_SYSTEMS = ("nes", "snes", "n64", "genesis", "32x", "sms", "game_gear", "pce", "supergrafx",
+                     "atari2600", "atari7800", "jaguar", "gb", "gbc", "neo_geo")
+CD_SYSTEMS = ("psx", "saturn", "sega_cd", "pce_cd", "neo_geo_cd", "3do", "jaguar_cd")
 SYSTEM_FOLDER_NAMES = {"psx": "PlayStation", "saturn": "Saturn", "sega_cd": "Sega CD", "pce_cd": "PC Engine CD",
-                       "neo_geo": "Neo Geo", "neo_geo_cd": "Neo Geo CD", "3do": "3DO", "jaguar_cd": "Jaguar CD", "pc": "PC"}
+                       "neo_geo": "Neo Geo", "neo_geo_cd": "Neo Geo CD", "3do": "3DO", "jaguar_cd": "Jaguar CD", "pc": "PC",
+                       "genesis": "Genesis", "pce": "PC Engine", "jaguar": "Atari Jaguar", "n64": "Nintendo 64"}
 MAX_PC_GAMES_PER_CARD = 500
 _SKIP_FOLDERS = {"$recycle.bin", "system volume information", "windows", "program files", "program files (x86)",
                  "programdata", "users", "recovery", "perflogs", "msocache", "redux games", "steam", "steamlibrary",
@@ -100,6 +109,25 @@ def system_folder_name(system):
     return SYSTEM_FOLDER_NAMES.get(system) or SYSTEMS.get(system, str(system)).split(" / ")[0]
 
 
+CONSOLE_FOLDERS = tuple(system_folder_name(system) for system in CARTRIDGE_SYSTEMS)
+STORAGE_FOLDERS = tuple(system_folder_name(system) for system in CD_SYSTEMS)
+KIND_FOLDERS = {"console": CONSOLE_FOLDERS, "gog": ("PC",), "storage": STORAGE_FOLDERS}
+
+
+def drive_identity(drive):
+    """A name for a drive that survives a change of letter: its volume serial, else its root."""
+    root = str(Path(drive))
+    if os.name == "nt":
+        try:
+            import ctypes
+            serial = ctypes.c_uint32()
+            if ctypes.windll.kernel32.GetVolumeInformationW(root, None, 0, ctypes.byref(serial), None, None, None, 0) and serial.value:
+                return f"volume-{serial.value:08X}"
+        except (AttributeError, OSError, ValueError):
+            pass
+    return root
+
+
 def drive_label(drive):
     """The volume label Windows shows for a drive, or an empty string."""
     if os.name != "nt":
@@ -125,7 +153,7 @@ def drive_usage(drive):
 
 
 def can_prepare(drive):
-    """Only a removable or fixed data drive that is not Windows' own gets the marker folder."""
+    """Only a removable or fixed data drive that is not Windows' own can become a card."""
     root = Path(drive)
     system_drive = os.environ.get("SystemDrive", "C:") + "\\"
     if os.name == "nt" and os.path.normcase(str(root)) == os.path.normcase(system_drive):
@@ -144,6 +172,22 @@ def find_cards(drives=None):
         except OSError:
             continue
     return cards
+
+
+def card_kind(marker):
+    """'console', 'gog' or 'storage' from the card file; 'legacy' for a marker written before 0.14;
+    None when the drive carries no marker folder."""
+    marker = Path(marker)
+    try:
+        if not marker.is_dir() or marker.is_symlink():
+            return None
+        document = json.loads((marker / CARD_FILE).read_text(encoding="utf-8-sig"))
+    except FileNotFoundError:
+        return "legacy"
+    except (OSError, ValueError):
+        return "legacy"
+    kind = document.get("kind") if isinstance(document, dict) else None
+    return kind if kind in KINDS else "legacy"
 
 
 @dataclass(frozen=True)
@@ -182,7 +226,7 @@ class CardSync:
 
 def _card_label(card):
     drive = Path(card).anchor.rstrip("\\/") or str(card)
-    return f"Game card {drive}"
+    return f"{KIND_LABELS.get(card_kind(card) or 'legacy', 'Game card')} {drive}"
 
 
 def pc_game_executable(folder):
@@ -254,29 +298,52 @@ def config_template(title, executable, drive):
     }
 
 
-def prepare_card(drive):
-    """Create the marker folder, its system folders and one config folder per installed PC game.
+_README = {
+    "console": "Redux console cartridge\n\nPut each system's cartridge files in its folder: {folders}. Redux plays them from here; "
+               "nothing is copied. Other supported systems work by name too (PlayStation, Sega CD, ...).\n\n"
+               "Neo Geo: zipped AES/MVS ROM sets named by set name (mslug.zip). The neogeo.zip BIOS goes in the bios/fbneo folder "
+               "of Redux or next to the games.\n",
+    "gog": "Redux GOG cartridge\n\nInstall GOG games anywhere on this drive (at the root or under Games / GOG Games). Each time "
+           "Redux reads the drive it writes one folder per game under PC, with a game.json and an art folder; the game's own "
+           "folder is never touched. Edit game.json to change the title, EXE or arguments; delete a game's folder under PC to "
+           "leave it out. Drop header, boxart and gameimage images (png, jpg or webp) into art for your own artwork.\n",
+    "storage": "Redux extra storage\n\nDiscs you install land in these folders: {folders}. Disc images you already own can go "
+               "there too. Redux plays them from here; nothing is copied back.\n",
+}
 
-    Existing files are never overwritten and the games' own folders are never touched.
-    Returns the game folders written this time.
+
+def prepare_card(drive, kind):
+    """Make a drive a card of one kind: the marker folder, its card file, the kind's folders and a README.
+
+    Existing files are never overwritten. A GOG cartridge also gets a config folder per installed
+    PC game (see ``write_pc_configs``). Returns the game folders written this time.
     """
+    if kind not in KINDS:
+        raise ValueError("A card is a console cartridge, a GOG cartridge or extra storage")
     root = Path(drive)
     marker = root / MARKER
-    written = []
     marker.mkdir(exist_ok=True)
-    for name in CARD_SYSTEM_FOLDERS:
+    card = marker / CARD_FILE
+    if not card.exists():
+        card.write_text(json.dumps({"kind": kind, "label": KIND_LABELS[kind], "redux": __version__,
+                                    "prepared": datetime.now(timezone.utc).isoformat(timespec="seconds")}, indent=2) + "\n", encoding="utf-8")
+    for name in KIND_FOLDERS[kind]:
         (marker / name).mkdir(exist_ok=True)
     readme = marker / "README.txt"
     if not readme.exists():
-        readme.write_text(
-            "Redux game card\n\nPut each system's disc images or cartridge files in its folder: " + ", ".join(CARD_SYSTEM_FOLDERS[:-1]) +
-            ", or any other supported system's name (Jaguar, NES, Genesis, ...). Redux plays them from here.\n\n"
-            "Neo Geo: zipped AES/MVS ROM sets named by set name (mslug.zip). The neogeo.zip BIOS goes in the bios/fbneo folder "
-            "of Redux or next to the games.\n\n"
-            "PC: Redux writes one folder per installed PC game it finds on this drive, with a game.json and an art folder. "
-            "Edit game.json to change the title, EXE or arguments; add header, boxart and gameimage images to art.\n",
-            encoding="utf-8")
-    pc = marker / "PC"
+        readme.write_text(_README[kind].format(folders=", ".join(KIND_FOLDERS[kind])), encoding="utf-8")
+    return write_pc_configs(root) if kind == "gog" else []
+
+
+def write_pc_configs(drive):
+    """One config folder under ``PC`` per installed PC game on the drive that has none yet.
+
+    Only a GOG cartridge is written to; the caller checks the kind. The games' own folders
+    are never touched. Returns the game folders written this time.
+    """
+    root = Path(drive)
+    pc = root / MARKER / "PC"
+    written = []
     for folder, executable in find_installed_pc_games(root):
         target = pc / _safe_name(folder.name)
         config = target / CONFIG_NAME

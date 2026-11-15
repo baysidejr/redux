@@ -51,8 +51,8 @@ class NeoGeoCardTests(unittest.TestCase):
         self.assertEqual([p.name for p in discover_media(self.marker / "PlayStation")], ["Game A.chd"])
         self.assertEqual([p.name for p in discover_media(self.marker / "Neo Geo", system="neo_geo")], ["kof98.7z", "mslug.zip"])
 
-    def test_new_cards_get_a_neo_geo_folder_and_synced_games_take_their_titles(self):
-        game_cards.prepare_card(self.drive)
+    def test_console_cartridges_get_a_neo_geo_folder_and_synced_games_take_their_titles(self):
+        game_cards.prepare_card(self.drive, "console")
         self.assertTrue((self.marker / "Neo Geo").is_dir());self.assertIn("neogeo.zip", (self.marker / "README.txt").read_text(encoding="utf-8"))
         self.rom("Neo Geo", "mslug.zip");self.rom("Neo Geo", "homebrew.zip")
         with tempfile.TemporaryDirectory() as home:

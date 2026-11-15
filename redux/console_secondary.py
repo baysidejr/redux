@@ -128,15 +128,17 @@ class SecondaryScreens:
             if not drives:
                 self.panel(X,318,W,92,PANEL,3);self.icon("library",X+21,342,30,ACCENT)
                 self.text(X+70,336,"Nothing connected",15,WHITE,"bold")
-                self.text(X+70,362,"Connect an SD card, micro SD card or SSD caddy. Redux sets it up as extra storage and plays its games in place.",13,MUTED,width=W-100)
+                self.text(X+70,362,"Connect an SD card, micro SD card or SSD caddy. Redux asks whether it is a console cartridge, a GOG cartridge or extra storage, and writes nothing until you choose.",13,MUTED,width=W-100)
             for index,drive in enumerate(drives[:4]):
                 y=318+index*82;letter=Path(drive["root"]).anchor.rstrip(chr(92)+"/");name=(drive["label"] or ("Optical drive" if drive["optical"] else "External drive"))
                 if drive["optical"]:
                     self._setting_row(f"storage:{letter}",f"{name} ({letter})","Disc tools: inspect, capture or import a mounted image",y,self.disc_dialog,icon="disc");continue
                 usage=drive.get("usage");value=f"{_size(usage[0])} free" if usage else None
-                if drive["ignored"]:detail="Not used by Redux • A to use it as extra storage"
-                elif drive["card"]:detail=f"Extra storage • {drive['games']} game{'' if drive['games']==1 else 's'}"+(" • discs install here" if drive["destination"] else "")
-                else:detail="A sets it up as extra storage"
+                from .game_cards import KIND_LABELS
+                kind_label=KIND_LABELS.get(drive.get("card_kind") or "legacy","Game card")
+                if drive["ignored"]:detail="Left alone • A to use it again" if drive["card"] else "Left alone • A to set it up"
+                elif drive["card"]:detail=f"{kind_label} • {drive['games']} game{'' if drive['games']==1 else 's'}"+(" • discs install here" if drive["destination"] else "")
+                else:detail="Not set up • A to choose: console cartridge, GOG cartridge or extra storage"
                 self._setting_row(f"storage:{letter}",f"{name} ({letter}) · {drive['kind']}",detail,y,lambda root=drive["root"]:self.storage_menu(root),icon="library",value=value)
         elif section=="input":
             connected=getattr(self.controller,"connected_indices",()) if self.controller else ()

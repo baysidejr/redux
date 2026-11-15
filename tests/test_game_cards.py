@@ -1,4 +1,4 @@
-"""Game cards: a drive opts in with a Redux Games folder; its games are linked in place."""
+"""Game cards: a drive becomes a card only when the player says what it is for; its games are linked in place."""
 import json
 from pathlib import Path
 import tempfile
@@ -52,10 +52,36 @@ class GameCardTests(unittest.TestCase):
         found=game_cards.find_installed_pc_games(self.drive)
         self.assertEqual([(folder.name,exe.name) for folder,exe in found],[("Expedition 33","game.exe"),("Nested","Nested.exe"),("Plain","Plain.exe")])
 
-    def test_preparing_a_drive_writes_the_structure_and_one_config_per_pc_game_without_touching_games(self):
+    def test_each_kind_writes_only_its_own_folders_and_records_itself(self):
+        console=self.root/"console";console.mkdir()
+        self.assertEqual(game_cards.prepare_card(console,"console"),[])
+        marker=console/game_cards.MARKER
+        self.assertEqual(sorted(p.name for p in marker.iterdir() if p.is_dir()),sorted(game_cards.CONSOLE_FOLDERS))
+        self.assertIn("NES",game_cards.CONSOLE_FOLDERS);self.assertIn("Genesis",game_cards.CONSOLE_FOLDERS);self.assertIn("Neo Geo",game_cards.CONSOLE_FOLDERS)
+        self.assertNotIn("PlayStation",game_cards.CONSOLE_FOLDERS);self.assertNotIn("Game Boy Advance",game_cards.CONSOLE_FOLDERS,"no emulator yet")
+        self.assertEqual(game_cards.card_kind(marker),"console")
+        document=json.loads((marker/game_cards.CARD_FILE).read_text(encoding="utf-8"))
+        self.assertEqual((document["kind"],document["label"]),("console","Console cartridge"))
+        self.assertIn("neogeo.zip",(marker/"README.txt").read_text(encoding="utf-8"))
+        storage=self.root/"storage";storage.mkdir()
+        game_cards.prepare_card(storage,"storage")
+        self.assertEqual(sorted(p.name for p in (storage/game_cards.MARKER).iterdir() if p.is_dir()),sorted(game_cards.STORAGE_FOLDERS))
+        self.assertEqual(game_cards.STORAGE_FOLDERS,("PlayStation","Saturn","Sega CD","PC Engine CD","Neo Geo CD","3DO","Jaguar CD"))
+        self.assertEqual(game_cards.card_kind(storage/game_cards.MARKER),"storage")
+        with self.assertRaises(ValueError):game_cards.prepare_card(self.root/"odd","usb")
+        self.assertFalse((self.root/"odd").exists(),"a refused kind writes nothing")
+        # A card from before 0.14 has no card file and keeps working.
+        self.marker.mkdir()
+        self.assertEqual(game_cards.card_kind(self.marker),"legacy")
+        self.assertIsNone(game_cards.card_kind(self.root/"nothing"))
+        (self.marker/game_cards.CARD_FILE).write_text("not json",encoding="utf-8")
+        self.assertEqual(game_cards.card_kind(self.marker),"legacy")
+
+    def test_preparing_a_gog_cartridge_writes_one_config_per_pc_game_without_touching_games(self):
         gog,exe=self.installed("Expedition 33","bin/game.exe",gog=True)
-        written=game_cards.prepare_card(self.drive)
-        for name in game_cards.CARD_SYSTEM_FOLDERS:self.assertTrue((self.marker/name).is_dir(),name)
+        written=game_cards.prepare_card(self.drive,"gog")
+        self.assertEqual(sorted(p.name for p in self.marker.iterdir() if p.is_dir()),["PC"])
+        self.assertEqual(game_cards.card_kind(self.marker),"gog")
         self.assertTrue((self.marker/"README.txt").is_file())
         config_folder=self.marker/"PC"/"Expedition 33"
         self.assertEqual(written,[config_folder])
@@ -66,13 +92,15 @@ class GameCardTests(unittest.TestCase):
         self.assertEqual(document["art"]["header"],"art/header.png")
         self.assertEqual(sorted(path.name for path in gog.iterdir()),["bin","goggame-1.info","unins000.exe"],"the game's own folder is untouched")
         (config_folder/"game.json").write_text('{"title": "Edited", "executable": "Expedition 33/bin/game.exe"}',encoding="utf-8")
-        self.assertEqual(game_cards.prepare_card(self.drive),[],"a second pass writes nothing new")
+        self.assertEqual(game_cards.prepare_card(self.drive,"gog"),[],"a second pass writes nothing new")
+        self.installed("Later","Later.exe")
+        self.assertEqual(game_cards.write_pc_configs(self.drive),[self.marker/"PC"/"Later"],"a later read adds settings for a new install only")
         self.assertIn("Edited",(config_folder/"game.json").read_text(encoding="utf-8"))
 
     def test_only_configured_pc_games_are_offered_and_a_broken_config_adds_nothing(self):
         self.installed("Expedition 33","bin/game.exe",gog=True)
         self.installed("Skipped")
-        game_cards.prepare_card(self.drive)
+        game_cards.prepare_card(self.drive,"gog")
         (self.marker/"PC"/"Skipped").rename(self.marker/"PC"/"Skipped-off")  # user renamed away the config folder
         (self.marker/"PC"/"Skipped-off"/"game.json").unlink()
         broken=self.marker/"PC"/"Broken";broken.mkdir();(broken/"game.json").write_text('{"executable": "nowhere.exe"}',encoding="utf-8")
@@ -82,7 +110,7 @@ class GameCardTests(unittest.TestCase):
     def test_sync_links_games_in_place_once_applies_card_art_and_reports_the_rest(self):
         self.rom("Jaguar","Tempest 2000.j64",b"T2K");self.rom("Jaguar","Doom.jag",b"DOOM")
         self.installed("Plain")
-        game_cards.prepare_card(self.drive)
+        game_cards.prepare_card(self.drive,"gog")
         art=self.marker/"PC"/"Plain"/"art"
         Image.new("RGB",(300,420),"red").save(art/"boxart.jpg");Image.new("RGB",(640,480),"blue").save(art/"gameimage.png")
         result=game_cards.sync_card(self.library,self.marker)
@@ -101,7 +129,7 @@ class GameCardTests(unittest.TestCase):
 
     def test_edited_config_changes_title_arguments_and_working_folder_on_the_next_read(self):
         folder,exe=self.installed("Plain")
-        game_cards.prepare_card(self.drive)
+        game_cards.prepare_card(self.drive,"gog")
         config=self.marker/"PC"/"Plain"/"game.json"
         document=json.loads(config.read_text(encoding="utf-8"))
         document.update(title="Plain Deluxe",arguments=["-windowed"],working_directory=str(folder))
@@ -126,6 +154,12 @@ class GameCardTests(unittest.TestCase):
         result=game_cards.sync_card(self.library,self.marker)
         self.assertEqual(len(result.added),1);self.assertEqual(len(result.errors),1)
         self.assertTrue(result.errors[0].startswith(cue.name))
+
+    def test_a_card_label_names_its_kind(self):
+        game_cards.prepare_card(self.drive,"gog")
+        self.assertTrue(game_cards.sync_card(self.library,self.marker).summary.startswith("GOG cartridge"))
+        self.marker.rename(self.drive/"gone");(self.drive/game_cards.MARKER).mkdir()
+        self.assertTrue(game_cards.sync_card(self.library,self.marker).summary.startswith("Game card"))
 
     def test_the_windows_drive_is_never_prepared(self):
         import os
