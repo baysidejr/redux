@@ -1,4 +1,6 @@
-# Project status — 0.24.0, 2026-11-15
+# Project status — 0.24.1, 2026-11-15
+
+Release 0.24.1 (2026-11-15): cartridge consoles play the owner's cartridge-loading sound (`redux/assets/sounds/cartridge-load.mp3`, 5.1 s) on the loading stage, the same way CD consoles play the disc sound; PC games stay silent. `STAGE_HOLD_SECONDS` is now 10 (owner's choice): intro, the loop to nine seconds, the outro, the game at ten. Confirmed on the real Tk loop with an NES load: the sound playing at start, the game starting at 10.2 s.
 
 Release 0.24.0 (2026-11-15) adds the owner's disc-loading sound to CD-console loads. `redux/assets/sounds/disc-load.mp3` (7.1 s) plays from `start_stage` for the seven CD systems through `redux/stage_sounds.py`, which drives Windows MCI (`mciSendString`, type mpegvideo) rather than winsound, so the MP3 needs no conversion and mixes with the menu sounds instead of being cut off by them. One stage sound at a time; a load already on the stage does not restart it; `clear_stage` (cancel, failure, leaving) and app shutdown stop and close it. It follows the Menu sounds setting. Confirmed on the real Tk loop (muted): MCI reports it playing at the start and three seconds in, and closed after a cancel.
 

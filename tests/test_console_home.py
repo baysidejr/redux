@@ -253,7 +253,7 @@ class HomeShelfTests(unittest.TestCase):
         app.root = None;ConsoleStage.start_stage(app, "nes", "Mario");ConsoleStage.hold_for_stage(app, lambda: started.append(2));self.assertEqual(started, [2])
 
     def test_a_cd_console_load_plays_the_disc_sound_and_a_cancel_stops_it(self):
-        from redux.stage_sounds import StageSounds, DISC_LOAD
+        from redux.stage_sounds import StageSounds, DISC_LOAD, CARTRIDGE_LOAD
         from redux.ui_sounds import sounds_root
         self.assertTrue((sounds_root() / DISC_LOAD).is_file(), "the disc sound ships with the app")
         commands = []
@@ -266,11 +266,15 @@ class HomeShelfTests(unittest.TestCase):
         self.assertEqual(len(app.stage_sounds.played), 1, "a load already on the stage does not restart the sound")
         ConsoleStage.clear_stage(app)
         self.assertIn(f"stop {alias}", commands);self.assertIn(f"close {alias}", commands);self.assertIsNone(app.stage_sounds.alias)
+        self.assertTrue((sounds_root() / CARTRIDGE_LOAD).is_file(), "the cartridge sound ships with the app")
         ConsoleStage.start_stage(app, "nes", "Mario")
-        self.assertEqual(len(app.stage_sounds.played), 1, "cartridge consoles load in silence")
+        self.assertEqual(app.stage_sounds.played[-1], CARTRIDGE_LOAD, "cartridge consoles play the cartridge going in")
+        ConsoleStage.clear_stage(app)
+        ConsoleStage.start_stage(app, "pc", "Doom")
+        self.assertEqual(len(app.stage_sounds.played), 2, "PC games load in silence");self.assertIsNone(app.stage_sounds.alias)
         ConsoleStage.clear_stage(app);app.sounds.enabled = False
         ConsoleStage.start_stage(app, "psx", "Metal Gear Solid")
-        self.assertEqual(len(app.stage_sounds.played), 1, "Menu sounds off keeps the stage silent too")
+        self.assertEqual(len(app.stage_sounds.played), 2, "Menu sounds off keeps the stage silent too")
         # A system without Windows audio, or a missing file, simply plays nothing.
         self.assertFalse(StageSounds(sender=False).play());self.assertFalse(StageSounds(root=Path(tempfile.gettempdir()), sender=lambda *a: 0).play())
         failing = StageSounds(sender=lambda text, *a: 263 if text.startswith("open") else 0)

@@ -1,4 +1,4 @@
-"""Sounds for the loading stage: a disc tray opening and the disc spinning up, for CD consoles.
+"""Sounds for the loading stage: a disc tray opening and spinning up for CD consoles, a cartridge going in for the rest.
 
 Menu sounds go through winsound, which plays one WAV at a time and cuts the previous one
 off. The stage sound plays through Windows' media control interface (MCI) instead, which
@@ -13,6 +13,7 @@ from pathlib import Path
 from .ui_sounds import sounds_root
 
 DISC_LOAD = "disc-load.mp3"
+CARTRIDGE_LOAD = "cartridge-load.mp3"
 _aliases = itertools.count(1)
 
 

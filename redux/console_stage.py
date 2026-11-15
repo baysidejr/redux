@@ -28,7 +28,7 @@ from .ui_theme import WHITE, MUTED, ACCENT
 AUTOPLAY_DELAY = 0.4      # seconds after the insert event before Play fires on its own
 AUTOPLAY_STAGE = 0.9      # seconds of stage animation before the install or load starts
 STOP_AFTER = 0.6                # seconds of fast cruise before the brake onto the loading console
-STAGE_HOLD_SECONDS = 15.0       # a game appears fifteen seconds after its load began: banner settled, loader looped, outro played
+STAGE_HOLD_SECONDS = 10.0       # a game appears ten seconds after its load began: banner settled, loader looped, outro played
 HOLD_POLL_MS = 100
 HERO_FRACTION = 0.25            # the carousel's share of the loading screen
 LIGHTS = 8
@@ -193,18 +193,21 @@ class ConsoleStage:
         root.after(HOLD_POLL_MS, poll)
 
     def _play_stage_sound(self, system):
-        """The disc tray opening and the disc spinning up, for a CD console, with the loader's intro.
+        """With the loader's intro: the disc tray and spin-up for a CD console, the cartridge going in for the rest.
 
-        Follows the Menu sounds setting; a cartridge console loads in silence for now."""
+        PC games have neither. Follows the Menu sounds setting."""
         from .game_cards import CD_SYSTEMS
+        from .stage_sounds import DISC_LOAD, CARTRIDGE_LOAD
         sounds = getattr(self, "stage_sounds", None)
         menu = getattr(self, "sounds", None)
         if not sounds or (menu is not None and not getattr(menu, "enabled", True)):
             return False
-        if system not in CD_SYSTEMS:
-            sounds.stop()
-            return False
-        return sounds.play()
+        if system in CD_SYSTEMS:
+            return sounds.play(DISC_LOAD)
+        if system in SYSTEMS and system not in ("pc", "unknown"):
+            return sounds.play(CARTRIDGE_LOAD)
+        sounds.stop()
+        return False
 
     def clear_stage(self):
         self.stage_animation = None
