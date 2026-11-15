@@ -7,9 +7,9 @@ carousel scrolls across the top quarter and brakes to a stop with the loading co
 pennant centred under the gold marker, and that console's loader animation plays below
 with the game's name and the progress. The pennants only move during a load.
 
-A game appears **eight seconds** after its load began, however fast the core starts: the
-banner has settled (at most 6.8 s), the loader has played its intro and one full loop
-(4 s), and the outro fills the last second. An install that takes longer simply runs its
+A game appears **fifteen seconds** after its load began, however fast the core starts: the
+banner has settled (at most 6.8 s), the loader has played its intro and several loops,
+and the outro fills the last second. An install that takes longer simply runs its
 loop until it is done.
 
 ## The banner carousel

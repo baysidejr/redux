@@ -42,15 +42,20 @@ class DiscPlayTests(unittest.TestCase):
     def test_play_on_an_uninstalled_disc_installs_it_and_then_plays(self):
         self.app.discs.active = disc()
         self.assertIsNone(self.app.installed_disc_game(self.app.discs.active))
+        self.app.show_stage = Mock();self.app.clear_stage = Mock()
         self.app.play_disc()
         self.app.task.assert_called_once()
         self.assertIn("starts when the copy is done", self.app.task.call_args.args[2])
+        self.app.show_stage.assert_called_once_with("saturn", "World Series Baseball 2")
         # The install's completion hands straight to Play with the installed game.
         done = self.app.task.call_args.args[1]
         game = self.installed()
         self.app.play = Mock()
         done(dict(game))
         self.app.play.assert_called_once();self.assertEqual(self.app.play.call_args.args[0]["id"], game["id"]);self.assertEqual(self.app.selected_id, game["id"])
+        self.app.clear_stage.assert_not_called()
+        done(None)
+        self.app.clear_stage.assert_called_once()
 
     def test_play_on_an_installed_disc_starts_it_without_reading_anything(self):
         game = self.installed(fingerprint="a" * 64)

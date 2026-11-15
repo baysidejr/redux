@@ -113,6 +113,10 @@ class ConsoleMedia:
             current=self.inserted_disc()
             if current and current.drive==drive:disc=current
         library=self.library;destination=self.install_destination()
+        if then_play:
+            # The loading screen runs from the first byte read: banner, loader intro, then its loop until the game is up.
+            self.overlay=None
+            self.show_stage(disc.system if disc and disc.system else "unknown",disc.title if disc else "")
         def work():
             from .disc_buffer import buffer_disc,DiscBufferCancelled
             from .disc_session import prepare_disc_game
@@ -157,9 +161,11 @@ class ConsoleMedia:
             if game:
                 self.selected_id=game["id"];self.__dict__.pop("_disc_installed",None)
                 self.refresh();self.status.set("Installed to library • ready to play")
-                if game.get("_install_warning"):self.notice("Game installed • saves need attention",game["_install_warning"])
-                elif then_play:self.finish_stage();self.play_installed(game)
-            else:self.status.set("Disc installation cancelled")
+                if game.get("_install_warning"):
+                    self.clear_stage();self.notice("Game installed • saves need attention",game["_install_warning"])
+                elif then_play:self.play_installed(game)  # the stage keeps looping; the outro plays just before the game appears
+            else:
+                self.clear_stage();self.status.set("Disc installation cancelled")
         self.task(work,done,"Installing disc • it starts when the copy is done…" if then_play else "Installing disc to library…")
 
     # ------------------------------------------------------------------ one button: Play

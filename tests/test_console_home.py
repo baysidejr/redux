@@ -218,7 +218,7 @@ class HomeShelfTests(unittest.TestCase):
         self.assertEqual(carousel.status(time.monotonic()), "stopped", "after the load the strip holds still again")
         self.assertNotEqual(carousel.sample(time.monotonic()), before)
 
-    def test_a_game_waits_eight_seconds_on_the_stage_then_the_outro_then_starts(self):
+    def test_a_game_waits_on_the_stage_then_the_outro_then_starts(self):
         from redux.console_stage import STAGE_HOLD_SECONDS
         from redux.ui_assets import Artwork
         app = self.app();app.art = SimpleNamespace(path=lambda system, kind="hero", custom=None: f"{system}-{kind}.png", bundled=Artwork.bundled, hero=lambda: "hero-banner.jpg")
@@ -237,6 +237,14 @@ class HomeShelfTests(unittest.TestCase):
         ms, poll = waits.pop();self.assertGreaterEqual(ms, 900)
         app.stage_animation["finishing_since"] -= 1.0;poll()
         self.assertEqual(len(started), 1, "the game starts when the outro ends")
+        # The stage tick never clears a stage whose game is still waiting to start.
+        ConsoleStage.start_stage(app, "sega_cd", "Eternal Champions");ConsoleStage.hold_for_stage(app, lambda: started.append(3))
+        app.stage_animation["started"] -= STAGE_HOLD_SECONDS;app.busy = False;app.disc_autoplay = None;app.card_autoplay = None
+        ConsoleStage.finish_stage(app);app.stage_animation["finishing_since"] -= 0.5
+        ConsoleStage._stage_tick(app)
+        self.assertIsNotNone(app.stage_animation, "the outro is not cut short");ms, poll = waits.pop()
+        app.stage_animation["finishing_since"] -= 1.0;poll();self.assertEqual(started[-1], 3)
+        started.clear();waits.clear()
         # A load whose stage went away (the player left) is dropped rather than started blind.
         started.clear();ConsoleStage.start_stage(app, "nes", "Mario");ConsoleStage.hold_for_stage(app, lambda: started.append(1))
         ms, poll = waits.pop();ConsoleStage.clear_stage(app);poll()

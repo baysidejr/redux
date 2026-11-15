@@ -1396,6 +1396,7 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleSta
                 ("Keep files and return to library",self._return_after_retained_disc)],message=str(message))
             self.overlay["back_action"]=self._return_after_retained_disc
             return
+        if not self.embedded and hasattr(self,"clear_stage"):self.clear_stage()  # a failed load leaves the loading screen
         self.notice("Task could not complete",str(message))
         if self.embedded:self.overlay["back_action"]=self.game_menu
 

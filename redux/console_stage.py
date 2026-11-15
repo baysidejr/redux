@@ -28,7 +28,7 @@ from .ui_theme import WHITE, MUTED, ACCENT
 AUTOPLAY_DELAY = 0.4      # seconds after the insert event before Play fires on its own
 AUTOPLAY_STAGE = 0.9      # seconds of stage animation before the install or load starts
 STOP_AFTER = 0.6                # seconds of fast cruise before the brake onto the loading console
-STAGE_HOLD_SECONDS = 8.0        # a game appears eight seconds after its load began: banner settled, loader looped, outro played
+STAGE_HOLD_SECONDS = 15.0       # a game appears fifteen seconds after its load began: banner settled, loader looped, outro played
 HOLD_POLL_MS = 100
 HERO_FRACTION = 0.25            # the carousel's share of the loading screen
 LIGHTS = 8
@@ -147,8 +147,8 @@ class ConsoleStage:
     def stage_ready(self, now=None):
         """True when the outro should begin: the game appears STAGE_HOLD_SECONDS after the load began.
 
-        The banner settles within 6.8 s and the loader's intro and one loop take 4 s, so both
-        have happened by then; the outro fills the last second of the eight."""
+        The banner settles within 6.8 s and the loader's intro and first loop take 4 s, so both
+        have happened well before; the outro fills the last second."""
         animation = getattr(self, "stage_animation", None)
         if not animation:
             return True
@@ -277,9 +277,10 @@ class ConsoleStage:
         if animation and animation.get("kind") == "load" and not animation.get("stopped") and now >= animation.get("stop_due", 0):
             animation["stopped"] = True
             self.stop_on_system(animation.get("system"))
-        if animation and not self.busy and not pending and not cartridge:
+        if animation and not self.busy and not pending and not cartridge and getattr(self, "_stage_hold", None) is None:
             # A load that never came (cancelled, failed, or the game is already up) lets the stage go.
-            if now - animation["started"] > (20 if animation.get("finishing_since") is None else 6):
+            finishing = animation.get("finishing_since")
+            if (finishing is None and now - animation["started"] > STAGE_HOLD_SECONDS + 15) or (finishing is not None and now - finishing > 6):
                 self.clear_stage()
         if (animation or self.busy) and self.screen == "home" and not self.overlay and now - getattr(self, "_stage_frame_at", 0) >= 0.05:
             self._stage_frame_at = now
@@ -496,7 +497,17 @@ class ConsoleStage:
 
     def _stage_loading(self, x, y, w, h, system, title):
         animation = getattr(self, "stage_animation", None) or {}
-        elapsed = time.monotonic() - animation.get("started", time.monotonic())
+        if "started" not in animation:
+            # Busy without a stage (a card read, a BIOS copy): keep a clock of its own so the art still moves.
+            loose = self.__dict__.get("_loose_load")
+            if not self.busy:
+                self._loose_load = None
+            elif loose is None:
+                self._loose_load = time.monotonic()
+            started = self.__dict__.get("_loose_load") or time.monotonic()
+        else:
+            started = animation["started"]
+        elapsed = time.monotonic() - started
         status = self.status.get() if hasattr(self.status, "get") else ""
         percent = _PERCENT.search(status or "")
         sheet = self.sheet_animation(system)
