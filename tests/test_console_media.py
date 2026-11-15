@@ -196,15 +196,13 @@ class ConsoleMediaTests(unittest.TestCase):
         app.all_games.append({"id": 8, "title": "Visible game", "system": "saturn", "available": True})
         app.rows = [app.all_games[-1]]
         app.focus = "game:8"
-        app.open_game = Mock()
+        app.open_game = Mock();app.search_screen = Mock()
         # Old selected Diablo is excluded by the current visible library rows.
         app.input_action("y")
         with patch("redux.embedded.find_core", side_effect=AssertionError("Hidden game launched")):
             app.input_action("start")
-        app.open_game.assert_not_called()
+        app.open_game.assert_not_called();app.search_screen.assert_called_once()
         app.selected_id = 8
-        app.input_action("y")
-        app.open_game.assert_called_once_with(8, tab="manage")
         played = []
         app.play = lambda: played.append(app._game_context()["id"])
         app.input_action("start")
@@ -231,7 +229,7 @@ class ConsoleMediaTests(unittest.TestCase):
         app.installed_disc_game = Mock(return_value=None)
         app.play = Mock(side_effect=AssertionError("Hero must not play Diablo"))
         app._home()
-        self.assertEqual(app.picture.call_args_list[0].args[0], "saturn-game.png")
+        self.assertEqual(app.picture.call_args_list[0].args[0], "saturn-hero.png")
         self.assertTrue(any("WORLD SERIES BASEBALL 2" in str(call) for call in app.display.call_args_list))
         self.assertTrue(any("Not installed" in str(call) for call in app.display.call_args_list))
         app.callbacks["hero:play"]()

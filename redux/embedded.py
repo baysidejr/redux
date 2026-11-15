@@ -171,6 +171,26 @@ class EmbeddedGame:
             temporary.unlink(missing_ok=True);staging.unlink(missing_ok=True);thumbnail_staging.unlink(missing_ok=True)
 
     @_serialized
+    def delete(self,number=0):
+        """Remove a save-state slot. The state blob goes too unless another slot still points at it."""
+        number=_slot_number(number)
+        manifest=self.states/f"slot-{number}.json"
+        if not manifest.exists():raise ValueError("That save slot is empty")
+        digest=None
+        try:
+            item=json.loads(manifest.read_text(encoding="utf-8"))
+            digest=item.get("sha256") if isinstance(item,dict) else None
+        except (OSError,ValueError):pass
+        manifest.unlink()
+        if isinstance(digest,str) and re.fullmatch(r"[a-f0-9]{64}",digest):
+            shared=False
+            for other in self.states.glob("slot-*.json"):
+                try:shared=shared or json.loads(other.read_text(encoding="utf-8")).get("sha256")==digest
+                except (OSError,ValueError,AttributeError):continue
+            if not shared:(self.states/(digest+".state")).unlink(missing_ok=True)
+        return self.slot(number)
+
+    @_serialized
     def load(self,number=0):
         slot=self.slot(number)
         if not slot.exists:raise ValueError("That save slot is empty")

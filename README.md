@@ -6,7 +6,7 @@ A controller-first Windows game library for the living room. Browse games, inser
 
 ## Install
 
-Download **ReduxSetup-0.17.0-win-x64.exe** from [Releases](https://github.com/baysidejr/redux/releases/latest), run it, and open Redux from the Start menu. Requires Windows 10 version 2004 or newer, x64. The default installation is per user under `%LOCALAPPDATA%\Programs\Redux`; administrator access is not required for ordinary installation or use.
+Download **ReduxSetup-0.18.0-win-x64.exe** from [Releases](https://github.com/baysidejr/redux/releases/latest), run it, and open Redux from the Start menu. Requires Windows 10 version 2004 or newer, x64. The default installation is per user under `%LOCALAPPDATA%\Programs\Redux`; administrator access is not required for ordinary installation or use.
 
 A portable ZIP is also available. Extract the complete `Redux` folder and run `Redux.exe`; keep `_internal` beside it. Python is included in both distributions.
 
@@ -16,7 +16,7 @@ The installer offers optional desktop and Windows startup shortcuts. Upgrades pr
 
 ## Features
 
-- Fullscreen library, platform collections, search, playlists and game details.
+- Fullscreen console shelf: every system's pixel-art tile, A to play; a wishlist fed from the built-in game database; search.
 - Gamepad navigation with SDL3 mappings and XInput fallback.
 - Integrated-core menu through Guide or Start+Select; save/load states, display settings and controls depend on core capabilities.
 - USB/internal PC optical-drive detection, buffering and installation of supported disc layouts.

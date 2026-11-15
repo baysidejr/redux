@@ -26,6 +26,7 @@ from .console_media import ConsoleMedia
 from .console_controllers import ConsoleControllers
 from .console_pc_games import ConsolePCGames
 from .console_cards import ConsoleGameCards
+from .console_stage import ConsoleStage
 from .console_controller_test import ConsoleControllerTest
 from .console_gamedb import ConsoleGameDatabase
 from .console_updates import ConsoleUpdates
@@ -50,7 +51,7 @@ def display_title(game):
 from .console_cores import ConsoleCores
 from .console_redux_controller import ConsoleReduxController
 
-class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleControllerTest,ConsoleGameDatabase,ConsoleUpdates,ConsolePCGames,ConsoleWindows,ConsoleFileBrowser,ConsoleIngame,ConsoleControllers,ConsoleMedia,ConsoleEditors,OverlayScreens,ReferenceLayout,SecondaryScreens,ToolsApp):
+class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleStage,ConsoleControllerTest,ConsoleGameDatabase,ConsoleUpdates,ConsolePCGames,ConsoleWindows,ConsoleFileBrowser,ConsoleIngame,ConsoleControllers,ConsoleMedia,ConsoleEditors,OverlayScreens,ReferenceLayout,SecondaryScreens,ToolsApp):
     def __init__(self,root,library_root=None,*,activation=None):
         from .windows_activation import parse_activation
         from .windows_gaming import WindowsGamingExperience
@@ -167,10 +168,10 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
         self._start_media_watch()
         self._start_card_watch()
         self._retire_scraper_files()
-        self.focus="welcome:card"
+        self.stage_animation=None;self.disc_autoplay=None
+        self.focus=f"home-system:{self.home_focused_system()}"
         root.after(40,self._tick)
         root.after(900,self._prewarm)
-        root.after(1500,self._link_database)
         root.after(500,self.first_core_setup)
 
     def _build(self):
@@ -269,9 +270,6 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
                 for lane in (True,False):self.art.backdrop(width,height,lane)
             for size in (11,12,13,14,15,16,17,18):self.fit_text("warm",100,size)
             self.fit_text("warm",100,17,"bold")
-            # The Playlists page's welcome tile, at the exact sizes it draws them.
-            self.art.image(self.art.welcome("box"),round(128*self.scale),round(124*self.scale),False,mode="contain",radius=0)
-            self.art.image(self.art.welcome("hero"),round(744*self.scale),round(124*self.scale),True,mode="cover",radius=round(3*self.scale))
         except (tk.TclError,AttributeError):pass
 
     def schedule_draw(self):
@@ -377,7 +375,6 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
             if action in {"menu","start"} and self.overlay.get("title") in {"Game paused","Game menu"}:self.back();return
             if action not in {"left","right","up","down","select","a","confirm","back","b","next"}:return
         if self.screen=="text" and action not in {"left","right","up","down","select","a","confirm","back","b","next"}:return
-        if not self.overlay and self.screen=="details" and self._details_navigation(action):return
         if not self.overlay and self.screen=="search" and self.keyboard_visible:
             if action in {"search","y","menu","start"}:self._type_key("RESULTS");return
             if action in {"details","favorite","x"}:self._type_key("BACKSPACE");return
@@ -387,8 +384,9 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
                 current=int(self.focus.split(":")[-1]) if str(self.focus).startswith("overlay:") else 0
                 self.focus=f"overlay:{max(0,min(len(self.overlay['items'])-1,current+(-1 if action=='up' else 1)))}"
                 self.schedule_draw();return
-            if self.focus and self.focus.startswith("game:") and self.screen in {"home","library","search"}:
-                rows=getattr(self,"home_rows",self.rows) if self.screen=="home" else self.rows
+            if self.screen=="home" and not self.overlay and self._home_shelf_move(action):return
+            if self.focus and self.focus.startswith("game:") and self.screen in {"library","search"}:
+                rows=self.rows
                 index=next((i for i,g in enumerate(rows) if f"game:{g['id']}"==self.focus),0)
                 delta={"left":-1,"right":1,"down":5,"up":-5}[action]
                 if self.screen=="home" and action in {"up","down"}:delta=0
@@ -406,9 +404,7 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
         elif action in {"search","y"}:
             if self.screen=="home" and str(self.focus).startswith("hero:") and self.inserted_disc():
                 self.inserted_disc_information();return
-            if self.screen in {"home","library","details"}:
-                if self._game_context():self.open_game(self.selected_id,tab="manage")
-            else:self.search_screen()
+            self.search_screen()
         elif action in {"menu","start"}:
             if self.embedded or self.playback and self.playback.active():self.game_menu()
             elif self.screen=="home" and str(self.focus).startswith("hero:") and self.inserted_disc():self.inserted_disc_options()
@@ -420,10 +416,38 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
             self.focus=keys[(keys.index(self.focus)+1)%len(keys)] if self.focus in keys else keys[0] if keys else None
             self.schedule_draw()
         elif action in {"shoulder_left","shoulder_right","lb","rb","previous_tab","next_tab"}:
+            if self.screen=="home":
+                systems=self.home_systems();index=systems.index(self.home_focused_system(systems))
+                target=max(0,min(len(systems)-1,index+(-8 if action in {"lb","shoulder_left","previous_tab"} else 8)))
+                self.focus=f"home-system:{systems[target]}";self.home_system=systems[target];self.schedule_draw();return
             systems=[None,*[s for s in SYSTEMS if any(g["system"]==s for g in self.all_games)]]
             current=systems.index(self.system_filter) if self.system_filter in systems else 0
             self.system_filter=systems[(current+(-1 if action in {"lb","shoulder_left","previous_tab"} else 1))%len(systems)]
             self.refresh()
+
+    def _home_shelf_move(self,action):
+        """Move among the console tiles by index, so paging follows the focus; up from the top row reaches the stage."""
+        systems=self.home_systems()
+        if self.focus=="hero:play" or self.focus=="hero:details":
+            if action=="down":
+                system=self.home_focused_system(systems);self.focus=f"home-system:{system}";self.schedule_draw();return True
+            return False
+        if not str(self.focus).startswith("home-system:"):return False
+        system=self.focus.split(":",1)[1]
+        index=systems.index(system) if system in systems else 0
+        if action=="up" and index%8<4:self.home_system=system;self.focus="hero:play";self.schedule_draw();return True
+        if action=="left" and index%4==0:return False
+        delta={"left":-1,"right":1,"down":4,"up":-4}[action]
+        target=index+delta
+        if action=="down" and index%8>=4 and target<len(systems):pass
+        if 0<=target<len(systems):
+            self.focus=f"home-system:{systems[target]}";self.home_system=systems[target];self.schedule_draw()
+        return True
+
+    def _play_game(self,identity):
+        """A on a game: play it. There is no game page any more."""
+        self.selected_id=identity
+        self.play()
 
     def activate(self):
         if self.busy:
@@ -460,13 +484,15 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
             self.view="all"
         self.focus=f"nav:{screen}" if screen in {"home","library","collections","systems","settings"} else "details:play"
         self.refresh()
-        if screen=="home":self.focus="welcome:card"
+        if screen=="home":self.focus=f"home-system:{self.home_focused_system()}"
         elif screen=="library":
             self.focus=f"game:{self.rows[0]['id']}" if self.rows else "facet:system"
             if self.rows:self.selected_id=self.rows[0]["id"]
         elif screen=="media":self.focus="shot:0"
         elif screen=="settings":self.settings_menu=True;self.focus="system:home"
-        elif screen=="collections":self.focus="collection:welcome"
+        elif screen=="collections":
+            entries=self.library.wishlist()
+            self.focus=f"wish:{entries[0]['id']}" if entries else "wishlist:database"
         elif screen=="saves":self.focus="saves:create"
         elif screen=="gamedb":self.focus=f"gamedb:{self.pages.get('gamedb',0)*27}"
         elif screen=="gamedb_game":self.focus="gamedb:back"
@@ -503,33 +529,7 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
         else:self.exit_menu()
 
     def open_game(self,game_id,tab="play"):
-        self.selected_id=game_id
-        self.details_tab=tab
-        self.navigate("details")
-        self.focus=f"details:{tab}"
-        self.schedule_draw()
-
-    def _details_navigation(self,action):
-        """Keep tabs and their content reachable independently of panel geometry."""
-        tabs=("play","manage","rate")
-        tab=getattr(self,"details_tab","play")
-        if tab not in tabs:tab="play"
-        tab_keys={f"details:{value}" for value in tabs}
-        left={"shoulder_left","lb","previous_tab"}
-        right={"shoulder_right","rb","next_tab"}
-        if action in left|right or (action in {"left","right"} and self.focus in tab_keys|{"details:launch"}):
-            step=-1 if action in left|{"left"} else 1
-            self._detail_tab(tabs[(tabs.index(tab)+step)%len(tabs)])
-            return True
-        if self.focus=="details:back" and action in {"down","right"}:
-            self.focus=f"details:{tab}"
-        elif self.focus in tab_keys and action=="up":self.focus="details:back"
-        elif self.focus in tab_keys and action=="down":
-            self.focus={"play":"details:launch","manage":"details:metadata","rate":"rating:1"}[tab]
-        elif action=="up" and self.focus in {"details:launch","details:metadata","details:art","details:collection","rating:1","rating:2","rating:3","rating:4","rating:5","rating:clear"}:
-            self.focus=f"details:{tab}"
-        else:return False
-        self.schedule_draw();return True
+        self._play_game(game_id)
 
     def _navigation_pointer(self,controller):
         self.controller_navigation=controller
@@ -595,7 +595,31 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
     def _sort(self,sort):self.sort=sort;self.refresh()
 
 
-    def _open_system(self,system):
+    def wishlist_menu(self,item):
+        self.menu(item["title"],[("Open in the Database",lambda:self._open_wishlist_entry(item)),("Move up",lambda:self._wishlist_move(item,-1)),
+            ("Move down",lambda:self._wishlist_move(item,1)),("Remove from wishlist",lambda:self._wishlist_remove(item)),("Back",lambda:None)],
+            message=SYSTEMS.get(item["system"],item["system"]))
+
+    def _open_wishlist_entry(self,item):
+        self.gamedb_system=item["system"];self.open_gamedb_game(item["database_id"])
+
+    def _wishlist_move(self,item,delta):
+        self.library.wishlist_move(item["id"],delta);self.focus=f"wish:{item['id']}";self.refresh()
+
+    def _wishlist_remove(self,item):
+        self.library.wishlist_remove(item["system"],item["database_id"])
+        entries=self.library.wishlist();self.focus=f"wish:{entries[0]['id']}" if entries else "wishlist:database";self.refresh()
+
+    def _open_system(self,system,origin=None):
+        """Open a console's games. From the shelf the tile grows into the stage first."""
+        from .console_stage import ZOOM_SECONDS
+        if origin and self.screen=="home" and not getattr(self,"_zoom_pending",False):
+            self._zoom_pending=True
+            self.start_stage(system,kind="zoom",origin=origin)
+            def land():
+                self._zoom_pending=False;self.clear_stage()
+                self.navigate("library",system=system,view="all",reset_scope=True)
+            self._later(int(ZOOM_SECONDS*1000),land);return
         self.navigate("library",system=system,view="all",reset_scope=True)
 
 
@@ -606,12 +630,6 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
 
     def _change_page(self,key,delta):
         self.pages[key]=max(0,self.pages.get(key,0)+delta);self.schedule_draw()
-
-    def _open_collection_view(self,view):self.navigate("library",view=view,reset_scope=True)
-    def _open_collection_view_all(self):self.navigate("library",view="all",reset_scope=True)
-    def _open_custom_collection(self,collection):
-        self.navigate("library",view="all",collection=collection,reset_scope=True)
-
 
     def _set_settings(self,section):self.settings_section=section;self.settings_menu=False;self.focus=f"setting:{section}";self.schedule_draw()
 
@@ -757,11 +775,6 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
             except (OSError,ValueError,TypeError) as error:messagebox.showerror("Emulator",str(error),parent=dialog)
         ttk.Button(frame,text="Save emulator",command=save,style="Accent.TButton").grid(row=4,column=1,pady=10)
 
-    def create_collection_dialog(self):
-        self.text_input("New collection","Collection name",lambda name:self._create_collection(name))
-
-    def _create_collection(self,name):self.library.create_collection(name);self.refresh()
-
     def text_input(self,title,label,callback,value="",*,secret=False,credential=False,hint=None,return_callback=None):
         self.text_prompt=dict(title=title,label=label,callback=callback,value=value,screen=self.screen,focus=self.focus,
                               secret=secret,credential=credential,hint=hint,return_callback=return_callback,keyboard_page="lower")
@@ -783,24 +796,6 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
         if prompt.get("credential"):prompt["value"]=""
         if prompt.get("return_callback"):prompt["return_callback"]()
 
-    def collection_menu(self):
-        game=self.selected()
-        if not game:return
-        memberships={c["id"] for c in self.library.game_collections(game["id"])}
-        items=[]
-        for collection in self.library.collections():
-            cid=collection["id"]
-            items.append((f"{'✓ ' if cid in memberships else '+ '}{collection['name']}",
-                lambda c=cid,existing=cid in memberships:self._membership(c,game["id"],existing)))
-        items.append(("Create a new playlist",self.create_collection_dialog))
-        items.append(("Cancel",lambda:None))
-        self.menu("Add to playlist",items)
-
-    def _membership(self,collection,game,remove):
-        if remove:self.library.remove_from_collection(collection,game)
-        else:self.library.add_to_collection(collection,game)
-        self.refresh()
-
     def game_actions(self):
         game=self.selected()
         if not game:return
@@ -817,30 +812,11 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
             ("Remove from wishlist" if game.get("wishlist") else "Add to wishlist",lambda:self._flag("wishlist",not game.get("wishlist"))),
             ("Saves & backups",lambda:self.navigate("saves")),("Screenshot gallery",lambda:self.navigate("screenshots")),("Remove library entry",self.remove_entry)])
 
-    def manage_collection(self):
-        item=next((c for c in self.library.collections() if c["id"]==self.collection_id),None)
-        if not item:return
-        game=self.selected() if str(self.focus).startswith("game:") else None
-        items=[]
-        if game:
-            items+=[("Move game up",lambda:self._move_in_playlist(item["id"],game["id"],-1)),
-                    ("Move game down",lambda:self._move_in_playlist(item["id"],game["id"],1)),
-                    ("Remove game from playlist",lambda:self._remove_from_playlist(item["id"],game["id"]))]
-        items+=[("Rename playlist",lambda:self.text_input("Rename playlist","Playlist name",lambda name:self.library.rename_collection(item["id"],name),item["name"])),
-                ("Delete playlist",lambda:self._confirm_collection_delete(item)),("Cancel",lambda:None)]
-        self.menu(item["name"],items,message="Games play in the order shown. Move the focused game to change it.")
-
     def _move_in_playlist(self,collection,game,delta):
         self.library.move_in_collection(collection,game,delta);self.refresh();self.focus=f"game:{game}";self.schedule_draw()
 
     def _remove_from_playlist(self,collection,game):
         self.library.remove_from_collection(collection,game);self.refresh()
-
-    def _confirm_collection_delete(self,item):
-        self.menu("Delete this playlist?",[("Keep playlist",lambda:None),("Delete playlist",lambda:self._delete_collection(item["id"]))],message="All games and media files stay in the library.")
-
-    def _delete_collection(self,identity):
-        self.library.delete_collection(identity);self.collection_id=None;self.navigate("collections",remember=False)
 
     def _screenshot_files(self):
         game=self.selected()
@@ -1038,6 +1014,7 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
             from .embedded import EmbeddedGame
             session=EmbeddedGame(library,game,core,firmware=firmware,audio=not self.preferences.get("mute",False))
             return session.start()
+        self.show_stage(game.get("system"),display_title(game))
         def started(session):
             try:record=library.start_session(game["id"])
             except Exception:
@@ -1076,7 +1053,7 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
             self.input_release_gate=True
             self.embedded.pause()
             items=[("Resume game",self._resume_embedded),("Save state",lambda:self.state_menu("save")),
-                ("Load state",lambda:self.state_menu("load")),("Display",self.video_filter_menu),
+                ("Load state",lambda:self.state_menu("load")),("Delete a save state",lambda:self.state_menu("delete")),("Display",self.video_filter_menu),
                 ("Controls",self.game_controls_menu),("Screenshot",lambda:self.state_operation("capture")),
                 ("Reset game",self._reset_embedded)]
             items.append(("Stop game and return to library",self._stop_embedded))
@@ -1134,11 +1111,20 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
             label=f"Slot {card.slot+1}  •  "+(stamp if card.exists else "Empty")
             items.append((label,lambda selected=card:self._request_state_operation(operation,selected,sid)))
         items.append(("Back to game menu",self.game_menu))
-        self.menu("Save state" if operation=="save" else "Load state",items,message="Choose a slot. Saving replaces that slot's previous state." if operation=="save" else "Choose a state to restore. Loading replaces your current in-memory game progress.")
+        titles={"save":"Save state","load":"Load state","delete":"Delete a save state"}
+        messages={"save":"Choose a slot. Saving replaces that slot's previous state.","load":"Choose a state to restore. Loading replaces your current in-memory game progress.",
+                  "delete":"Choose a state to delete. In-game battery saves are not touched."}
+        self.menu(titles.get(operation,operation.title()),items,message=messages.get(operation,""))
         self.overlay.update(kind="state_slots",cards=slot_cards,operation=operation)
         if sid:self.overlay["resume_id"]=sid
 
     def _request_state_operation(self,operation,card,sid=None):
+        if operation=="delete":
+            if not card.exists:
+                self.notice("Nothing to delete","This slot is empty.");self.overlay["back_action"]=lambda:self.state_menu(operation,sid);return
+            self.menu("Delete this state?",[("Cancel",lambda:self.state_menu(operation,sid)),("Delete state",lambda:self.state_operation(operation,card.slot,sid))],
+                      message=f"Slot {card.slot+1} is removed for good. Battery saves stay.")
+            self.overlay["back_action"]=lambda:self.state_menu(operation,sid);return
         if operation=="load" and (not card.exists or not card.compatible):
             self.notice("State unavailable","This slot is empty." if not card.exists else "OLD • This state was made by another core build." if card.old_version else card.error or "This state cannot be loaded.")
             if sid:self.overlay["resume_id"]=sid
@@ -1157,9 +1143,9 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
         if not backend:raise RuntimeError("This backend has no state interface")
         def work():return backend.capture() if operation=="capture" else getattr(backend,operation)(slot)
         def done(result):
-            self.status.set(f"Screenshot saved: {result}" if operation=="capture" else f"State {operation} completed • slot {slot+1}")
+            self.status.set(f"Screenshot saved: {result}" if operation=="capture" else f"State deleted • slot {slot+1}" if operation=="delete" else f"State {operation} completed • slot {slot+1}")
             self.game_menu()
-        self.task(work,done,"Capturing game frame…" if operation=="capture" else f"{operation.title()} state • slot {slot+1}…",cancellable=False)
+        self.task(work,done,"Capturing game frame…" if operation=="capture" else f"{'Deleting' if operation=='delete' else operation.title()} state • slot {slot+1}…",cancellable=False)
 
     def _backup_current(self,sid):
         from .saves import SaveStore
@@ -1297,7 +1283,8 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
                 if record is not None:self.library.finish_session(record,duration_seconds=session.play_seconds,exit_code=1 if failure else 0)
             finally:
                 self.embedded=None;self.embedded_record=None;self.game_photo=None;self.held_keys.clear()
-                self.screen="details";self.overlay=None;self.focus="details:play";self.refresh()
+                self.clear_stage();self.home_system=(getattr(self,"embedded_game",None) or {}).get("system") or getattr(self,"home_system",None)
+                self.screen="home";self.overlay=None;self.focus=f"home-system:{self.home_focused_system()}";self.refresh()
             self.status.set("Playback stopped: "+failure if failure else "Game closed • battery saves and play history stored")
             if failure:self.notice("Playback stopped",failure)
             if exit_after:self._close_now()
@@ -1329,7 +1316,7 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
                 try:self._catalogue_ready(self.catalogue_queue.get_nowait())
                 except queue.Empty:pass
             self._harvest_sessions()
-            self._poll_database_link()
+            self._stage_tick()
             self._redux_controller_tick()
             try:
                 sid,ready=self.bridge_events.get_nowait()

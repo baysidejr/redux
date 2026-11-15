@@ -526,12 +526,6 @@ def sync_card(library, marker, *, cancelled=None, catalogue=None, progress=None)
                 if item.arguments or item.working_directory:
                     library.configure_pc_game(game["id"], list(item.arguments), item.working_directory or None)
                 game = _apply_card_art(library, game, item.folder)
-                # The shipped database knows GOG games by product id: fill the facts the card does not carry.
-                try:
-                    from .gamedb_link import link_game
-                    link_game(library, game, serial=item.store_id or None)
-                except (OSError, ValueError):
-                    pass
                 if already:
                     result.existing += 1
                 else:

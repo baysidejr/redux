@@ -334,6 +334,11 @@ class Library:
                 """CREATE TABLE IF NOT EXISTS collections (
                     id INTEGER PRIMARY KEY, name TEXT NOT NULL, name_key TEXT NOT NULL UNIQUE,
                     created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ','now')))""",
+                """CREATE TABLE IF NOT EXISTS wishlist (
+                    id INTEGER PRIMARY KEY, system TEXT NOT NULL, database_id TEXT NOT NULL, title TEXT NOT NULL,
+                    position INTEGER NOT NULL DEFAULT 0,
+                    added_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ','now')),
+                    UNIQUE(system,database_id))""",
                 """CREATE TABLE IF NOT EXISTS collection_games (
                     collection_id INTEGER NOT NULL REFERENCES collections(id) ON DELETE CASCADE,
                     game_id INTEGER NOT NULL REFERENCES games(id) ON DELETE CASCADE,
@@ -357,6 +362,7 @@ class Library:
                 "launchers":{"system","executable","arguments"},
                 "collections":{"id","name","name_key","created_at"},
                 "collection_games":{"collection_id","game_id","position"},
+                "wishlist":{"id","system","database_id","title","position","added_at"},
                 "play_sessions":{"id","game_id","started_at","ended_at","duration_seconds","status","exit_code"},
             }
             for table,required in required_tables.items():
@@ -744,6 +750,43 @@ class Library:
         with self.connect() as db:
             db.execute("UPDATE games SET favorite=CASE favorite WHEN 0 THEN 1 ELSE 0 END WHERE id=?",(game_id,))
         return self.game(game_id)
+
+    # ------------------------------------------------------------------ the wishlist: database games to play one day
+    def wishlist(self):
+        with self.connect() as db:
+            rows=db.execute("SELECT * FROM wishlist ORDER BY position,id").fetchall()
+        return [dict(row) for row in rows]
+
+    def wishlist_has(self,system,database_id):
+        with self.connect() as db:
+            return db.execute("SELECT 1 FROM wishlist WHERE system=? AND database_id=?",(str(system),str(database_id))).fetchone() is not None
+
+    def wishlist_add(self,system,database_id,title):
+        """Put a database game on the list, at the end. Returns False when it is already there."""
+        system,database_id=str(system),str(database_id)
+        if not system or not database_id:raise ValueError("A wishlist entry names a database game")
+        name=_name(title or database_id,"Title",500)
+        with self.connect() as db:
+            if db.execute("SELECT 1 FROM wishlist WHERE system=? AND database_id=?",(system,database_id)).fetchone():return False
+            position=(db.execute("SELECT COALESCE(MAX(position),0) FROM wishlist").fetchone()[0] or 0)+1
+            db.execute("INSERT INTO wishlist(system,database_id,title,position) VALUES(?,?,?,?)",(system,database_id,name,position))
+        return True
+
+    def wishlist_remove(self,system,database_id):
+        with self.connect() as db:
+            db.execute("DELETE FROM wishlist WHERE system=? AND database_id=?",(str(system),str(database_id)))
+            for index,row in enumerate(db.execute("SELECT id FROM wishlist ORDER BY position,id").fetchall(),1):
+                db.execute("UPDATE wishlist SET position=? WHERE id=?",(index,row["id"]))
+
+    def wishlist_move(self,entry_id,delta):
+        """Move an entry up (-1) or down (+1); the ends clamp."""
+        with self.connect() as db:
+            ids=[row["id"] for row in db.execute("SELECT id FROM wishlist ORDER BY position,id").fetchall()]
+            if entry_id not in ids:raise KeyError("No such wishlist entry")
+            index=ids.index(entry_id);target=max(0,min(len(ids)-1,index+int(delta)))
+            ids.insert(target,ids.pop(index))
+            for position,identity in enumerate(ids,1):
+                db.execute("UPDATE wishlist SET position=? WHERE id=?",(position,identity))
 
     def collections(self):
         with self.connect() as db:

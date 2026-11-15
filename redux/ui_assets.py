@@ -102,10 +102,6 @@ class Artwork:
             if candidate.is_file():return candidate
         return None
 
-    def welcome(self,kind="hero"):
-        """The welcome banner (hero) or box art shown before any game is chosen."""
-        return self.bundled("welcome","banner.jpg" if kind=="hero" else "box.jpg")
-
     def path(self,system,kind="hero",custom=None):
         if custom and Path(custom).is_file():return Path(custom)
         # Original system tiles ship with the frontend (owner-made pixel art, plus the PC

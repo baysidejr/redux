@@ -1,9 +1,7 @@
 """The Database pages: System → Database lists the systems, a system lists its games, a game has its own page."""
 from __future__ import annotations
 
-import queue
 import shutil
-import threading
 from pathlib import Path
 
 from .gamedb import GameDatabase, LABELS, title_key
@@ -21,37 +19,6 @@ class ConsoleGameDatabase:
         if database is None:
             database = self._game_database = GameDatabase()
         return database
-
-    # ------------------------------------------------------------------ the collection and the database
-    def _link_database(self):
-        """Fill empty facts for collection games from the database, off the UI thread; redraw when done."""
-        thread=getattr(self,"_database_link_thread",None)
-        if thread is not None and thread.is_alive():
-            return
-        from .gamedb_link import backfill
-        results=self.gamedb_link_results=queue.Queue()
-        library,database=self.library,self.gamedb
-        def work():
-            try:
-                results.put(backfill(library,database))
-            except Exception:
-                results.put(0)
-        self._database_link_thread=threading.Thread(target=work,name="gamedb-link",daemon=True)
-        self._database_link_thread.start()
-
-    def _poll_database_link(self):
-        results=getattr(self,"gamedb_link_results",None)
-        if results is None:
-            return
-        try:
-            changed=results.get_nowait()
-        except queue.Empty:
-            return
-        self.gamedb_link_results=None
-        if changed and not self.busy:
-            self.__dict__.pop("_database_links",None)
-            self.refresh()
-            self.schedule_draw()
 
     def _retire_scraper_files(self):
         """Artwork scraping is gone since 0.13: remove the saved accounts and caches it left behind."""
@@ -130,8 +97,15 @@ class ConsoleGameDatabase:
         return None
 
     def _open_owned(self, row):
-        self.selected_id = row["id"]
-        self.navigate("details")
+        self.navigate("library", system=row["system"], view="all", reset_scope=True)
+        self.selected_id = row["id"];self.focus = f"game:{row['id']}";self.schedule_draw()
+
+    def toggle_wishlist(self, system, game):
+        if self.library.wishlist_has(system, game["id"]):
+            self.library.wishlist_remove(system, game["id"]);self.status.set("Removed from your wishlist")
+        else:
+            self.library.wishlist_add(system, game["id"], game["title"]);self.status.set("Added to your wishlist")
+        self.schedule_draw()
 
     def _gamedb_pager(self, key, total, size, X, R, y=642):
         if total <= size:
@@ -255,6 +229,9 @@ class ConsoleGameDatabase:
             self.panel(1010, 400, 230, 30, ACCENT, radius=2)
             self.display(1125, 415, "IN MY COLLECTION", 14, WHITE, "bold", anchor="center")
             self.button_canvas("gamedb:open", "Open", 1010, 455, 230, 36, lambda row=owned: self._open_owned(row))
+        library = getattr(self, "library", None)
+        listed = bool(library is not None and hasattr(library, "wishlist_has") and library.wishlist_has(system, game["id"]))
+        self.button_canvas("gamedb:wish", "On your wishlist  ·  remove" if listed else "Add to wishlist", 1010, 500 if owned else 455, 230, 36, lambda: self.toggle_wishlist(system, game))
         facts = [f"{label}: {value}" for label, value in self.gamedb.facts(game) if label != "Released"]
         self.text(404, 496, self.fit_text("   ·   ".join(facts) if facts else "No further information in the database.", 790, 13), 13, "#a8a8ae")
         description = (game.get("description") or "").replace("\r\n", "\n").strip()

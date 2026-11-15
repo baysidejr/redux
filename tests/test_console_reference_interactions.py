@@ -23,55 +23,11 @@ class ReferenceInteractionTests(unittest.TestCase):
 
     def event(self,keysym,char="",state=0):return SimpleNamespace(keysym=keysym,char=char,state=state)
 
-    def test_controller_details_tabs_work_from_launch_panel_and_preserve_game_scope(self):
-        app=self.bare("details");app.details_tab="play";app.focus="details:launch"
-        app.system_filter="sega_cd"
-        for action,expected in (("right","manage"),("rb","rate"),("lb","manage"),("left","play")):
-            app._route_controller_events([SimpleNamespace(action=action,pressed=True)])
-            self.assertEqual((app.details_tab,app.focus),(expected,f"details:{expected}"))
-            self.assertEqual((app.selected_id,app.system_filter),(1,"sega_cd"))
-
-    def test_details_content_back_and_tabs_are_reachable_without_mouse(self):
-        for tab,first in (("play","details:launch"),("manage","details:metadata"),("rate","rating:1")):
-            app=self.bare("details");app.details_tab=tab;app.focus=f"details:{tab}"
-            for action,expected in (("down",first),("up",f"details:{tab}"),("up","details:back"),("down",f"details:{tab}")):
-                app.input_action(action);self.assertEqual(app.focus,expected)
-
-    def test_details_controller_can_activate_manage_action_and_return(self):
-        app=self.bare("details");app.details_tab="play";app.focus="details:play";calls=[]
-        app.callbacks={"details:metadata":lambda:calls.append("metadata")}
-        for action in ("right","down","select"):
-            app._route_controller_events([SimpleNamespace(action=action,pressed=True)])
-        self.assertEqual(calls,["metadata"])
-        app.back=lambda:calls.append("back")
-        app._route_controller_events([SimpleNamespace(action="back",pressed=True)])
-        self.assertEqual(calls,["metadata","back"])
-
-    def test_controller_hides_pointer_and_stationary_motion_cannot_steal_focus(self):
-        app=self.bare("details");changes=[]
-        app.canvas=SimpleNamespace(winfo_pointerxy=lambda:(150,200),configure=lambda **kw:changes.append(kw))
-        app.focus="details:play";app.details_tab="play"
-        app.targets=[FocusTarget("details:launch",(0,0,300,300))]
-        app.scale=1;app.offset_x=app.offset_y=0
-        app._route_controller_events([SimpleNamespace(action="right",pressed=True)])
-        self.assertEqual(changes[-1],{"cursor":"none"})
-        app._motion(SimpleNamespace(x=150,y=200,x_root=150,y_root=200))
-        self.assertEqual(app.focus,"details:manage")
-        app._motion(SimpleNamespace(x=160,y=200,x_root=160,y_root=200))
-        self.assertEqual(changes[-1],{"cursor":""})
-        self.assertEqual(app.focus,"details:launch")
-
     def test_controller_releases_do_not_hide_pointer_or_navigate(self):
         app=self.bare("details");app.details_tab="play";app.focus="details:play"
         app._route_controller_events([SimpleNamespace(action="right",pressed=False)])
         self.assertFalse(getattr(app,"controller_navigation",False))
         self.assertEqual(app.focus,"details:play")
-
-    def test_details_tab_shortcuts_do_not_escape_overlay(self):
-        app=self.bare("details");app.details_tab="play";app.focus="overlay:0"
-        app.overlay={"title":"Information","items":[("OK",lambda:None)]}
-        app.input_action("rb")
-        self.assertEqual((app.details_tab,app.focus),("play","overlay:0"))
 
     def navigation_app(self):
         app=self.bare("home")

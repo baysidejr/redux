@@ -33,21 +33,15 @@ class ConsoleMedia:
         self.media_versions={}
         self.media_stopping=threading.Event()
         def enrich():
-            from .gamedb import GameDatabase
-            from .gamedb_link import disc_enrichment
-            database=GameDatabase()
+            # A disc is named by its header (and a workspace catalogue when one is configured).
+            # The shipped database is a place to browse, not something a disc borrows from.
             while not self.media_stopping.is_set():
                 request=self.media_requests.get()
                 if request is None:return
                 version,identity,catalogue=request
                 try:
                     metadata=catalogue_disc_match(catalogue,identity) or {}
-                    # The shipped database supplies facts and art; a workspace catalogue's own values win.
-                    facts,artwork=disc_enrichment(database,identity)
-                    merged=dict(facts);merged.update({key:value for key,value in metadata.items() if value not in (None,"")})
-                    if merged.get("cover_path") or merged.get("artwork_path"):artwork.pop("cover_path",None)
-                    if merged.get("hero_path"):artwork.pop("hero_path",None)
-                    self.media_results.put((version,identity,merged,artwork))
+                    self.media_results.put((version,identity,metadata,{}))
                 except (OSError,ValueError,RuntimeError,ImportError,TypeError,AttributeError):
                     # Detection remains useful without optional metadata/artwork.
                     self.media_results.put((version,identity,{},{}))
@@ -64,7 +58,7 @@ class ConsoleMedia:
         for event in self.media_watcher.poll_events():
             changed=self.discs.apply(event)
             if event.kind in {"inserted","changed"} and event.identity:
-                self._enrich_disc(event.identity)
+                self._enrich_disc(event.identity);self.note_disc_insert(event)
             elif event.kind=="removed":
                 self.media_versions[event.drive]=self.media_versions.get(event.drive,0)+1
             if changed:

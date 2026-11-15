@@ -262,14 +262,14 @@ class DatabasePagesTests(unittest.TestCase):
         self.assertIn("Sonic CD", app.texts);self.assertIn("Time travel.", app.texts)
         self.assertIn("Developer: Sonic Team   ·   Publisher: Sega   ·   Genre: Platform   ·   Players: 1 player   ·   Rating: E - Everyone", app.texts)
         self.assertIn("Releases: USA · Europe 4407", app.texts)
-        self.assertEqual(app.targets, ["gamedb:back"])
+        self.assertEqual(app.targets, ["gamedb:back", "gamedb:wish"])
         self.assertTrue(any(p and Path(p).name == "boxart.jpg" for p in app.pictures))
         app.all_games = [dict(id=7, system="sega_cd", title="Sonic CD (USA)")]
         app.targets = [];app.callbacks = {};app.texts = []
         ConsoleGameDatabase._gamedb_game(app)
         self.assertIn("IN MY COLLECTION", app.texts);self.assertIn("gamedb:open", app.targets)
         app.callbacks["gamedb:open"]()
-        self.assertEqual((app.selected_id, app.screen), (7, "details"))
+        self.assertEqual((app.selected_id, app.screen, app.system_filter), (7, "library", "sega_cd"))
 
     def test_back_from_a_game_returns_to_its_list_and_then_to_the_database_page(self):
         app = self.app()

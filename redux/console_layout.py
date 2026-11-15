@@ -12,13 +12,13 @@ import tkinter as tk
 from tkinter import font as tkfont
 
 from .library import SYSTEMS,ARTWORK_FIELDS
+from .game_cards import CD_SYSTEMS,system_folder_name
 from .ui_model import FocusTarget,page_window
 from .ui_theme import Painter,BACKGROUND,SURFACE,RAISED,WHITE,SUBTLE,MUTED,ACCENT
 from . import __version__
 from .brand import fuji_shapes
 
 LANE=1280*520/1920
-DATABASE_ROLES={"cover":"boxart","hero":"hero","screenshot":"gameimage"}
 LANE_SCREENS=frozenset({"home","systems","collections","settings","saves","media"})
 BADGES={"welcome":("REDUX","#e5405e"),"psx":("PS","#8e24aa"),"nes":("NES","#ec407a"),"snes":("SNES","#7e57c2"),
     "3do":("3DO","#bb653e"),"sega_cd":("SEGA CD","#1f5fa8"),"pce_cd":("TG-CD","#c98a2e"),
@@ -53,7 +53,7 @@ class ReferenceLayout:
             self.photos.append(background)
             self.canvas.create_image(self.offset_x,self.offset_y,anchor="nw",image=background)
             if lane:self._header()
-        screen={"home":self._home,"library":self._library,"details":self._game_details,
+        screen={"home":self._home,"library":self._library,
             "systems":self._systems,"collections":self._collections,"settings":self._settings,
             "search":self._search,"saves":self._saves,"gameplay":self._gameplay,
             "text":self._text_editor,"screenshots":self._screenshots,"screenshot":self._screenshot,
@@ -117,7 +117,7 @@ class ReferenceLayout:
         self.icon("search",82,65,28)
         self.target(search,(64,47,128,111),self.search_screen,"Search")
         # My Collection is home; a system's grid is a sub page it opens, not a lane entry.
-        entries=[("home","My Collection",266),("collections","Playlists",342),("media","Media",416),("settings","System",490)]
+        entries=[("home","Home",266),("collections","Wishlist",342),("media","Media",416),("settings","System",490)]
         current="home" if self.screen in {"systems","library"} else "settings" if self.screen in {"saves","text"} else self.screen
         for screen,label,y in entries:
             key=f"nav:{screen}";focused=self.focus==key;active=current==screen
@@ -149,26 +149,13 @@ class ReferenceLayout:
         return w
 
     def _game_artwork(self,game,role):
-        if not game:return None
-        if game.get(ARTWORK_FIELDS[role]):
-            try:
-                custom=self.library.artwork_for(game) if role=="cover" else self.library.artwork_for(game,role=role)
-                if custom and Path(custom).is_file():return custom
-            except (OSError,ValueError):pass
-        return self._database_artwork(game,role)
-
-    def _database_artwork(self,game,role):
-        """The shipped database's box art, banner or game image stands in when a game has no file of its own."""
-        if role not in DATABASE_ROLES or not game.get("system"):return None
-        database=getattr(self,"gamedb",None)
-        if database is None:return None
-        from .gamedb_link import database_game,art_for
-        key=(game.get("id"),game.get("system"),game.get("title"),game.get("game_id"),game.get("store_id"))
-        cache=self.__dict__.setdefault("_database_links",{})
-        if key not in cache:
-            if len(cache)>2048:cache.clear()
-            cache[key]=database_game(database,game["system"],serial=game.get("game_id") or game.get("store_id"),title=game.get("title"))
-        return art_for(database,cache[key],role)
+        """The player's own art for a game, or None. The database is a place to browse, not a source for the shelf."""
+        if not game or not game.get(ARTWORK_FIELDS[role]):return None
+        try:
+            custom=self.library.artwork_for(game) if role=="cover" else self.library.artwork_for(game,role=role)
+            if custom and Path(custom).is_file():return custom
+        except (OSError,ValueError):pass
+        return None
 
     def _captured_game_screenshot(self,game):
         if not game:return None
@@ -192,78 +179,49 @@ class ReferenceLayout:
         # the cover panel and use purpose-specific art/gameplay above it.
         return self._game_artwork(game,"hero") or self._game_screenshot(game)
 
-    def _home(self):
-        game=self.selected();system=game["system"] if game else "psx"
-        disc=self.inserted_disc()
-        if disc:system=disc.system or "unknown"
-        # The welcome banner is the first thing on screen: it fronts the Welcome card and
-        # any home without a chosen game, until a disc or a focused game takes over.
-        welcome=not disc and (self.focus=="welcome:card" or not game)
-        if welcome:system="welcome"
-        x=LANE;w=1280-x;h=w*437/1400
-        image=disc.hero_path if disc else self.art.welcome("hero") if welcome else self._game_hero(game) or self.art.path(system,"hero")
-        if not self.picture(image,x,0,w,h,shade=bool(disc)):
-            self.rect(x,0,w,h,"#17121f")
-            if not disc:self.display(x+54,100,"Welcome to Redux" if welcome else SYSTEMS.get(system,"Your collection"),54,"#72707a")
-        if disc:
-            self._top_shade(x,0,w,h-29)
-            has_cover=disc.cover_path and self.picture(disc.cover_path,x+22,20,168,h-66,mode="contain")
-            tx=x+216 if has_cover else x+36
-            self.display(tx,58,"DISC INSERTED" if not disc.is_virtual else "MOUNTED IMAGE",14,"#c7c1d1","bold")
-            self.display(tx,92,disc.title.upper(),38,WHITE,"bold",width=1280-tx-30)
-            facts=[SYSTEMS.get(system,"Unidentified system"),disc.drive]
-            if disc.metadata.get("year"):facts.append(str(disc.metadata["year"]))
-            if disc.game_id:facts.append(disc.game_id)
-            self.display(tx,197,"  ·  ".join(facts),18,"#dedbe3")
-            self.display(tx,227,"Installed  ·  A to play" if self.installed_disc_game(disc) else "Not installed  ·  A to install and play",16,"#b4b0bb")
-        self._identity(1090,27)
-        strip_y=h-29
-        self.rect(x,strip_y,w,29,"#080808")
-        badge_width=self._badge(system,x+12,strip_y+4)
-        self.display(x+max(65,24+badge_width),strip_y+7,self.fit_text(disc.title.upper() if disc else "WELCOME TO REDUX" if welcome else title(game).upper(),540,15),15,WHITE)
-        self._controller_hint("A","Play" if disc else "Storage" if welcome else "Play",1080,strip_y+6,"#35a4c6")
-        self._controller_hint("Y","Info" if disc else "Manage",1180 if disc else 1163,strip_y+6,"#d6bb34")
-        self.target("hero:play",(x+2,2,1278,h-2),self.play_disc if disc else self._open_media if welcome else self.play,"Play disc" if disc else "Storage" if welcome else "Play selected game")
-        self.target("hero:details",(1174 if disc else 1158,strip_y,1279,h),self.inserted_disc_information if disc else (lambda:self.open_game(game["id"])) if game else self._open_media,"Disc information" if disc else "Manage game")
-        if self.focus in {"hero:play","hero:details"}:self.rect(x+1,1,w-3,h-2,"",WHITE,2)
-        self.display(360,315,"Systems",21,"#a2a2a4")
-        systems=[s for s in SYSTEMS if s!="unknown" and any(g["system"]==s for g in self.all_games)]
-        if not systems:
-            self._empty_home();return
-        system_index=next((i for i,s in enumerate(systems) if f"home-system:{s}"==self.focus),0)
-        start=max(0,min(system_index-3,len(systems)-4))
-        for i,s in enumerate(systems[start:start+4]):
-            sx=360+i*(213+13.5);key=f"home-system:{s}"
-            self._system_tile(s,key,sx,348,213,149,lambda value=s:self._open_system(value))
-        self.display(360,524,"Continue Playing" if any(g.get("last_played") for g in self.all_games) else "My Games",21,"#a2a2a4")
-        games=sorted(self.all_games,key=lambda item:item.get("last_played") or "",reverse=True)
-        self.home_rows=games
-        # The Welcome card leads the row; the game cards follow it in the same window.
-        entries=["welcome",*games]
-        index=next((i for i,g in enumerate(entries) if (g=="welcome" and self.focus=="welcome:card") or (g!="welcome" and f"game:{g['id']}"==self.focus)),0)
-        start=max(0,min(index-3,len(entries)-4))
-        for i,entry in enumerate(entries[start:start+4]):
-            if entry=="welcome":self._welcome_card(360+i*226.5,558,213,149)
-            else:self._card(entry,360+i*226.5,558,213,149)
+    def home_systems(self):
+        from .console_stage import HOME_ORDER
+        return [s for s in HOME_ORDER if s in SYSTEMS]+[s for s in SYSTEMS if s not in HOME_ORDER and s!="unknown"]
 
-    def _welcome_card(self,x,y,w,h):
-        key="welcome:card"
-        self.rect(x,y,w,h,"#111113")
-        if not self.picture(self.art.welcome("box"),x,y,w,h,mode="contain"):
-            self.display(x+w/2,y+h/2,"Welcome",24,WHITE,anchor="center")
-        if self.focus==key:self.rect(x-3,y-3,w+6,h+6,"",WHITE,2)
-        self.target(key,(x,y,x+w,y+h),self._open_media,"Welcome")
+    def home_focused_system(self,systems=None):
+        systems=systems or self.home_systems()
+        if str(self.focus).startswith("home-system:"):
+            system=self.focus.split(":",1)[1]
+            if system in systems:self.home_system=system;return system
+        remembered=getattr(self,"home_system",None)
+        if remembered in systems:return remembered
+        owned=[s for s in systems if any(g["system"]==s for g in self.all_games)]
+        return owned[0] if owned else systems[0]
+
+    def _home(self):
+        """Home: the stage above, every console below. A console opens its games; a disc plays."""
+        from .console_stage import ZOOM_SECONDS
+        disc=self.inserted_disc()
+        systems=self.home_systems()
+        counts={}
+        for game in self.all_games:counts[game["system"]]=counts.get(game["system"],0)+1
+        focused=self.home_focused_system(systems)
+        x=LANE;w=1280-x;h=w*437/1400
+        animation=getattr(self,"stage_animation",None)
+        zooming=bool(animation and animation.get("origin") and time.monotonic()-animation["started"]<ZOOM_SECONDS)
+        if not zooming:self._stage(x,0,w,h,disc,focused,counts)
+        self._identity(1090,27)
+        self.display(360,315,"Consoles",21,"#a2a2a4")
+        index=systems.index(focused) if focused in systems else 0
+        page=index//8;pages=max(1,(len(systems)+7)//8)
+        self.display(1248,322,f"{page+1} / {pages}   ·   LB  RB",13,"#8b8b91",anchor="ne")
+        for i,s in enumerate(systems[page*8:page*8+8]):
+            sx=360+(i%4)*226.5;sy=348+(i//4)*176;key=f"home-system:{s}"
+            self._system_tile(s,key,sx,sy,213,149,lambda value=s,rect=(sx,sy,213,149):self._open_system(value,origin=rect))
+            count=counts.get(s,0)
+            if count:
+                self.rect(sx+213-46,sy+149-26,46,26,"#080808")
+                self.display(sx+213-23,sy+149-13,str(count),14,WHITE,"bold",anchor="center")
+        if zooming:self._stage(x,0,w,h,disc,focused,counts)
 
     def _open_media(self):
         """Where games come from: the System → Storage page."""
         self.navigate("settings");self._set_settings("storage")
-
-    def _empty_home(self):
-        # Games arrive from a disc or an attached game drive; there is nothing to add by hand.
-        self._welcome_card(360,348,213,149)
-        self.display(599,365,"Your games arrive on their own",30,WHITE)
-        self.display(600,409,"Insert a disc or connect your game card or drive.\nRedux plays them from where they are.",20,"#a1a1a5",width=610)
-        self.button_canvas("home:storage","Storage",600,473,205,42,self._open_media)
 
     def _system_tile(self,system,key,x,y,w,h,callback):
         if not self.picture(self.art.path(system,"tile"),x,y,w,h):
@@ -303,12 +261,12 @@ class ReferenceLayout:
         if not game.get("available"):
             self.rect(x,y+h-59,w,24,"#342322");self.display(x+9,y+h-56,"Media offline",15,"#edb7a7")
         if self.focus==key:self.rect(x-3,y-3,w+6,h+6,"",WHITE,2)
-        self.target(key,(x,y,x+w,y+h),lambda identity=game["id"]:self.open_game(identity),game["title"])
+        self.target(key,(x,y,x+w,y+h),lambda identity=game["id"]:self._play_game(identity),game["title"])
 
     def _library(self):
         game_system=self.system_filter
         collection=next((c["name"] for c in self.library.collections() if c["id"]==self.collection_id),None)
-        heading=collection or SYSTEMS.get(game_system,"My Collection")
+        heading=collection or SYSTEMS.get(game_system,"All games")
         if self.view!="all":heading={"favorites":"Favorites","continue":"Continue Playing","wishlist":"Wishlist","completed":"Completed Games"}.get(self.view,heading)
         focused_game=self.selected() if str(self.focus).startswith("game:") else None
         if focused_game:heading=title(focused_game).upper()
@@ -333,7 +291,7 @@ class ReferenceLayout:
         if collection:self.button_canvas("collection:manage","Edit playlist",1030,220,170,35,self.manage_collection)
         if not self.rows:
             self.display(80,325,"No games in this view",34,WHITE)
-            self.display(80,378,"Choose a different filter, insert a disc or connect a game card.",21,"#8e8e94")
+            self.display(80,378,("Insert a disc to install and play it." if game_system in CD_SYSTEMS else "Install GOG games on a GOG cartridge." if game_system=="pc" else f"Put games in the {system_folder_name(game_system)} folder of a console cartridge.") if game_system else "Insert a disc or connect a console cartridge.",21,"#8e8e94")
             self.button_canvas("empty:storage","Storage",80,440,213,45,self._open_media,True);return
         index=next((i for i,g in enumerate(self.rows) if f"game:{g['id']}"==self.focus),0)
         start,end=page_window(len(self.rows),index,5,2)
@@ -342,7 +300,7 @@ class ReferenceLayout:
 
     def library_views(self):
         self.menu("Show",[(label,lambda value=view:self._filter(value)) for view,label in
-            [("all","All Games"),("continue","Continue Playing"),("favorites","Favorites"),("wishlist","Wishlist"),("completed","Completed Games")]])
+            [("all","All Games"),("continue","Continue Playing"),("favorites","Favorites"),("completed","Completed Games")]])
 
     def facet_menu(self,kind):
         self.facet_tab=kind

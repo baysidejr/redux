@@ -60,7 +60,7 @@ class SecondaryScreens:
 
     # The System menu: one horizontal row of icons over the dimmed screen, like a console's
     # system bar. The focused item names itself above the row; A opens it, B leaves.
-    SYSTEM_ITEMS=(("home","Home","home","Return to My Collection"),
+    SYSTEM_ITEMS=(("home","Home","home","Back to the console shelf"),
                   ("storage","Storage","storage","Where Redux and your games live."),
                   ("database","Database","disc","Every game Redux knows, system by system."),
                   ("input","Controllers","controller","Made to feel at home in your hands."),
@@ -185,34 +185,27 @@ class SecondaryScreens:
             self._setting_row("settings:fullscreen","Fullscreen","ON · A switches to windowed mode" if fullscreen else "OFF · A fills the display",608,self.fullscreen,icon="systems",toggle=fullscreen)
 
     def _collections(self):
-        self._secondary_heading("Made for your collection","Playlists","Keep great games together.")
-        self.button_canvas("collection:new","+  New playlist",1040,67,208,40,self.create_collection_dialog,True)
-        # The Welcome tile leads Playlists as it leads Now Playing: box art, then the banner.
-        focused=self.focus=="collection:welcome"
-        self.panel(370,140,878,128,"#2c232a" if focused else PANEL,3,WHITE if focused else None)
-        self.rect(372,142,128,124,"#111113")
-        self.picture(self.art.welcome("box"),372,142,128,124,mode="contain")
-        if not self.picture(self.art.welcome("hero"),502,142,744,124,shade=True,radius=3):self.rect(502,142,744,124,"#17121f")
-        self.display(524,170,"WELCOME",14,"#c7c1d1","bold")
-        self.display(524,194,"Every world you own, under one roof.",22,WHITE)
-        self.target("collection:welcome",(370,140,1248,268),self._open_collection_view_all,"Welcome")
-        # A playlist is an ordered list of installed games, nothing more.
-        collections=self.library.collections();self.text(370,288,"YOUR PLAYLISTS",11,MUTED,"bold")
-        self.text(1248,288,str(len(collections)),12,MUTED,anchor="ne")
-        if not collections:
-            self.panel(370,315,878,140,PANEL,3);self.icon("collections",396,348,31,ACCENT)
-            self.display(451,342,"Play your games in your order",24,WHITE)
-            self.text(451,383,"Create a playlist, then add games from each game's Manage menu. Move them up or down from Edit playlist.",14,MUTED,width=730)
-        start,end=self._page_bounds("collections",len(collections),14)
-        for offset,item in enumerate(collections[start:end]):
-            x,y=370+(offset%2)*450,315+(offset//2)*47;key=f"custom:{item['id']}";focused=self.focus==key
-            self.panel(x,y,428,40,"#2c232a" if focused else PANEL,2,WHITE if focused else None)
-            self.icon("collections",x+13,y+12,16,ACCENT if focused else MUTED)
-            self.text(x+42,y+12,self.fit_text(item["name"],322,13),13,WHITE)
-            self.text(x+389,y+12,str(item["game_count"]),12,MUTED,anchor="ne")
-            self.icon("chevron",x+400,y+14,12,FAINT)
-            self.target(key,(x,y,x+428,y+40),lambda cid=item["id"]:self._open_custom_collection(cid),item["name"])
-        self._secondary_pager("collections",len(collections),14)
+        """Wishlist: database games you mean to play one day, in the order you mean to play them."""
+        self._secondary_heading("Games you want to play","Wishlist","Add games from System → Database. Move them into your order.")
+        entries=self.library.wishlist()
+        self.text(1248,78,f"{len(entries)} GAME"+("" if len(entries)==1 else "S"),12,MUTED,anchor="ne")
+        if not entries:
+            self.panel(370,182,878,200,PANEL,3);self.icon("collections",396,215,31,ACCENT)
+            self.display(451,208,"Nothing on your wishlist yet",24,WHITE)
+            self.text(451,250,"Browse System → Database, open a game and choose Add to wishlist. It comes back here in the order you want to play it.",14,MUTED,width=730)
+            self.button_canvas("wishlist:database","Open the Database",451,306,220,40,lambda:(self.navigate("settings"),self._set_settings("database")),True);return
+        start,end=self._page_bounds("collections",len(entries),8)
+        for offset,item in enumerate(entries[start:end]):
+            y=165+offset*62;key=f"wish:{item['id']}";focused=self.focus==key
+            self.panel(370,y,878,56,"#2c232a" if focused else PANEL,2,WHITE if focused else None)
+            entry=self.gamedb.game(item["system"],item["database_id"]) or {}
+            self.rect(378,y+4,38,48,"#101013")
+            if not self.picture(self.gamedb.art(entry,"boxart") if entry else None,378,y+4,38,48,mode="contain"):self.icon("disc",386,y+17,22,"#46464c")
+            self.text(430,y+9,self.fit_text(item["title"],620,15),15,WHITE,"bold")
+            self.text(430,y+31,SYSTEMS.get(item["system"],item["system"])+(f"  ·  {entry.get('year')}" if entry.get("year") else ""),12,MUTED)
+            self.text(1236,y+19,str(start+offset+1),14,MUTED,anchor="ne")
+            self.target(key,(370,y,1248,y+56),lambda it=item:self.wishlist_menu(it),item["title"])
+        self._secondary_pager("collections",len(entries),8)
 
     def _systems(self):
         self._secondary_heading("Every era. One collection.","Systems","Explore the hardware that made the games.")
