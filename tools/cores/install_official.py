@@ -26,7 +26,9 @@ CORES = {
     "mednafen_supafaust": "https://github.com/libretro/supafaust",
     "mednafen_pce": "https://github.com/libretro/beetle-pce-libretro",
     "mupen64plus_next": "https://docs.libretro.com/library/mupen64plus/",
-    "mame": "https://docs.libretro.com/library/mame/",
+    "stella": "https://docs.libretro.com/library/stella/",
+    "prosystem": "https://docs.libretro.com/library/prosystem/",
+    "mgba": "https://docs.libretro.com/library/mgba/",
     "picodrive": "https://docs.libretro.com/library/picodrive/",
 }
 LICENSES = {
@@ -38,7 +40,9 @@ LICENSES = {
     "mednafen_supafaust": "https://raw.githubusercontent.com/libretro/supafaust/master/COPYING",
     "mednafen_pce": "https://raw.githubusercontent.com/libretro/beetle-pce-libretro/master/COPYING",
     "mupen64plus_next": "https://raw.githubusercontent.com/libretro/mupen64plus-libretro-nx/develop/LICENSE",
-    "mame": "https://raw.githubusercontent.com/libretro/mame/master/COPYING",
+    "stella": "https://raw.githubusercontent.com/stella-emu/stella/master/License.txt",
+    "prosystem": "https://raw.githubusercontent.com/libretro/prosystem-libretro/master/License.txt",
+    "mgba": "https://raw.githubusercontent.com/libretro/mgba/master/LICENSE",
     "picodrive": "https://raw.githubusercontent.com/libretro/picodrive/master/COPYING",
 }
 
@@ -64,7 +68,7 @@ def install(name):
     archive = fetch(url, 128 * 1024 * 1024)
     with zipfile.ZipFile(io.BytesIO(archive)) as zipped:
         entry = zipped.getinfo(binary_name)
-        if entry.file_size > (512 if name=="mame" else 256) * 1024 * 1024:
+        if entry.file_size > 256 * 1024 * 1024:
             raise RuntimeError("The core archive contains an oversized binary.")
         binary = zipped.read(binary_name)
     if binary[:2] != b"MZ":

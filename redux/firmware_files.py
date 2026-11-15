@@ -55,6 +55,7 @@ KNOWN = (
     FirmwareFile("bios_U.sms", "sms", "U", required=False), FirmwareFile("bios_E.sms", "sms", "E", required=False), FirmwareFile("bios_J.sms", "sms", "J", required=False),
     FirmwareFile("bios.gg", "game_gear", required=False),
     FirmwareFile("gb_bios.bin", "gb", required=False), FirmwareFile("gbc_bios.bin", "gbc", required=False),
+    FirmwareFile("gba_bios.bin", "gba", required=False), FirmwareFile("7800 BIOS (U).rom", "atari7800", required=False),
 )
 BY_NAME = {entry.name.casefold(): entry for entry in KNOWN}
 _REGIONS = {"u": "U", "usa": "U", "us": "U", "north america": "U", "america": "U", "canada": "U",

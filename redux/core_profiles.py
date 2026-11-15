@@ -38,10 +38,6 @@ _SEGA_QUALIFICATION = (
     "Original hook is named Kega and consumes genesis_plus_gx_region_detect; "
     "underlying engine identity is not proven for every load branch."
 )
-_MAME_BLOCKERS = (
-    _REVISION_UNKNOWN,
-    "Driver, ROM/software-list set, firmware and game acceptance require validation with this MAME revision.",
-)
 
 # PSX options/values verified in beetle-psx-libretro/libretro_core_options.h
 # (software BEETLE_OPT prefix is beetle_psx_ in libretro_options.h).
@@ -131,10 +127,14 @@ _profiles = (
                 blockers=("Original BIOS recommended; built-in HLE is core-version dependent.",)),
     CoreProfile("3do", "opera_libretro.dll", "Opera", None, "redux_extension",
                 blockers=("Embedded Opera Boot is core-version dependent; some games require original firmware.",)),
-    CoreProfile("atari2600", "mame_libretro.dll", "MAME", "mame", "upstream_family",
-                blockers=_MAME_BLOCKERS, original_system_ids=(16,)),
-    CoreProfile("atari7800", "mame_libretro.dll", "MAME", "mame", "upstream_family",
-                blockers=_MAME_BLOCKERS, original_system_ids=(23,)),
+    CoreProfile("atari2600", "stella_libretro.dll", "Stella", None, "redux_extension",
+                blockers=("The original used MAME for the 2600; Stella is Redux's choice and needs no firmware.",),
+                original_system_ids=(16,)),
+    CoreProfile("atari7800", "prosystem_libretro.dll", "ProSystem", None, "redux_extension",
+                blockers=("The original used MAME for the 7800; ProSystem is Redux's choice. The 7800 BIOS (U).rom is optional.",),
+                original_system_ids=(23,)),
+    CoreProfile("gba", "mgba_libretro.dll", "mGBA", None, "redux_extension",
+                blockers=("The original had no Game Boy Advance support; gba_bios.bin is optional (mGBA has a built-in BIOS).",)),
     CoreProfile("gb", "gambatte_libretro.dll", "Gambatte", None, "redux_extension",
                 blockers=("Original Game Boy dispatch identity is not established by the inspected catalogue map.",)),
     CoreProfile("gbc", "gambatte_libretro.dll", "Gambatte", None, "redux_extension",

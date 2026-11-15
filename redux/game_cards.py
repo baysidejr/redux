@@ -45,9 +45,9 @@ ART_ROLES = (("header", "hero"), ("boxart", "cover"), ("gameimage", "screenshot"
 ART_EXTENSIONS = (".png", ".jpg", ".jpeg", ".webp")
 KINDS = ("console", "gog", "storage")
 KIND_LABELS = {"console": "Console cartridge", "gog": "GOG cartridge", "storage": "Extra storage", "legacy": "Game card"}
-# Cartridge systems with an emulator; Game Boy Advance waits for one.
+# Cartridge systems with an emulator.
 CARTRIDGE_SYSTEMS = ("nes", "snes", "n64", "genesis", "32x", "sms", "game_gear", "pce", "supergrafx",
-                     "atari2600", "atari7800", "jaguar", "gb", "gbc", "neo_geo")
+                     "atari2600", "atari7800", "jaguar", "gb", "gbc", "gba", "neo_geo")
 CD_SYSTEMS = ("psx", "saturn", "sega_cd", "pce_cd", "neo_geo_cd", "3do", "jaguar_cd")
 SYSTEM_FOLDER_NAMES = {"psx": "PlayStation", "saturn": "Saturn", "sega_cd": "Sega CD", "pce_cd": "PC Engine CD",
                        "neo_geo": "Neo Geo", "neo_geo_cd": "Neo Geo CD", "3do": "3DO", "jaguar_cd": "Jaguar CD", "pc": "PC",

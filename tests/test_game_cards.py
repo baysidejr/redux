@@ -58,7 +58,7 @@ class GameCardTests(unittest.TestCase):
         marker=console/game_cards.MARKER
         self.assertEqual(sorted(p.name for p in marker.iterdir() if p.is_dir()),sorted(game_cards.CONSOLE_FOLDERS))
         self.assertIn("NES",game_cards.CONSOLE_FOLDERS);self.assertIn("Genesis",game_cards.CONSOLE_FOLDERS);self.assertIn("Neo Geo",game_cards.CONSOLE_FOLDERS)
-        self.assertNotIn("PlayStation",game_cards.CONSOLE_FOLDERS);self.assertNotIn("Game Boy Advance",game_cards.CONSOLE_FOLDERS,"no emulator yet")
+        self.assertNotIn("PlayStation",game_cards.CONSOLE_FOLDERS);self.assertIn("Game Boy Advance",game_cards.CONSOLE_FOLDERS,"mGBA plays it")
         self.assertEqual(game_cards.card_kind(marker),"console")
         document=json.loads((marker/game_cards.CARD_FILE).read_text(encoding="utf-8"))
         self.assertEqual((document["kind"],document["label"]),("console","Console cartridge"))

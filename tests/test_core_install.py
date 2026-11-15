@@ -58,9 +58,9 @@ class CoreInstallerTests(unittest.TestCase):
 
     def test_recommended_set_is_unique_and_excludes_optional_backends(self):
         names=recommended_names()
-        self.assertEqual(len(names),12)
+        self.assertEqual(len(names),15)
         self.assertIn('neocd',names);self.assertIn('opera',names);self.assertIn('fbneo',names)
-        self.assertNotIn('mame',names);self.assertIn('mupen64plus_next',names,'Nintendo 64 is part of the recommended set')
+        self.assertNotIn('mame',names);self.assertIn('stella',names);self.assertIn('prosystem',names);self.assertIn('mgba',names);self.assertIn('mupen64plus_next',names,'Nintendo 64 is part of the recommended set')
         self.assertTrue(set(names)<=cores.CORES.keys())
 
 

@@ -28,7 +28,7 @@ from redux.libretro_host import EmbeddedSession, _SystemInfo
 
 CORES = (
     "mednafen_saturn", "mednafen_supafaust", "mednafen_pce",
-    "mupen64plus_next", "mame", "picodrive",
+    "mupen64plus_next", "picodrive", "stella", "prosystem", "mgba",
     "neocd", "opera", "fbneo",
 )
 

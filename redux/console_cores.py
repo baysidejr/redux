@@ -32,12 +32,12 @@ class ConsoleCores:
         items=[('Set up recommended systems'+(f' · {len(missing)} missing' if missing else ' · installed'),lambda:self.download_cores(names+('bigpemu',)))]
         items.append(('BigPEmu - Jaguar / Jaguar CD',self.bigpemu_setup_menu))
         items.append(('Copy BIOS files from a drive',self.copy_firmware_menu))
-        for name in names+tuple(extra for extra in ('mame',) if extra not in names):
+        for name in names:
             systems=[s for s,p in PROFILES.items() if p.filename==name+'_libretro.dll']
             family=PROFILES[systems[0]].family
             exists=(folder/(name+'_libretro.dll')).is_file()
             items.append((family+(' · installed' if exists else ' · not installed'),lambda n=name:self.core_options(n)))
-        self.menu('Emulator setup',items+[('Back',lambda:None)],message='Choose a core to install, repair or update. Recommended systems use the built-in controller and display defaults. MAME is an optional compatibility-testing backend.')
+        self.menu('Emulator setup',items+[('Back',lambda:None)],message='Choose a core to install, repair or update. Every recommended system uses the built-in controller and display defaults.')
 
     # ------------------------------------------------------------------ firmware from a drive
     def firmware_drives(self):
