@@ -1,4 +1,6 @@
-# Project status — 0.25.0, 2026-11-15
+# Project status — 0.25.1, 2026-11-15
+
+Release 0.25.1 (2026-11-15): the loaders' intro (the tray opening, taking the disc and closing, or the cartridge going in) plays at 75 % of the sheet's 12 fps, 2.7 s instead of 2.0 s (`INTRO_SPEED`, owner's first value to tweak from); the loop and outro keep the sheet's rate. Measured on the real Tk loop.
 
 Release 0.25.0 (2026-11-15) makes the pixel art scale cleanly. `redux/pixel_fit.py` contains a sprite in its space at the largest whole factor of its art size (fractional only below 1x); `Artwork.sprite` reduces a 2x-exported cell to its art pixels (exact) before a nearest-neighbour enlargement, so every art pixel is an even square, and can crop to a viewport. Drawing moved to screen pixels (`device_frame`, `device_rect`, `device_sprite` in the layout): the loading screen is laid out from the window, the carousel has its own clipped viewport across the full window width (more pennants on wider windows) with whole-pixel banners on `#0a0816`, the loader is contained and centred between the title band and a footer at the window's bottom, and the Home stage carousel uses the same viewport. Banner edges round half-up so a whole-pixel tile gives equal widths. Rendered at 1280x720 (loader 3x), 1920x1080 (4x, banners 1x), 2560x1080 (4x, more banners), 1000x1000 (4x) and 3840x2160 (9x, banners 2x).
 

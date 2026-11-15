@@ -61,7 +61,7 @@ clipped at the stage edges.
 | Rate | 12 frames per second |
 | Manifest | `animations.json`: `fps`, `frame` size, and per system `sheet`, `columns`, `intro`, `loop`, `outro`, `mechanism` |
 
-The intro plays once, the loop runs for as long as the install or the core load takes,
+The intro plays once, at 75 % of the sheet's rate (`INTRO_SPEED` in `redux/console_stage.py`) so the tray reads as a tray, the loop runs at the sheet's own rate for as long as the install or the core load takes,
 and the outro plays when an install hands over to the game. Cells are scaled with
 nearest-neighbour sampling so the pixels stay crisp at any screen size.
 

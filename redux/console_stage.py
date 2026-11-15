@@ -34,6 +34,7 @@ HOLD_POLL_MS = 100
 HERO_FRACTION = 0.25            # the carousel's share of the loading screen
 STAGE_FILL = "#0a0816"          # behind sprites wherever they do not cover their space
 LIGHTS = 8
+INTRO_SPEED = 0.75              # the tray opening, taking the disc and closing plays at 75 % of the sheet's rate
 HOME_ORDER = ("nes", "snes", "n64", "genesis", "32x", "sega_cd", "saturn", "sms", "game_gear", "psx", "pce", "pce_cd", "supergrafx",
               "neo_geo", "neo_geo_cd", "3do", "atari2600", "atari7800", "jaguar", "jaguar_cd", "gb", "gbc", "gba", "pc")
 _PERCENT = re.compile(r"(\d{1,3})%")
@@ -89,16 +90,24 @@ class SpriteSheetAnimation:
         return self.sheet.is_file()
 
     def index_at(self, seconds, *, finishing_since=None):
-        """The cell to show ``seconds`` into the load; the outro once ``finishing_since`` is given."""
-        step = int(max(0.0, seconds) * self.fps)
+        """The cell to show ``seconds`` into the load; the outro once ``finishing_since`` is given.
+
+        The intro plays at ``INTRO_SPEED`` of the sheet's rate so the tray has time to read as a
+        tray; the loop and the outro play at the sheet's own rate."""
+        seconds = max(0.0, seconds)
         intro_length = self.intro[1] - self.intro[0] + 1
         if finishing_since is not None and self.outro:
             offset = int(max(0.0, finishing_since) * self.fps)
             return min(self.outro[0] + offset, self.outro[1])
-        if step < intro_length:
-            return self.intro[0] + step
+        intro_seconds = self.intro_seconds
+        if seconds < intro_seconds:
+            return self.intro[0] + min(intro_length - 1, int(seconds * self.fps * INTRO_SPEED))
         span = max(1, self.loop[1] - self.loop[0] + 1)
-        return self.loop[0] + (step - intro_length) % span
+        return self.loop[0] + int((seconds - intro_seconds) * self.fps) % span
+
+    @property
+    def intro_seconds(self):
+        return (self.intro[1] - self.intro[0] + 1) / (self.fps * INTRO_SPEED)
 
     def box(self, index):
         row, column = divmod(max(0, int(index)), self.columns)

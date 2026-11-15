@@ -144,7 +144,10 @@ class HomeShelfTests(unittest.TestCase):
             self.assertIn(system, settings["systems"], f"{system} has a sheet");self.assertTrue(Artwork.bundled("animations", settings["systems"][system]["sheet"]), system)
         sheet = SpriteSheetAnimation(Artwork.bundled("animations", "sega_cd.png"), settings["systems"]["sega_cd"], settings)
         self.assertTrue(sheet);self.assertEqual((sheet.fps, sheet.columns, sheet.width, sheet.height), (12, 8, 480, 270))
-        self.assertEqual([sheet.index_at(t) for t in (0, 1.0, 1.99, 2.0, 3.99, 4.0)], [0, 12, 23, 24, 47, 24], "intro once, then the loop")
+        from redux.console_stage import INTRO_SPEED
+        intro = 24 / (12 * INTRO_SPEED)
+        self.assertAlmostEqual(sheet.intro_seconds, intro);self.assertGreater(intro, 2.0, "the tray plays slower than the sheet's 12 fps")
+        self.assertEqual([sheet.index_at(t) for t in (0, intro / 2, intro - 0.01, intro + 0.001, intro + 1.99, intro + 2.01)], [0, 12, 23, 24, 47, 24], "intro once, slowed, then the loop at full rate")
         self.assertEqual((sheet.index_at(9, finishing_since=0), sheet.index_at(9, finishing_since=9)), (48, 59), "the outro plays once the load is done and holds its last frame")
         self.assertEqual(sheet.box(9), (480, 270, 960, 540))
         # The stage draws the sheet on the right and keeps the words on the left.
