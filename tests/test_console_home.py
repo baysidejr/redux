@@ -201,6 +201,23 @@ class HomeShelfTests(unittest.TestCase):
             app.card_roots = {str(storage / game_cards.MARKER)};app.all_games = [{"id": 9, "title": "Disc Game", "system": "psx", "source_path": str(storage / "Redux Games" / "PlayStation" / "d.chd"), "available": True}]
             self.assertIsNone(ConsoleStage.inserted_cartridge(app))
 
+    def test_the_hero_stands_still_until_a_load_and_holds_where_it_stopped_after(self):
+        from redux.ui_assets import Artwork
+        app = self.app();app.art = SimpleNamespace(path=lambda system, kind="hero", custom=None: f"{system}-{kind}.png", bundled=Artwork.bundled, hero=lambda: "hero-banner.jpg")
+        app.sprite = lambda *a: True
+        carousel = ConsoleStage.banner_carousel(app)
+        self.assertEqual(carousel.status(time.monotonic()), "stopped", "no motion on Home")
+        self.assertEqual(carousel.sample(0), carousel.sample(100), "the same stretch stays on screen")
+        before = carousel.sample(0)
+        ConsoleStage.start_stage(app, "sega_cd", "Eternal Champions")
+        self.assertEqual(carousel.status(time.monotonic()), "scrolling", "a load sets the pennants moving")
+        app.stage_animation["stop_due"] = 0;app.busy = True
+        ConsoleStage._stage_tick(app)
+        self.assertEqual(carousel.target, "sega_cd");self.assertEqual(carousel.status(time.monotonic()), "stopping")
+        app.busy = False;ConsoleStage.clear_stage(app)
+        self.assertEqual(carousel.status(time.monotonic()), "stopped", "after the load the strip holds still again")
+        self.assertNotEqual(carousel.sample(time.monotonic()), before)
+
     def test_frame_animations_loop_from_their_marked_frame(self):
         with tempfile.TemporaryDirectory() as temporary:
             folder = Path(temporary)

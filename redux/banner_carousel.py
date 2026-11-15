@@ -88,6 +88,13 @@ class BannerCarousel:
         self.mode = "cruise"
         self.target = None
 
+    def hold(self, now):
+        """Stand still wherever the strip is now."""
+        self.origin = self.sample(now)
+        self.epoch = now
+        self.mode = "idle"
+        self.target = None
+
     def stop_at(self, system_id, now):
         """Brake to a stop with this console's banner centred. Returns the seconds the brake takes."""
         banner = self.resolve(system_id)

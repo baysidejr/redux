@@ -16,6 +16,7 @@ docs/ANIMATIONS.md.
 from __future__ import annotations
 
 import json
+import random
 import re
 import time
 from pathlib import Path
@@ -26,7 +27,6 @@ from .ui_theme import WHITE, MUTED, ACCENT
 
 AUTOPLAY_DELAY = 0.4      # seconds after the insert event before Play fires on its own
 AUTOPLAY_STAGE = 0.9      # seconds of stage animation before the install or load starts
-IDLE_BANNERS_PER_SECOND = 1.6   # the hero drifts while nothing loads
 STOP_AFTER = 0.6                # seconds of fast cruise before the brake onto the loading console
 HERO_FRACTION = 0.25            # the carousel's share of the loading screen
 LIGHTS = 8
@@ -146,7 +146,7 @@ class ConsoleStage:
         self.stage_animation = None
         carousel = self.banner_carousel()
         if carousel:
-            carousel.start(time.monotonic(), IDLE_BANNERS_PER_SECOND)
+            carousel.hold(time.monotonic())
 
     # ------------------------------------------------------------------ the banner carousel
     def banner_carousel(self):
@@ -160,7 +160,8 @@ class ConsoleStage:
             if manifest and atlas:
                 try:
                     carousel = BannerCarousel(load_manifest(manifest), atlas)
-                    carousel.start(time.monotonic(), IDLE_BANNERS_PER_SECOND)
+                    # Still on Home: a different stretch of pennants each time Redux starts. It only moves for a load.
+                    carousel.origin = random.uniform(0, carousel.count)
                 except (OSError, ValueError, KeyError, TypeError):
                     carousel = None
             self._banner_carousel = carousel
@@ -231,8 +232,7 @@ class ConsoleStage:
             # A load that never came (cancelled, failed, or the game is already up) lets the stage go.
             if now - animation["started"] > (20 if animation.get("finishing_since") is None else 6):
                 self.clear_stage()
-        interval = 0.05 if (animation or self.busy) else 0.125
-        if self.screen == "home" and not self.overlay and now - getattr(self, "_stage_frame_at", 0) >= interval:
+        if (animation or self.busy) and self.screen == "home" and not self.overlay and now - getattr(self, "_stage_frame_at", 0) >= 0.05:
             self._stage_frame_at = now
             self.schedule_draw()
 
@@ -326,7 +326,7 @@ class ConsoleStage:
         cartridge = None if disc else self.inserted_cartridge()
         system = disc.system if disc and disc.system else (cartridge or {}).get("system") or (animation or {}).get("system") or focused_system
         loading = bool(animation) or self.busy
-        # The hero: the console banners drifting by (the still banner when the pack is missing).
+        # The hero: a still stretch of the console banners (the old banner when the pack is missing).
         if not self._draw_carousel(x, y, w, h - 29):
             if not self.picture(self.art.hero(), x, y, w, h, shade=loading or bool(disc) or bool(cartridge)):
                 self.rect(x, y, w, h, "#17121f")

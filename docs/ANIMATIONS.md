@@ -1,18 +1,19 @@
 # Stage animations
 
-The stage is the banner area of Home. Idle, it is the **console banner carousel**: 52
-hanging pennants drifting right to left. While a disc installs or a game starts, the
-whole screen becomes the loading screen: the carousel across the top quarter, braking
-to a stop with the loading console's pennant centred under the gold marker, and that
-console's loader animation below with the game's name and the progress.
+The stage is the banner area of Home. Idle, it shows a still stretch of the **console
+banner carousel**: 52 hanging pennants, a different stretch each time Redux starts.
+While a disc installs or a game starts, the whole screen becomes the loading screen: the
+carousel scrolls across the top quarter and brakes to a stop with the loading console's
+pennant centred under the gold marker, and that console's loader animation plays below
+with the game's name and the progress. The pennants only move during a load.
 
 ## The banner carousel
 
 `redux/assets/banners/console_banners.png` is an atlas of 52 banners, 8 columns by 7 rows
 of 180 × 540 cells (logical art 90 × 270 at an exact 2× scale). `banners.json` gives each
 banner's rectangle (`x, y, width, height`), aliases (`playstation` → `psx`, `tg16` → `pce`,
-…) and the scroll `order`. `redux/banner_carousel.py` is the motion: cruise at a constant
-speed (1.6 banners a second on Home, the manifest's 32 on the loading screen), and on
+…) and the scroll `order`. `redux/banner_carousel.py` is the motion: still on Home at a
+random stretch, cruise at the manifest's 32 banners a second on the loading screen, and on
 `stop_on_system(system)` a cubic ease-out that keeps the current speed as its initial
 slope, travels at least 8 banners, never reverses, and comes to rest with the target
 centred. The stop fires 0.6 s into a load and is independent of the load finishing; a

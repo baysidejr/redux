@@ -1,4 +1,6 @@
-# Project status — 0.22.0, 2026-11-15
+# Project status — 0.22.1, 2026-11-15
+
+Release 0.22.1 (2026-11-15): the hero stands still. The carousel picks a random stretch of pennants when Redux starts and does not move on Home; it scrolls and brakes only on the loading screen, and holds wherever it stopped afterwards (`BannerCarousel.hold`). The stage no longer redraws while idle.
 
 Release 0.22.0 (2026-11-15) ships the owner's console banner carousel. `redux/assets/banners` holds the 52-banner atlas and `banners.json`; `redux/banner_carousel.py` is a port of the owner's clock-driven motion reference (cruise, cubic ease-out brake with matched initial velocity, minimum travel, no reversal, exact centring, modulo only at lookup). On Home the carousel is the hero, drifting at 1.6 banners a second; a load turns the whole screen into the loading screen (`_loading_screen`): the carousel across the top quarter at 32 banners a second, `stop_on_system` 0.6 s in so the loading console's pennant settles under the gold marker, the console's loader sheet below (intro, loop, and the outro once `finish_stage` is called), title and status in a band between, Cancel at the bottom right. The hero draws at 8 frames a second idle and 20 while loading; sprites have their own 320-entry cache and are clipped at the stage edges by cropping the source. Every Redux console except PC has a banner; the manifest's aliases resolve.
 
