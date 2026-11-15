@@ -1,0 +1,685 @@
+{
+  "version": 1,
+  "kind": "static-banner-atlas",
+  "sheet": "console_banners.png",
+  "sheetSize": {
+    "width": 1440,
+    "height": 3780
+  },
+  "frame": {
+    "width": 180,
+    "height": 540
+  },
+  "logicalFrame": {
+    "width": 90,
+    "height": 270
+  },
+  "pixelScale": 2,
+  "columns": 8,
+  "rows": 7,
+  "count": 52,
+  "background": "#0a0816",
+  "style": "8-bit logo crests, gold hanging pennants, no nameplates",
+  "order": [
+    "nes",
+    "genesis",
+    "psx",
+    "pce",
+    "atari2600",
+    "snes",
+    "sega_cd",
+    "jaguar",
+    "3do",
+    "cdi",
+    "n64",
+    "saturn",
+    "gb",
+    "game_gear",
+    "neo_geo",
+    "turbo_duo",
+    "dreamcast",
+    "gamecube",
+    "ps2",
+    "xbox",
+    "gba",
+    "neo_geo_cd",
+    "atari7800",
+    "lynx",
+    "gbc",
+    "sms",
+    "pce_cd",
+    "supergrafx",
+    "32x",
+    "colecovision",
+    "intellivision",
+    "vectrex",
+    "nds",
+    "psp",
+    "wii",
+    "ps3",
+    "xbox360",
+    "turboexpress",
+    "ngpc",
+    "odyssey2",
+    "amiga_cd32",
+    "3ds",
+    "vita",
+    "wii_u",
+    "ps4",
+    "xbox_one",
+    "switch",
+    "ps5",
+    "xbox_series",
+    "switch2",
+    "atari5200",
+    "jaguar_cd"
+  ],
+  "carousel": {
+    "direction": "right-to-left",
+    "heroFraction": 0.25,
+    "cruiseBannersPerSecond": 32,
+    "gap": 0,
+    "wrap": true,
+    "stopAlignment": "center",
+    "stopEasing": "cubic ease-out with matched initial velocity",
+    "minimumStopTravelBanners": 8
+  },
+  "aliases": {
+    "tg16": "pce",
+    "turbografx16": "pce",
+    "pc_engine": "pce",
+    "tgcd": "pce_cd",
+    "pc_engine_cd": "pce_cd",
+    "pce_duo": "turbo_duo",
+    "duo": "turbo_duo",
+    "philips_cdi": "cdi",
+    "playstation": "psx",
+    "gameboy": "gb",
+    "gameboy_color": "gbc",
+    "gameboy_advance": "gba",
+    "master_system": "sms",
+    "megadrive": "genesis",
+    "neo_geo_aes": "neo_geo",
+    "ps_vita": "vita",
+    "xbox_series_x": "xbox_series",
+    "xbox_series_s": "xbox_series",
+    "nintendo_ds": "nds",
+    "nintendo_3ds": "3ds",
+    "nintendo_switch": "switch",
+    "nintendo_switch_2": "switch2"
+  },
+  "systems": {
+    "atari2600": {
+      "label": "ATARI 2600",
+      "index": 0,
+      "rect": [
+        0,
+        0,
+        180,
+        540
+      ],
+      "individual": "individual/atari2600.png"
+    },
+    "atari5200": {
+      "label": "ATARI 5200",
+      "index": 1,
+      "rect": [
+        180,
+        0,
+        180,
+        540
+      ],
+      "individual": "individual/atari5200.png"
+    },
+    "atari7800": {
+      "label": "ATARI 7800",
+      "index": 2,
+      "rect": [
+        360,
+        0,
+        180,
+        540
+      ],
+      "individual": "individual/atari7800.png"
+    },
+    "lynx": {
+      "label": "ATARI LYNX",
+      "index": 3,
+      "rect": [
+        540,
+        0,
+        180,
+        540
+      ],
+      "individual": "individual/lynx.png"
+    },
+    "jaguar": {
+      "label": "JAGUAR",
+      "index": 4,
+      "rect": [
+        720,
+        0,
+        180,
+        540
+      ],
+      "individual": "individual/jaguar.png"
+    },
+    "jaguar_cd": {
+      "label": "JAGUAR CD",
+      "index": 5,
+      "rect": [
+        900,
+        0,
+        180,
+        540
+      ],
+      "individual": "individual/jaguar_cd.png"
+    },
+    "nes": {
+      "label": "NES",
+      "index": 6,
+      "rect": [
+        1080,
+        0,
+        180,
+        540
+      ],
+      "individual": "individual/nes.png"
+    },
+    "snes": {
+      "label": "SNES",
+      "index": 7,
+      "rect": [
+        1260,
+        0,
+        180,
+        540
+      ],
+      "individual": "individual/snes.png"
+    },
+    "n64": {
+      "label": "NINTENDO 64",
+      "index": 8,
+      "rect": [
+        0,
+        540,
+        180,
+        540
+      ],
+      "individual": "individual/n64.png"
+    },
+    "gamecube": {
+      "label": "GAMECUBE",
+      "index": 9,
+      "rect": [
+        180,
+        540,
+        180,
+        540
+      ],
+      "individual": "individual/gamecube.png"
+    },
+    "wii": {
+      "label": "WII",
+      "index": 10,
+      "rect": [
+        360,
+        540,
+        180,
+        540
+      ],
+      "individual": "individual/wii.png"
+    },
+    "wii_u": {
+      "label": "WII U",
+      "index": 11,
+      "rect": [
+        540,
+        540,
+        180,
+        540
+      ],
+      "individual": "individual/wii_u.png"
+    },
+    "switch": {
+      "label": "SWITCH",
+      "index": 12,
+      "rect": [
+        720,
+        540,
+        180,
+        540
+      ],
+      "individual": "individual/switch.png"
+    },
+    "switch2": {
+      "label": "SWITCH 2",
+      "index": 13,
+      "rect": [
+        900,
+        540,
+        180,
+        540
+      ],
+      "individual": "individual/switch2.png"
+    },
+    "gb": {
+      "label": "GAME BOY",
+      "index": 14,
+      "rect": [
+        1080,
+        540,
+        180,
+        540
+      ],
+      "individual": "individual/gb.png"
+    },
+    "gbc": {
+      "label": "GAME BOY COLOR",
+      "index": 15,
+      "rect": [
+        1260,
+        540,
+        180,
+        540
+      ],
+      "individual": "individual/gbc.png"
+    },
+    "gba": {
+      "label": "GAME BOY ADVANCE",
+      "index": 16,
+      "rect": [
+        0,
+        1080,
+        180,
+        540
+      ],
+      "individual": "individual/gba.png"
+    },
+    "nds": {
+      "label": "NINTENDO DS",
+      "index": 17,
+      "rect": [
+        180,
+        1080,
+        180,
+        540
+      ],
+      "individual": "individual/nds.png"
+    },
+    "3ds": {
+      "label": "NINTENDO 3DS",
+      "index": 18,
+      "rect": [
+        360,
+        1080,
+        180,
+        540
+      ],
+      "individual": "individual/3ds.png"
+    },
+    "sms": {
+      "label": "MASTER SYSTEM",
+      "index": 19,
+      "rect": [
+        540,
+        1080,
+        180,
+        540
+      ],
+      "individual": "individual/sms.png"
+    },
+    "genesis": {
+      "label": "GENESIS",
+      "index": 20,
+      "rect": [
+        720,
+        1080,
+        180,
+        540
+      ],
+      "individual": "individual/genesis.png"
+    },
+    "sega_cd": {
+      "label": "SEGA CD",
+      "index": 21,
+      "rect": [
+        900,
+        1080,
+        180,
+        540
+      ],
+      "individual": "individual/sega_cd.png"
+    },
+    "32x": {
+      "label": "32X",
+      "index": 22,
+      "rect": [
+        1080,
+        1080,
+        180,
+        540
+      ],
+      "individual": "individual/32x.png"
+    },
+    "saturn": {
+      "label": "SATURN",
+      "index": 23,
+      "rect": [
+        1260,
+        1080,
+        180,
+        540
+      ],
+      "individual": "individual/saturn.png"
+    },
+    "dreamcast": {
+      "label": "DREAMCAST",
+      "index": 24,
+      "rect": [
+        0,
+        1620,
+        180,
+        540
+      ],
+      "individual": "individual/dreamcast.png"
+    },
+    "game_gear": {
+      "label": "GAME GEAR",
+      "index": 25,
+      "rect": [
+        180,
+        1620,
+        180,
+        540
+      ],
+      "individual": "individual/game_gear.png"
+    },
+    "psx": {
+      "label": "PLAYSTATION",
+      "index": 26,
+      "rect": [
+        360,
+        1620,
+        180,
+        540
+      ],
+      "individual": "individual/psx.png"
+    },
+    "ps2": {
+      "label": "PLAYSTATION 2",
+      "index": 27,
+      "rect": [
+        540,
+        1620,
+        180,
+        540
+      ],
+      "individual": "individual/ps2.png"
+    },
+    "ps3": {
+      "label": "PLAYSTATION 3",
+      "index": 28,
+      "rect": [
+        720,
+        1620,
+        180,
+        540
+      ],
+      "individual": "individual/ps3.png"
+    },
+    "ps4": {
+      "label": "PLAYSTATION 4",
+      "index": 29,
+      "rect": [
+        900,
+        1620,
+        180,
+        540
+      ],
+      "individual": "individual/ps4.png"
+    },
+    "ps5": {
+      "label": "PLAYSTATION 5",
+      "index": 30,
+      "rect": [
+        1080,
+        1620,
+        180,
+        540
+      ],
+      "individual": "individual/ps5.png"
+    },
+    "psp": {
+      "label": "PSP",
+      "index": 31,
+      "rect": [
+        1260,
+        1620,
+        180,
+        540
+      ],
+      "individual": "individual/psp.png"
+    },
+    "vita": {
+      "label": "PS VITA",
+      "index": 32,
+      "rect": [
+        0,
+        2160,
+        180,
+        540
+      ],
+      "individual": "individual/vita.png"
+    },
+    "xbox": {
+      "label": "XBOX",
+      "index": 33,
+      "rect": [
+        180,
+        2160,
+        180,
+        540
+      ],
+      "individual": "individual/xbox.png"
+    },
+    "xbox360": {
+      "label": "XBOX 360",
+      "index": 34,
+      "rect": [
+        360,
+        2160,
+        180,
+        540
+      ],
+      "individual": "individual/xbox360.png"
+    },
+    "xbox_one": {
+      "label": "XBOX ONE",
+      "index": 35,
+      "rect": [
+        540,
+        2160,
+        180,
+        540
+      ],
+      "individual": "individual/xbox_one.png"
+    },
+    "xbox_series": {
+      "label": "XBOX SERIES",
+      "index": 36,
+      "rect": [
+        720,
+        2160,
+        180,
+        540
+      ],
+      "individual": "individual/xbox_series.png"
+    },
+    "pce": {
+      "label": "TURBOGRAFX-16",
+      "index": 37,
+      "rect": [
+        900,
+        2160,
+        180,
+        540
+      ],
+      "individual": "individual/pce.png"
+    },
+    "pce_cd": {
+      "label": "TURBOGRAFX CD",
+      "index": 38,
+      "rect": [
+        1080,
+        2160,
+        180,
+        540
+      ],
+      "individual": "individual/pce_cd.png"
+    },
+    "turbo_duo": {
+      "label": "TURBO DUO",
+      "index": 39,
+      "rect": [
+        1260,
+        2160,
+        180,
+        540
+      ],
+      "individual": "individual/turbo_duo.png"
+    },
+    "supergrafx": {
+      "label": "SUPERGRAFX",
+      "index": 40,
+      "rect": [
+        0,
+        2700,
+        180,
+        540
+      ],
+      "individual": "individual/supergrafx.png"
+    },
+    "turboexpress": {
+      "label": "TURBOEXPRESS",
+      "index": 41,
+      "rect": [
+        180,
+        2700,
+        180,
+        540
+      ],
+      "individual": "individual/turboexpress.png"
+    },
+    "neo_geo": {
+      "label": "NEO GEO AES",
+      "index": 42,
+      "rect": [
+        360,
+        2700,
+        180,
+        540
+      ],
+      "individual": "individual/neo_geo.png"
+    },
+    "neo_geo_cd": {
+      "label": "NEO GEO CD",
+      "index": 43,
+      "rect": [
+        540,
+        2700,
+        180,
+        540
+      ],
+      "individual": "individual/neo_geo_cd.png"
+    },
+    "ngpc": {
+      "label": "NEO GEO POCKET COLOR",
+      "index": 44,
+      "rect": [
+        720,
+        2700,
+        180,
+        540
+      ],
+      "individual": "individual/ngpc.png"
+    },
+    "3do": {
+      "label": "3DO",
+      "index": 45,
+      "rect": [
+        900,
+        2700,
+        180,
+        540
+      ],
+      "individual": "individual/3do.png"
+    },
+    "cdi": {
+      "label": "PHILIPS CD-i",
+      "index": 46,
+      "rect": [
+        1080,
+        2700,
+        180,
+        540
+      ],
+      "individual": "individual/cdi.png"
+    },
+    "colecovision": {
+      "label": "COLECOVISION",
+      "index": 47,
+      "rect": [
+        1260,
+        2700,
+        180,
+        540
+      ],
+      "individual": "individual/colecovision.png"
+    },
+    "intellivision": {
+      "label": "INTELLIVISION",
+      "index": 48,
+      "rect": [
+        0,
+        3240,
+        180,
+        540
+      ],
+      "individual": "individual/intellivision.png"
+    },
+    "odyssey2": {
+      "label": "ODYSSEY 2",
+      "index": 49,
+      "rect": [
+        180,
+        3240,
+        180,
+        540
+      ],
+      "individual": "individual/odyssey2.png"
+    },
+    "vectrex": {
+      "label": "VECTREX",
+      "index": 50,
+      "rect": [
+        360,
+        3240,
+        180,
+        540
+      ],
+      "individual": "individual/vectrex.png"
+    },
+    "amiga_cd32": {
+      "label": "AMIGA CD32",
+      "index": 51,
+      "rect": [
+        540,
+        3240,
+        180,
+        540
+      ],
+      "individual": "individual/amiga_cd32.png"
+    }
+  }
+}

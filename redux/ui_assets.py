@@ -162,8 +162,9 @@ class Artwork:
         try:
             stat=sheet.stat()
             key=("sprite",str(sheet),stat.st_mtime_ns,tuple(int(v) for v in box),int(width),int(height))
-            if key in self.cache:
-                self.cache.move_to_end(key);return self.cache[key]
+            sprites=self.__dict__.setdefault("_sprites",OrderedDict())
+            if key in sprites:
+                sprites.move_to_end(key);return sprites[key]
             sheets=self.__dict__.setdefault("_sheets",OrderedDict())
             sheet_key=(str(sheet),stat.st_mtime_ns)
             if sheet_key not in sheets:
@@ -171,11 +172,11 @@ class Artwork:
                 with Image.open(sheet) as source:
                     if source.width*source.height>40_000_000:return None
                     sheets[sheet_key]=source.convert("RGBA")
-                while len(sheets)>3:sheets.popitem(last=False)
+                while len(sheets)>4:sheets.popitem(last=False)
             cell=sheets[sheet_key].crop(tuple(int(v) for v in box)).resize((int(width),int(height)),Image.Resampling.NEAREST)
             photo=ImageTk.PhotoImage(cell,master=self.master)
-            self.cache[key]=photo
-            while len(self.cache)>80:self.cache.popitem(last=False)
+            sprites[key]=photo
+            while len(sprites)>320:sprites.popitem(last=False)
             return photo
         except (OSError,ValueError,Image.DecompressionBombError):
             return None

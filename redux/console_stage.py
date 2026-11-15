@@ -20,11 +20,15 @@ import re
 import time
 from pathlib import Path
 
+from .banner_carousel import BannerCarousel, load_manifest
 from .library import SYSTEMS
 from .ui_theme import WHITE, MUTED, ACCENT
 
 AUTOPLAY_DELAY = 0.4      # seconds after the insert event before Play fires on its own
 AUTOPLAY_STAGE = 0.9      # seconds of stage animation before the install or load starts
+IDLE_BANNERS_PER_SECOND = 1.6   # the hero drifts while nothing loads
+STOP_AFTER = 0.6                # seconds of fast cruise before the brake onto the loading console
+HERO_FRACTION = 0.25            # the carousel's share of the loading screen
 LIGHTS = 8
 HOME_ORDER = ("nes", "snes", "n64", "genesis", "32x", "sega_cd", "saturn", "sms", "game_gear", "psx", "pce", "pce_cd", "supergrafx",
               "neo_geo", "neo_geo_cd", "3do", "atari2600", "atari7800", "jaguar", "jaguar_cd", "gb", "gbc", "gba", "pc")
@@ -111,7 +115,11 @@ class ConsoleStage:
             if title:
                 current["title"] = title
             return
-        self.stage_animation = dict(kind=kind, system=system or "unknown", title=title or "", started=time.monotonic(), origin=origin)
+        self.stage_animation = dict(kind=kind, system=system or "unknown", title=title or "", started=time.monotonic(), origin=origin,
+                                    stop_due=time.monotonic() + STOP_AFTER, stopped=False)
+        carousel = self.banner_carousel()
+        if carousel and kind == "load":
+            carousel.start(time.monotonic())
         draw = getattr(self, "schedule_draw", None)
         if draw:
             draw()
@@ -136,6 +144,57 @@ class ConsoleStage:
 
     def clear_stage(self):
         self.stage_animation = None
+        carousel = self.banner_carousel()
+        if carousel:
+            carousel.start(time.monotonic(), IDLE_BANNERS_PER_SECOND)
+
+    # ------------------------------------------------------------------ the banner carousel
+    def banner_carousel(self):
+        """The hero carousel, built once from assets/banners; None when the pack is not there."""
+        carousel = self.__dict__.get("_banner_carousel", False)
+        if carousel is False:
+            carousel = None
+            bundled = getattr(getattr(self, "art", None), "bundled", None)
+            manifest = bundled("banners", "banners.json") if bundled else None
+            atlas = bundled("banners", "console_banners.png") if manifest else None
+            if manifest and atlas:
+                try:
+                    carousel = BannerCarousel(load_manifest(manifest), atlas)
+                    carousel.start(time.monotonic(), IDLE_BANNERS_PER_SECOND)
+                except (OSError, ValueError, KeyError, TypeError):
+                    carousel = None
+            self._banner_carousel = carousel
+        return carousel
+
+    def stop_on_system(self, system_id):
+        """Brake the carousel onto a console's banner. Independent of the load finishing; a console without a banner keeps scrolling."""
+        carousel = self.banner_carousel()
+        if not carousel:
+            return 0.0
+        try:
+            return carousel.stop_at(system_id, time.monotonic())
+        except KeyError:
+            return 0.0
+
+    def _draw_carousel(self, x, y, w, h):
+        carousel = self.banner_carousel()
+        if not carousel:
+            return False
+        now = time.monotonic()
+        for banner, source, (left, top, width, height) in carousel.placements(w, h, now):
+            # The canvas has no clip: trim a banner that hangs over either edge by cropping its source.
+            sx0, sy0, sx1, sy1 = source
+            src_w = sx1 - sx0
+            if left < 0:
+                cut = min(width, -left)
+                sx0 += round(src_w * cut / width); left += cut; width -= cut
+            if left + width > w:
+                cut = min(width, left + width - w)
+                sx1 -= round(src_w * cut / width); width -= cut
+            if width <= 0 or sx1 <= sx0:
+                continue
+            self.sprite(carousel.atlas, (sx0, sy0, sx1, sy1), x + left, y + top, width, height)
+        return True
 
     def _stage_tick(self):
         """Keep the stage moving while something is loading or a disc just went in."""
@@ -165,9 +224,15 @@ class ConsoleStage:
                 self.focus = "hero:play"
                 self.start_stage(game.get("system"), game.get("title", ""))
                 self._later(int(AUTOPLAY_STAGE * 1000), lambda identity=game["id"]: self._play_game(identity))
-        if animation and now - animation["started"] > 20 and not self.busy:
-            self.stage_animation = None
-        if (animation or self.busy) and self.screen == "home" and now - getattr(self, "_stage_frame_at", 0) >= 0.1:
+        if animation and animation.get("kind") == "load" and not animation.get("stopped") and now >= animation.get("stop_due", 0):
+            animation["stopped"] = True
+            self.stop_on_system(animation.get("system"))
+        if animation and not self.busy and not pending and not cartridge:
+            # A load that never came (cancelled, failed, or the game is already up) lets the stage go.
+            if now - animation["started"] > (20 if animation.get("finishing_since") is None else 6):
+                self.clear_stage()
+        interval = 0.05 if (animation or self.busy) else 0.125
+        if self.screen == "home" and not self.overlay and now - getattr(self, "_stage_frame_at", 0) >= interval:
             self._stage_frame_at = now
             self.schedule_draw()
 
@@ -261,9 +326,12 @@ class ConsoleStage:
         cartridge = None if disc else self.inserted_cartridge()
         system = disc.system if disc and disc.system else (cartridge or {}).get("system") or (animation or {}).get("system") or focused_system
         loading = bool(animation) or self.busy
-        # One Redux hero banner, whatever is focused or loading; the console appears in its animation.
-        if not self.picture(self.art.hero(), x, y, w, h, shade=loading or bool(disc) or bool(cartridge)):
-            self.rect(x, y, w, h, "#17121f")
+        # The hero: the console banners drifting by (the still banner when the pack is missing).
+        if not self._draw_carousel(x, y, w, h - 29):
+            if not self.picture(self.art.hero(), x, y, w, h, shade=loading or bool(disc) or bool(cartridge)):
+                self.rect(x, y, w, h, "#17121f")
+        if disc or cartridge or loading:
+            self.panel(x, y, w, h - 29, "#0a0816b0", 0)
         label = SYSTEMS.get(system, "Redux") if system else "Redux"
         if loading:
             self._stage_loading(x, y, w, h, system, (animation or {}).get("title") or (disc.title if disc else ""))
@@ -314,6 +382,60 @@ class ConsoleStage:
             self.target("hero:details", (1174, strip_y, 1279, h), self.inserted_disc_information, "Disc information")
         if self.focus in {"hero:play", "hero:details"}:
             self.rect(x + 1, 1, w - 3, h - 2, "", WHITE, 2)
+
+    def _loading_screen(self):
+        """While a game loads: the banner carousel across the top quarter, the console's loader below."""
+        animation = getattr(self, "stage_animation", None) or {}
+        system = animation.get("system") or "unknown"
+        title = animation.get("title") or SYSTEMS.get(system, "")
+        status = self.status.get() if hasattr(self.status, "get") else ""
+        percent = _PERCENT.search(status or "")
+        hero_h = round(720 * HERO_FRACTION)
+        self.rect(0, 0, 1280, 720, "#0a0816")
+        if not self._draw_carousel(0, 0, 1280, hero_h):
+            self.picture(self.art.hero(), 0, 0, 1280, hero_h)
+        # The centre marks under and over the strip, and the gold rule beneath it.
+        self.rect(634, 0, 12, 5, "#ffde76");self.rect(637, 5, 6, 5, "#ffde76");self.rect(634, hero_h - 5, 12, 5, "#ffde76")
+        self.rect(0, hero_h, 1280, 2, "#89632c")
+        band = hero_h + 10
+        self.display(40, band, "NOW LOADING", 13, "#c7c1d1", "bold")
+        self.display(40, band + 22, self.fit_text(str(title).upper(), 680, 28, "bold"), 28, WHITE, "bold")
+        self.display(1240, band + 4, self.fit_text(status or "Starting…", 480, 14), 14, "#dedbe3", anchor="ne")
+        if percent:
+            value = max(0, min(100, int(percent.group(1))))
+            self.rect(760, band + 30, 480, 6, "#2a2531");self.rect(760, band + 30, 480 * value / 100, 6, ACCENT)
+            self.display(1240, band + 42, f"{value}%", 13, WHITE, "bold", anchor="ne")
+        top = hero_h + 66
+        elapsed = time.monotonic() - animation.get("started", time.monotonic())
+        sheet = self.sheet_animation(system)
+        if sheet:
+            loader_h = 720 - top - 36
+            loader_w = loader_h * sheet.width / sheet.height
+            finishing = animation.get("finishing_since")
+            index = sheet.index_at(elapsed, finishing_since=None if finishing is None else time.monotonic() - finishing)
+            self.sprite(sheet.sheet, sheet.box(index), (1280 - loader_w) / 2, top, loader_w, loader_h)
+        else:
+            # No loader for this console yet: the lights and the sliding disc, centred.
+            self._stage_loading_marks(240, top + 200, 800, elapsed)
+        cancel = getattr(self, "cancelled", None)
+        if self.busy and cancel is not None and getattr(self, "task_cancellable", True):
+            self.button_canvas("task:cancel", "Cancel", 1130, 686, 110, 26, cancel.set)
+        else:
+            self.display(1240, 694, "LOADING", 13, "#9a9aa2", "bold", anchor="ne")
+        self.display(40, 694, SYSTEMS.get(system, "").upper(), 13, "#9a9aa2", "bold")
+
+    def _stage_loading_marks(self, x, y, w, elapsed):
+        lit = int(elapsed * 9) % LIGHTS
+        for index in range(LIGHTS):
+            on = index == lit or index == (lit - 1) % LIGHTS
+            self.rect(x + index * 22, y, 14, 8, ACCENT if on else "#3a2a44")
+        slot_x = x + w - 180
+        self.rect(slot_x, y - 6, 120, 20, "#101013");self.rect(slot_x + 4, y - 2, 112, 12, "#1d1a24")
+        travel = (elapsed * 1.4) % 1.0
+        dx = slot_x + 130 - travel * 130
+        for row, cols in enumerate(((2, 3, 4), (1, 2, 3, 4, 5), (0, 1, 2, 4, 5, 6), (1, 2, 3, 4, 5), (2, 3, 4))):
+            for column in cols:
+                self.rect(dx + column * 5, y - 18 + row * 5, 5, 5, "#e8e4f0" if (row, column) != (2, 3) else "#2b2535")
 
     def _how_games_arrive(self, system):
         from .game_cards import CD_SYSTEMS, system_folder_name

@@ -150,11 +150,13 @@ class HomeShelfTests(unittest.TestCase):
         # The stage draws the sheet on the right and keeps the words on the left.
         app = self.app();app.art = SimpleNamespace(path=lambda system, kind="hero", custom=None: f"{system}-{kind}.png", bundled=Artwork.bundled, hero=lambda: "hero-banner.jpg")
         drawn = [];app.sprite = lambda sheet_path, box, x, y, w, h: drawn.append((Path(sheet_path).name, box, round(w), round(h))) or True
+        loader = lambda: [d for d in drawn if d[0] == "sega_cd.png"]
         app.busy = True;app.status = SimpleNamespace(get=lambda: "Installing disc • Saving to library • 7 MiB", set=lambda t: None)
         ConsoleStage.start_stage(app, "sega_cd", "Eternal Champions")
         ReferenceLayout._home(app)
-        self.assertEqual(drawn[0][0], "sega_cd.png");self.assertEqual(drawn[0][1], (0, 0, 480, 270), "the intro starts at cell 0")
-        self.assertEqual(round(drawn[0][2] / drawn[0][3], 2), 1.78, "cells keep their 16:9 shape")
+        self.assertTrue(loader(), "the loader sheet is drawn");self.assertEqual(loader()[0][1], (0, 0, 480, 270), "the intro starts at cell 0")
+        self.assertEqual(round(loader()[0][2] / loader()[0][3], 2), 1.78, "cells keep their 16:9 shape")
+        self.assertTrue(any(d[0] == "console_banners.png" for d in drawn), "the banner carousel scrolls across the top of the loading screen")
         self.assertIn("NOW LOADING", app.texts);self.assertIn("ETERNAL CHAMPIONS", app.texts)
         # A second start for the same console carries the running animation on; finishing switches to the outro.
         started = app.stage_animation["started"]
@@ -162,7 +164,7 @@ class HomeShelfTests(unittest.TestCase):
         self.assertEqual(app.stage_animation["started"], started)
         ConsoleStage.finish_stage(app)
         drawn.clear();ReferenceLayout._home(app)
-        self.assertEqual(drawn[0][1], sheet.box(48), "the outro begins at its first cell")
+        self.assertEqual(loader()[0][1], sheet.box(48), "the outro begins at its first cell")
         ConsoleStage.start_stage(app, "nes", "Mario")
         self.assertNotEqual(app.stage_animation["started"], started, "another console starts its own animation")
 

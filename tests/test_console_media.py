@@ -215,7 +215,7 @@ class ConsoleMediaTests(unittest.TestCase):
         app.focus = "hero:play"
         app.art = SimpleNamespace(path=lambda system, kind: f"{system}-{kind}.png", hero=lambda: "hero-banner.jpg")
         app.picture = Mock(return_value=False)
-        app.rect = Mock()
+        app.rect = Mock();app.panel = Mock()
         app.display = Mock()
         app._top_shade = Mock()
         app._identity = Mock()

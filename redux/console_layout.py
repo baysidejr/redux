@@ -210,6 +210,12 @@ class ReferenceLayout:
         focused=self.home_focused_system(systems)
         x=LANE;w=1280-x;h=w*437/1400
         animation=getattr(self,"stage_animation",None)
+        if animation and animation.get("kind")=="load":
+            # A game is loading: the banner carousel and the console's loader take the whole screen.
+            self.targets=[];self.callbacks={}
+            self._loading_screen()
+            if self.focus not in self.callbacks:self.focus="task:cancel" if "task:cancel" in self.callbacks else None
+            return
         self._stage(x,0,w,h,disc,focused,counts)
         if not (animation or self.busy):self._identity(1090,27)
         self.display(360,315,"Consoles",21,"#a2a2a4")
