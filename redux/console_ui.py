@@ -1020,19 +1020,22 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
 
     def _start_integrated_game(self,game,core,media_lease=None):
         library=self.library;firmware=self.firmware_directory()
-        if game.get("system")=="saturn":
-            region=str(game.get("region") or "").casefold()
-            names=("mpr-17933.bin",) if region in {"u","usa","north america","e","europe"} else ("sega_101.bin","mpr-17933.bin")
-            if not firmware or not any((Path(firmware)/name).is_file() for name in names):
-                retained=""
-                if media_lease:
-                    released=media_lease.close()
-                    if released is False or getattr(media_lease,"closed",True) is False:
-                        self.retained_disc_leases=getattr(self,"retained_disc_leases",[])+[media_lease]
-                        retained="\nTemporary disc buffer retained: "+str(media_lease.entry_path)
-                self.menu("Saturn firmware needed",[("Choose firmware folder",self.choose_firmware),("Back",lambda:None)],
-                          message="Add compatible Saturn BIOS firmware ("+" or ".join(names)+") to "+str(firmware)+" and retry Play, or choose another firmware folder. Disc installation does not require firmware."+retained)
-                return
+        from .firmware_files import missing_firmware,system_label
+        try:game_path=None if game.get("transient_disc") else library.path_for(game)
+        except (OSError,ValueError,KeyError,AttributeError):game_path=None
+        missing=missing_firmware(game.get("system"),firmware,region=game.get("region"),game_path=game_path)
+        if missing:
+            names,message=missing
+            retained=""
+            if media_lease:
+                released=media_lease.close()
+                if released is False or getattr(media_lease,"closed",True) is False:
+                    self.retained_disc_leases=getattr(self,"retained_disc_leases",[])+[media_lease]
+                    retained="\nTemporary disc buffer retained: "+str(media_lease.entry_path)
+            self.menu(f"{system_label(game.get('system'))} firmware needed",
+                      [("Choose firmware folder",self.choose_firmware),("Copy BIOS files from a drive",self.copy_firmware_menu),("Back",lambda:None)],
+                      message=message+" Disc installation does not require firmware."+retained)
+            return
         def work():
             from .embedded import EmbeddedGame
             from .disc_session import DiscEmbeddedGame

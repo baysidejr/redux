@@ -2,8 +2,9 @@
 
 A drive that arrives with no ``Redux Games`` folder gets one question: console cartridge, GOG
 cartridge, extra storage, or not now. Nothing is written to it before the answer, and Not now
-keeps Redux from asking about that drive again. Drives present at start-up are only read;
-System → Storage offers the same choice for any drive at any time.
+keeps Redux from asking about that drive again. A drive that carries a ``bios`` folder with
+known firmware files gets a second question, to copy them (console_cores.py). Drives present
+at start-up are only read; System → Storage offers the same choice for any drive at any time.
 """
 from __future__ import annotations
 
@@ -24,6 +25,7 @@ class ConsoleGameCards:
         self.card_drives=None
         self.card_pending=[]
         self.card_offers=[]
+        self.firmware_offers=[]
         self.card_stopping=threading.Event()
         def watch():
             seen=None
@@ -52,12 +54,17 @@ class ConsoleGameCards:
             self.card_drives=set(drives)
             cards=set(cards)
             card_drives={str(Path(card).parent) for card in cards}
+            from .firmware_files import find_firmware_folder, known_files_in
             for drive in sorted(arrived_drives):
                 try:
                     bare=drive not in card_drives and can_prepare(drive) and not self._storage_ignored(drive)
-                except OSError:bare=False
+                    firmware=find_firmware_folder(drive) if can_prepare(drive) and not self._firmware_drive_ignored(drive) else None
+                except OSError:bare,firmware=False,None
                 if bare and drive not in self.card_offers:self.card_offers.append(drive)
+                if firmware and all(offer[0]!=drive for offer in getattr(self,"firmware_offers",[])):
+                    self.firmware_offers.append((drive,firmware,known_files_in(firmware)))
             self.card_offers=[drive for drive in self.card_offers if drive in self.card_drives]
+            self.firmware_offers=[offer for offer in getattr(self,"firmware_offers",[]) if offer[0] in self.card_drives]
             arrived=cards-self.card_roots;gone=self.card_roots-cards
             self.card_roots=cards
             for card in sorted(arrived):
@@ -69,6 +76,7 @@ class ConsoleGameCards:
         if not self._cards_idle():return
         if self.card_pending:self._sync_card(self.card_pending.pop(0))
         elif self.card_offers:self.offer_drive(self.card_offers.pop(0))
+        elif getattr(self,"firmware_offers",None):self.offer_firmware(*self.firmware_offers.pop(0))
 
     # ------------------------------------------------------------------ the one question
     def offer_drive(self,root):

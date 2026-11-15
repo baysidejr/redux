@@ -402,7 +402,7 @@ class EmbeddedSession:
             self._game_info = game
             stage = "loading game content"
             if not self._core.retro_load_game(C.byref(game)):
-                raise EmbeddedError(self._callback_error or "The libretro core refused this game.")
+                raise EmbeddedError(self._callback_error or self._refusal_reason())
             loaded = True
             if self._callback_error:
                 raise EmbeddedError(self._callback_error)
@@ -657,6 +657,17 @@ class EmbeddedSession:
                 self._frame = VideoFrame(width, height, rgb, self._sequence)
         except Exception as exc:
             self._callback_error = str(exc)
+
+    def _refusal_reason(self):
+        """The core's own last error line, when it logged one, behind the generic refusal."""
+        import re
+        for text in reversed(self.messages):
+            if text.startswith("Core log 3: ") or text.startswith("Core log 2: "):
+                line = text.split(": ", 1)[1].strip()
+                line = re.sub(r'\s*[:=]?\s*"?%[sdlux]"?', "", line).strip().rstrip(":.")
+                if line:
+                    return "The libretro core refused this game: " + line + "."
+        return "The libretro core refused this game."
 
     def _core_log(self,level,message):
         # A C variadic logger cannot be printf-formatted safely by a Python

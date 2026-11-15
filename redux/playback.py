@@ -183,11 +183,11 @@ def assess_readiness(system: str, executable: str | Path, *, profile_id: str | N
             firmware.append(str(bios))
         else: issues.append("The PCSX-Redux installation is missing its bundled 512 KiB openbios.bin.")
         warnings.append("OpenBIOS compatibility varies by game; starting the backend is not a gameplay verification.")
-    elif profile.firmware == "psx" or (profile.firmware == "system" and system in {"psx","saturn","pce_cd"}):
+    elif profile.firmware == "psx" or (profile.firmware == "system" and system in {"psx","saturn","pce_cd","sega_cd"}):
+        from .firmware_files import files_for
         roots = [Path(firmware_dir).expanduser().resolve()] if firmware_dir else []
         roots += [path.parent / "bios",path.parent / "firmware"]
-        expected = {"psx":("scph5500.bin","scph5501.bin","scph5502.bin"),
-                    "saturn":("sega_101.bin","mpr-17933.bin"),"pce_cd":("syscard3.pce",)}.get(system,())
+        expected = tuple(entry.name.casefold() for entry in files_for(system) if entry.required)
         for folder in roots:
             if not folder.is_dir(): continue
             for candidate in folder.iterdir():

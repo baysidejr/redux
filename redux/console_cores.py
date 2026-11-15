@@ -1,4 +1,6 @@
-"""Controller-operated setup for optional integrated emulator cores."""
+"""Controller-operated setup for optional integrated emulator cores, and firmware copied from a drive."""
+from pathlib import Path
+
 from .core_profiles import PROFILES
 from .embedded import HOSTED_DEFAULTS
 from .ui_assets import project_root
@@ -29,12 +31,68 @@ class ConsoleCores:
         if not executable(project_root()).is_file():missing.append('bigpemu')
         items=[('Set up recommended systems'+(f' · {len(missing)} missing' if missing else ' · installed'),lambda:self.download_cores(names+('bigpemu',)))]
         items.append(('BigPEmu - Jaguar / Jaguar CD',self.bigpemu_setup_menu))
+        items.append(('Copy BIOS files from a drive',self.copy_firmware_menu))
         for name in names+('mupen64plus_next','mame'):
             systems=[s for s,p in PROFILES.items() if p.filename==name+'_libretro.dll']
             family=PROFILES[systems[0]].family
             exists=(folder/(name+'_libretro.dll')).is_file()
             items.append((family+(' · installed' if exists else ' · not installed'),lambda n=name:self.core_options(n)))
         self.menu('Emulator setup',items+[('Back',lambda:None)],message='Choose a core to install, repair or update. Recommended systems use the built-in controller and display defaults. N64 and MAME are optional compatibility-testing backends.')
+
+    # ------------------------------------------------------------------ firmware from a drive
+    def firmware_drives(self):
+        """Connected drives that carry a bios folder with known files: [(root, folder, found)]."""
+        from .firmware_files import find_firmware_folder, known_files_in
+        from .game_cards import list_drives, can_prepare
+        result=[]
+        for drive in list_drives():
+            try:
+                if not can_prepare(drive):continue
+                folder=find_firmware_folder(drive)
+            except OSError:folder=None
+            if folder:result.append((str(drive),folder,known_files_in(folder)))
+        return result
+
+    def copy_firmware_menu(self):
+        """Pick a connected drive whose bios folder Redux can copy from."""
+        from .firmware_files import describe
+        drives=self.firmware_drives()
+        if not drives:
+            self.notice('No BIOS files found','Connect a drive with a bios folder at its root (or inside Redux Games) holding the files your emulators need, such as bios_CD_U.bin for Sega CD or scph5501.bin for PlayStation.')
+            return
+        items=[(f"{root.rstrip(chr(92)+'/')} · {len(found)} file{'' if len(found)==1 else 's'} · {describe(found)}",lambda folder=folder:self.copy_firmware_from(folder)) for root,folder,found in drives]
+        self.menu('Copy BIOS files from a drive',items+[('Cancel',lambda:None)],message='Known firmware files are copied into '+str(self.firmware_directory())+'. Files already there are never replaced.')
+
+    def offer_firmware(self,root,folder,found):
+        """The one question for a drive that arrived with BIOS files on it."""
+        from .firmware_files import describe
+        if not Path(folder).is_dir():return
+        letter=str(root).rstrip(chr(92)+'/')
+        self.menu(f'BIOS files found on {letter}',[
+            (f"Copy {len(found)} file{'' if len(found)==1 else 's'}",lambda:self.copy_firmware_from(folder)),
+            ('Not now',lambda:self._ignore_firmware_drive(root))],
+            message=f'This drive has firmware for {describe(found)}. Copying puts the files where your emulators look ({self.firmware_directory()}). Files already there are never replaced. Not now leaves the drive alone; System → Emulators & firmware can copy later.')
+
+    def _ignore_firmware_drive(self,root):
+        from .game_cards import drive_identity
+        identity=drive_identity(root)
+        ignored=[item for item in self.preferences.get('firmware_ignored',[]) if str(item).casefold()!=identity.casefold()]+[identity]
+        self.preferences['firmware_ignored']=ignored;self._save_preferences()
+        self.status.set(f"{str(root).rstrip(chr(92)+'/')} left alone • System → Emulators & firmware can copy its BIOS files later");self.schedule_draw()
+
+    def _firmware_drive_ignored(self,root):
+        from .game_cards import drive_identity
+        ignored={str(item).casefold() for item in self.preferences.get('firmware_ignored',[])}
+        return drive_identity(root).casefold() in ignored or str(root).casefold() in ignored
+
+    def copy_firmware_from(self,folder):
+        from .firmware_files import copy_firmware
+        destination=self.firmware_directory()
+        def work():return copy_firmware(folder,destination,cancelled=self.cancelled)
+        def done(result):
+            self.notice('BIOS files copied' if result.copied else 'No new BIOS files',result.summary+('\n'+'\n'.join(result.failed[:4]) if result.failed else '')+'\nFolder: '+str(destination))
+        self.overlay=None
+        self.task(work,done,'Copying BIOS files…',cancellable=True)
 
     def core_options(self,name):
         installed=(project_root()/'tools/cores'/(name+'_libretro.dll')).is_file()
