@@ -105,7 +105,7 @@ class ConsoleStage:
                 self._later(int(AUTOPLAY_STAGE * 1000), self.play_disc)
         if animation and now - animation["started"] > 20 and not self.busy:
             self.stage_animation = None
-        if (animation or self.busy) and self.screen == "home" and now - getattr(self, "_stage_frame_at", 0) >= 0.05:
+        if (animation or self.busy) and self.screen == "home" and now - getattr(self, "_stage_frame_at", 0) >= 0.1:
             self._stage_frame_at = now
             self.schedule_draw()
 
@@ -172,10 +172,14 @@ class ConsoleStage:
         strip_y = h - 29
         self.rect(x, strip_y, w, 29, "#080808")
         badge_width = self._badge(system or "welcome", x + 12, strip_y + 4)
-        self.display(x + max(65, 24 + badge_width), strip_y + 7, self.fit_text((disc.title if disc else label).upper(), 540, 15), 15, WHITE)
-        self._controller_hint("A", "Play" if disc else "Open", 1080, strip_y + 6, "#35a4c6")
-        if disc:
-            self._controller_hint("Y", "Info", 1180, strip_y + 6, "#d6bb34")
+        strip_title = (animation or {}).get("title") if loading else None
+        self.display(x + max(65, 24 + badge_width), strip_y + 7, self.fit_text((strip_title or (disc.title if disc else label)).upper(), 540, 15), 15, WHITE)
+        if loading:
+            self.display(1240, strip_y + 7, "LOADING", 13, "#9a9aa2", "bold", anchor="ne")
+        else:
+            self._controller_hint("A", "Play" if disc else "Open", 1080, strip_y + 6, "#35a4c6")
+            if disc:
+                self._controller_hint("Y", "Info", 1180, strip_y + 6, "#d6bb34")
         self.target("hero:play", (x + 2, 2, 1278, h - 2), self.play_disc if disc else (lambda s=system: self._open_system(s)), "Play disc" if disc else label)
         if disc:
             self.target("hero:details", (1174, strip_y, 1279, h), self.inserted_disc_information, "Disc information")
