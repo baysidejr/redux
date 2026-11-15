@@ -3,12 +3,14 @@ from __future__ import annotations
 
 from pathlib import Path
 from .library import SYSTEMS
+from .credential_keyboard import keyboard_rows, next_page, edit_value, masked_value
 
 WHITE="#f4f4f2"
 MUTED="#a3a3ab"
 ACCENT="#ec407a"
 
 _METADATA_FIELDS=("title","system","year","publisher","developer","genre","region","description")
+ART_LABELS={"cover":"Box cover","tile":"Library tile","hero":"Background / fan art","screenshot":"Gameplay screenshot","logo":"Game logo"}
 
 
 def _size(value):
@@ -24,6 +26,54 @@ def _track_time(sectors):
 
 
 class ConsoleEditors:
+    # ------------------------------------------------------------------ the user's own artwork
+    def game_artwork_menu(self):
+        game=self.selected()
+        if not game:return
+        self.menu("Game artwork",[("Choose "+ART_LABELS[role].lower(),lambda kind=role:self.choose_artwork_role(kind)) for role in ART_LABELS]+[("Back",lambda:None)],
+            message="Covers, landscape tiles and backgrounds are separate. Your own images stay with the portable library and win over the database's art.")
+
+    def choose_artwork_role(self,role):
+        game=self.selected()
+        if not game:return
+        identity=game["id"]
+        def selected(path):
+            self.task(lambda:self.library.set_artwork(identity,path,role=role),lambda _:self._cover_selected(),"Saving game artwork…")
+        self.open_file_browser("Choose "+ART_LABELS[role].lower(),mode="files",on_select=selected,extensions={".png",".jpg",".jpeg",".webp",".gif"},multiple=False)
+
+    # ------------------------------------------------------------------ the full character keyboard (PC arguments and other free text)
+    def _credential_keyboard(self):
+        prompt=self.text_prompt
+        page=prompt.get("keyboard_page","lower")
+        rows=keyboard_rows(page)
+        self.panel(0,302,1280,380,"#111216f2",0)
+        for row_index,row in enumerate(rows):
+            cell,top=56,321+row_index*49
+            left=(1280-len(row)*cell)/2
+            for index,character in enumerate(row):
+                x=left+index*cell;key="credential:key:"+str(ord(character))
+                focused=self.focus==key
+                if focused:self.panel(x+7,top,42,40,WHITE,20)
+                self.text(x+28,top+20,character,22,"#111216" if focused else WHITE,anchor="center")
+                self.target(key,(x,top,x+cell,top+43),lambda char=character:self._credential_edit(char),character)
+        controls=(("PAGE",{"lower":"ABC / symbols","upper":"123 / symbols","symbols":"abc"}[page]),("SPACE","Space"),("BACKSPACE","Delete"),("CLEAR","Clear"),("SAVE","Save"))
+        for index,(key,label) in enumerate(controls):
+            x=204+index*176
+            callback=self._accept_text if key=="SAVE" else lambda action=key:self._credential_edit(action)
+            self.button_canvas("credential:"+key,label,x,602,164,39,callback,key=="SAVE")
+
+    def _credential_edit(self,key):
+        if key=="PAGE":
+            self.text_prompt["keyboard_page"]=next_page(self.text_prompt.get("keyboard_page","lower"))
+            first=keyboard_rows(self.text_prompt["keyboard_page"])[0][0]
+            self.focus="credential:key:"+str(ord(first))
+        else:
+            self.text_prompt["value"]=edit_value(self.text_prompt["value"],key)
+        self.schedule_draw()
+
+    def _prompt_text_value(self,prompt):
+        return masked_value(prompt["value"]) if prompt.get("secret") else prompt["value"]
+
     def metadata_dialog(self):
         game=self.selected()
         if not game:

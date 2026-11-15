@@ -8,6 +8,7 @@ its header first and by its header title second.
 from __future__ import annotations
 
 import json
+import threading
 import re
 import sys
 import unicodedata
@@ -91,6 +92,7 @@ class GameDatabase:
         self.root = Path(root) if root else database_root()
         self.downloads = Path(downloads) if downloads else downloaded_root()
         self._systems = {}
+        self._lock = threading.RLock()
         self._manifest = None
 
     # ------------------------------------------------------------------ loading
@@ -203,6 +205,10 @@ class GameDatabase:
         self._systems.pop(system, None)
 
     def _load(self, system):
+        with self._lock:
+            return self._load_locked(system)
+
+    def _load_locked(self, system):
         if system in self._systems:
             return self._systems[system]
         entry = dict(games=[], by_id={}, by_serial={}, by_title={}, label=LABELS.get(system, system))

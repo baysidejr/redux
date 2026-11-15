@@ -87,3 +87,7 @@ developer's TheGamesDB and SteamGridDB keys; the output here is what ships.
 ## Neo Geo cartridge names
 
 `neo_geo/names.json` is not a catalog: it maps FinalBurn Neo set names (`mslug`, `kof98`) to a title and publisher so a zipped Neo Geo AES/MVS game on a game card gets a readable name. Source: libretro-database `dat/SNK - Neo Geo.dat`, English title only, set numbers and board codes stripped. The Database page does not list this system; it has no art or descriptions of its own.
+
+## How the app uses it
+
+Since 0.13 the database is the only source of game facts and art besides the user's own files. `redux/gamedb_link.py` matches collection games (serial, then title) and fills empty description, year, publisher, developer and genre; the screens show the database's box art, banner and game image for any game without its own, and inserted discs get the same treatment on the home banner. Nothing is copied into the library, so art downloaded later from System → Database shows up at once.

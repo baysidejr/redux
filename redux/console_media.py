@@ -1,4 +1,4 @@
-"""Automatic media presentation; native reads and artwork stay off Tk's thread."""
+"""Automatic media presentation; native reads and database lookups stay off Tk's thread."""
 from __future__ import annotations
 
 import queue
@@ -33,16 +33,22 @@ class ConsoleMedia:
         self.media_versions={}
         self.media_stopping=threading.Event()
         def enrich():
-            from .disc_artwork import fetch_disc_artwork
+            from .gamedb import GameDatabase
+            from .gamedb_link import disc_enrichment
+            database=GameDatabase()
             while not self.media_stopping.is_set():
                 request=self.media_requests.get()
                 if request is None:return
-                version,identity,catalogue,cache=request
+                version,identity,catalogue=request
                 try:
                     metadata=catalogue_disc_match(catalogue,identity) or {}
-                    artwork=fetch_disc_artwork(cache,identity,metadata)
-                    self.media_results.put((version,identity,metadata,artwork))
-                except (OSError,ValueError,RuntimeError,ImportError):
+                    # The shipped database supplies facts and art; a workspace catalogue's own values win.
+                    facts,artwork=disc_enrichment(database,identity)
+                    merged=dict(facts);merged.update({key:value for key,value in metadata.items() if value not in (None,"")})
+                    if merged.get("cover_path") or merged.get("artwork_path"):artwork.pop("cover_path",None)
+                    if merged.get("hero_path"):artwork.pop("hero_path",None)
+                    self.media_results.put((version,identity,merged,artwork))
+                except (OSError,ValueError,RuntimeError,ImportError,TypeError,AttributeError):
                     # Detection remains useful without optional metadata/artwork.
                     self.media_results.put((version,identity,{},{}))
         self.media_worker=threading.Thread(target=enrich,name="disc-artwork",daemon=True)
@@ -52,7 +58,7 @@ class ConsoleMedia:
     def _enrich_disc(self,identity):
         version=self.media_versions.get(identity.drive,0)+1
         self.media_versions[identity.drive]=version
-        self.media_requests.put((version,identity,self.catalogue,self.library.root/"cache"/"disc_artwork"))
+        self.media_requests.put((version,identity,self.catalogue))
 
     def _poll_media(self):
         for event in self.media_watcher.poll_events():

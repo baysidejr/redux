@@ -72,4 +72,13 @@ def import_identified(library,path,*,system="auto",linked=False,cancelled=None,p
             if fields:
                 library.update_metadata(game["id"],**fields)
                 game=library.game(game["id"])
+    if created:
+        # The shipped database fills what the file name and header cannot: description, year,
+        # publisher, developer, genre. A disc serial finds it; otherwise its title does.
+        try:
+            from .gamedb_link import link_game
+            if link_game(library,game,serial=identity.game_id):
+                game=library.game(game["id"])
+        except (OSError,ValueError):
+            pass
     return game,created,identity

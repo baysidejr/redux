@@ -395,7 +395,7 @@ def _apply_card_art(library, game, folder):
         tile = library.artwork_for(updated, "tile")
         if (sources.get("cover") or sources.get("screenshot")) and not (tile and Path(tile).is_file()):
             import tempfile
-            from .scraping import compose_tile
+            from .tile_art import compose_tile
             with tempfile.TemporaryDirectory(prefix="card-tile-") as temporary:
                 composed = Path(temporary) / "tile.png"
                 compose_tile(composed, updated["title"], {role: path for role, path in sources.items() if path})

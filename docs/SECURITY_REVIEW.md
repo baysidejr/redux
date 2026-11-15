@@ -23,7 +23,7 @@ Reviewed November 9, 2026. Scope: current Python source, Windows integration hel
 
 ## Security properties and limits
 
-Scraper credentials use current-user DPAPI outside the portable library. Provider errors and provenance omit reusable secrets. Remote artwork is bounded by bytes and dimensions. Library write paths and staging cleanup enforce ownership boundaries. Native PC game launches use argument vectors without shell evaluation and track the owned process family.
+Artwork scraping and its stored provider credentials were removed in 0.13; start-up deletes a leftover `scraper-credentials.dpapi`. Game facts and art come from the shipped database and from verified GitHub release downloads. Library write paths and staging cleanup enforce ownership boundaries. Native PC game launches use argument vectors without shell evaluation and track the owned process family.
 
 Redux and its installer are unsigned. Windows Xbox home registration remains an optional development-package flow requiring Developer Mode at registration time; the installer does not change that setting or register the home identity. Native cores and external game executables are trusted code running as the user, not sandboxed content. Optional core downloads use official HTTPS sources and record hashes; upstream nightlies are not pinned by an independently published digest. Python, Tcl/Tk, SDL3 and every core require ongoing upstream security maintenance; this dependency scan does not establish that all native components are vulnerability-free.
 

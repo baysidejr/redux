@@ -18,6 +18,7 @@ from . import __version__
 from .brand import fuji_shapes
 
 LANE=1280*520/1920
+DATABASE_ROLES={"cover":"boxart","hero":"hero","screenshot":"gameimage"}
 LANE_SCREENS=frozenset({"home","systems","collections","settings","saves","media"})
 BADGES={"welcome":("REDUX","#e5405e"),"psx":("PS","#8e24aa"),"nes":("NES","#ec407a"),"snes":("SNES","#7e57c2"),
     "3do":("3DO","#bb653e"),"sega_cd":("SEGA CD","#1f5fa8"),"pce_cd":("TG-CD","#c98a2e"),
@@ -148,12 +149,26 @@ class ReferenceLayout:
         return w
 
     def _game_artwork(self,game,role):
-        if not game or not game.get(ARTWORK_FIELDS[role]):return None
-        try:
-            custom=self.library.artwork_for(game) if role=="cover" else self.library.artwork_for(game,role=role)
-            if custom and Path(custom).is_file():return custom
-        except (OSError,ValueError):pass
-        return None
+        if not game:return None
+        if game.get(ARTWORK_FIELDS[role]):
+            try:
+                custom=self.library.artwork_for(game) if role=="cover" else self.library.artwork_for(game,role=role)
+                if custom and Path(custom).is_file():return custom
+            except (OSError,ValueError):pass
+        return self._database_artwork(game,role)
+
+    def _database_artwork(self,game,role):
+        """The shipped database's box art, banner or game image stands in when a game has no file of its own."""
+        if role not in DATABASE_ROLES or not game.get("system"):return None
+        database=getattr(self,"gamedb",None)
+        if database is None:return None
+        from .gamedb_link import database_game,art_for
+        key=(game.get("id"),game.get("system"),game.get("title"),game.get("game_id"))
+        cache=self.__dict__.setdefault("_database_links",{})
+        if key not in cache:
+            if len(cache)>2048:cache.clear()
+            cache[key]=database_game(database,game["system"],serial=game.get("game_id"),title=game.get("title"))
+        return art_for(database,cache[key],role)
 
     def _captured_game_screenshot(self,game):
         if not game:return None
@@ -368,7 +383,7 @@ class ReferenceLayout:
         self.rect(99,366,248,244,"#171719")
         if not self.picture(visual,99,366,248,244,mode="contain"):
             self.picture(self.art.path(game["system"],"tile"),99,366,248,244)
-        if not game.get("artwork_path"):
+        if not self._game_artwork(game,"cover"):
             self.rect(99,553,248,57,"#080809")
             self.display(112,563,self.fit_text(title(game),222,28),29,WHITE,"bold")
         current=getattr(self,"details_tab","play")

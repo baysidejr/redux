@@ -32,7 +32,6 @@ from .console_updates import ConsoleUpdates
 from .console_ingame import ConsoleIngame
 from .console_browser import ConsoleFileBrowser
 from .console_windows import ConsoleWindows
-from .console_scraper import ConsoleScraper
 from . import __version__
 from .ui_theme import Painter,ACCENT,BACKGROUND,SURFACE,RAISED,WHITE,SUBTLE,MUTED
 
@@ -51,7 +50,7 @@ def display_title(game):
 from .console_cores import ConsoleCores
 from .console_redux_controller import ConsoleReduxController
 
-class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleControllerTest,ConsoleGameDatabase,ConsoleUpdates,ConsolePCGames,ConsoleScraper,ConsoleWindows,ConsoleFileBrowser,ConsoleIngame,ConsoleControllers,ConsoleMedia,ConsoleEditors,OverlayScreens,ReferenceLayout,SecondaryScreens,ToolsApp):
+class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleControllerTest,ConsoleGameDatabase,ConsoleUpdates,ConsolePCGames,ConsoleWindows,ConsoleFileBrowser,ConsoleIngame,ConsoleControllers,ConsoleMedia,ConsoleEditors,OverlayScreens,ReferenceLayout,SecondaryScreens,ToolsApp):
     def __init__(self,root,library_root=None,*,activation=None):
         from .windows_activation import parse_activation
         from .windows_gaming import WindowsGamingExperience
@@ -167,9 +166,11 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
         self._load_catalogue()
         self._start_media_watch()
         self._start_card_watch()
+        self._retire_scraper_files()
         self.focus="welcome:card"
         root.after(40,self._tick)
         root.after(900,self._prewarm)
+        root.after(1500,self._link_database)
         root.after(500,self.first_core_setup)
 
     def _build(self):
@@ -687,8 +688,6 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
             self.refresh()
             self.status.set(f"{'Cancelled • ' if cancelled else ''}{added} added • {duplicates} existing • {len(errors)} errors")
             if errors:self.notice("Some media could not be imported","\n".join(errors[:4]))
-            elif artwork_imports and not cancelled and self.scraper_settings().load()["automatic"]:
-                self.scrape_game_ids(artwork_imports)
         self.task(work,done,"Identifying and importing media…")
 
     def choose_reference_art(self):
@@ -813,7 +812,6 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
                 ("Remove library entry",self.remove_entry)])
             return
         self.menu("Game options",[("Edit title / system / metadata",self.metadata_dialog),
-            ("Find game artwork",self.scrape_selected_game),
             ("Choose cover artwork",self.choose_cover),("Verify every media file",self.verify),
             ("Mark unfinished" if game.get("completed") else "Mark completed",lambda:self._flag("completed",not game.get("completed"))),
             ("Remove from wishlist" if game.get("wishlist") else "Add to wishlist",lambda:self._flag("wishlist",not game.get("wishlist"))),
@@ -1383,6 +1381,7 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleCon
                 try:self._catalogue_ready(self.catalogue_queue.get_nowait())
                 except queue.Empty:pass
             self._harvest_sessions()
+            self._poll_database_link()
             self._redux_controller_tick()
             try:
                 sid,ready=self.bridge_events.get_nowait()

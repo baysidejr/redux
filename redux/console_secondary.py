@@ -322,7 +322,7 @@ class SecondaryScreens:
         self.display(80,46,prompt["title"],38,WHITE)
         self.text(80,105,prompt["label"],15,MUTED)
         self.panel(80,143,1120,53,"#ffffff19",0)
-        value=self._scraper_text_value(prompt) if prompt.get("credential") else prompt["value"]
+        value=self._prompt_text_value(prompt) if prompt.get("credential") else prompt["value"]
         self.text(101,159,self.fit_text(value+" |",1077,21),21,WHITE)
         self.button_canvas("text:save","Save",980,47,100,37,self._accept_text,True)
         self.button_canvas("text:cancel","Cancel",1096,47,104,37,self._cancel_text)
