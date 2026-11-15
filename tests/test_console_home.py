@@ -112,6 +112,7 @@ class HomeShelfTests(unittest.TestCase):
         app.busy = False;app.screen = "library";ConsoleStage._stage_tick(app)
         self.assertIsNone(app.disc_autoplay);app.navigate.assert_called_with("home", remember=False)
         self.assertEqual(app.stage_animation["title"], "Eternal Champions");self.assertEqual(app.focus, "hero:play")
+        self.assertEqual(app.home_system, "sega_cd");self.assertEqual(app.stage_animation["origin"], (360 + 226.5, 348 + 176, 213, 149), "the Sega CD tile grows into the stage")
         delay, callback = [c for c in app.calls if isinstance(c, tuple) and c[0] == "after"][-1][1:]
         self.assertIs(callback, app.play_disc)
         # A disc swapped out before the delay elapsed is forgotten.

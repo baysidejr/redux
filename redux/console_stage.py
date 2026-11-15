@@ -100,14 +100,24 @@ class ConsoleStage:
                 self.disc_autoplay = None
                 if self.screen != "home":
                     self.navigate("home", remember=False)
+                # The disc's console grows out of the shelf into the stage, then the disc loads.
+                self.home_system = disc.system
                 self.focus = "hero:play"
-                self.start_stage(disc.system, disc.title)
+                self.start_stage(disc.system, disc.title, origin=self._shelf_tile_rect(disc.system))
                 self._later(int(AUTOPLAY_STAGE * 1000), self.play_disc)
         if animation and now - animation["started"] > 20 and not self.busy:
             self.stage_animation = None
         if (animation or self.busy) and self.screen == "home" and now - getattr(self, "_stage_frame_at", 0) >= 0.1:
             self._stage_frame_at = now
             self.schedule_draw()
+
+    def _shelf_tile_rect(self, system):
+        """Where a console's tile sits on the shelf page that shows it, for the zoom into the stage."""
+        systems = self.home_systems()
+        if system not in systems:
+            return None
+        index = systems.index(system) % 8
+        return (360 + (index % 4) * 226.5, 348 + (index // 4) * 176, 213, 149)
 
     def _stage_idle(self):
         playing = bool(self.embedded) or bool(self.playback and self.playback.active())
