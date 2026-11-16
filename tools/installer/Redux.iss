@@ -38,6 +38,12 @@ SetupLogging=yes
 Name: desktopicon; Description: "Create a desktop shortcut"; Flags: unchecked
 Name: startup; Description: "Open Redux fullscreen when I sign in"; Flags: unchecked
 
+[InstallDelete]
+; Xbox My Apps helpers removed in 0.31.0; nothing calls them.
+Type: files; Name: "{app}\tools\windows_xbox\Add-XboxApp.ps1"
+Type: files; Name: "{app}\tools\windows_xbox\Remove-XboxApp.ps1"
+Type: files; Name: "{app}\tools\windows_xbox\Invoke-XboxApp.ps1"
+
 [Files]
 Source: "{#AppSource}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "redux-launch.json,redux-launch-diagnostic.json,.redux-diagnose-next-launch"
 
