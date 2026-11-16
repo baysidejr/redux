@@ -14,7 +14,7 @@ try {
     $arguments = @('-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File',
         ('"' + (Join-Path $PSScriptRoot $helper) + '"'),
         '-BackupDirectory', ('"' + $BackupDirectory + '"'), '-ResultFile', ('"' + $ResultFile + '"'))
-    if ($Action -eq 'Enable') { $arguments += '-Enable' }
+    if ($Action -eq 'Enable') { $arguments += @('-Enable', '-DeveloperMode') }
     # Only the small registry helper elevates; Redux and its game/core hosts stay
     # at medium integrity so Xbox home activation remains valid.
     $process = Start-Process -FilePath "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe" `

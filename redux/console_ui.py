@@ -170,6 +170,7 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleSta
         self._start_media_watch()
         self._start_card_watch()
         self._retire_scraper_files()
+        self._refresh_home_registration()
         self.stage_animation=None;self.disc_autoplay=None
         self.focus=f"home-system:{self.home_focused_system()}"
         root.after(40,self._tick)
@@ -1560,7 +1561,10 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleSta
 
     def exit_menu(self):
         if self.is_gaming_home():
-            self.menu("Xbox home",[("Keep browsing",lambda:None),("Windows Xbox mode settings",self.open_xbox_settings)],message="Use the Xbox mode menu to switch to the Windows desktop.")
+            # Redux is Windows' home here: closing it would leave an empty screen.
+            self.menu("Redux is home",[("Keep browsing",lambda:None),
+                      ("Restart PC",lambda:self._power_menu("restart")),("Shut down PC",lambda:self._power_menu("shutdown"))],
+                      message="Restart or shut down this PC. To reach the Windows desktop, press the Xbox button and choose the desktop from Windows' menu.")
             return
         self.exit_app_menu()
 

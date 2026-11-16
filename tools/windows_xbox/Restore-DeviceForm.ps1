@@ -15,7 +15,7 @@ try {
     }
     $keyPath = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\OEM'
     if ($saved.value_existed) {
-        New-Item -Path $keyPath -Force | Out-Null
+        if (-not (Test-Path -LiteralPath $keyPath)) { New-Item -Path $keyPath | Out-Null }
         $value = $saved.value
         if ($saved.value_kind -eq 'Binary') { $value = [byte[]]$value }
         if ($saved.value_kind -eq 'MultiString') { $value = [string[]]$value }

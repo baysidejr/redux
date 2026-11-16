@@ -69,7 +69,8 @@ class ConsoleUpdates:
     def _apply_update(self, path):
         from .updates import launch_installer, UpdateError
         try:
-            launch_installer(path)
+            from .console_windows import application_directory
+            launch_installer(path, application_directory()/"Redux.exe")
         except (UpdateError, OSError) as error:
             self.notice("The update could not start", str(error))
             return

@@ -31,6 +31,7 @@ def main(argv=None):
     play=sub.add_parser("play")
     play.add_argument("id",type=int)
     sub.add_parser("drives")
+    sub.add_parser("refresh-home",help="After an update, register the new Redux as the full screen experience home")
     inspect=sub.add_parser("inspect-disc")
     inspect.add_argument("drive")
     identity=sub.add_parser("identify")
@@ -54,6 +55,9 @@ def main(argv=None):
     from .launch import build_command, launch_game
     from .optical import list_drives,inspect_disc
     try:
+        if args.command=="refresh-home":
+            from .console_windows import refresh_home_registration
+            print(json.dumps({"refreshed":refresh_home_registration(force_shutdown=True)}));return
         if args.command=="drives":
             print(json.dumps([asdict(d) for d in list_drives()],indent=2))
             return

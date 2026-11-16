@@ -76,7 +76,7 @@ class XboxIdentityTests(unittest.TestCase):
         second = prepare_identity_layout(self.source, self.source, "0.8.0")
         self.assertEqual(second["layout"], first["layout"])
         self.assertEqual(executable.stat().st_mtime_ns, timestamp)
-        for name in ("register_script", "unregister_script", "enable_picker_script", "restore_device_form_script", "device_form_wrapper", "xbox_app_wrapper"):
+        for name in ("register_script", "unregister_script", "enable_picker_script", "restore_device_form_script", "device_form_wrapper"):
             self.assertTrue(Path(second[name]).is_file(), name)
         (self.source / "Redux.exe").write_bytes(b"next executable")
         third = prepare_identity_layout(self.source, self.source, "0.8.0")

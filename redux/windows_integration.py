@@ -1,9 +1,18 @@
-"""Windows identity setup kept separate from ordinary library and game use."""
+"""Make Redux the home screen of Windows' full screen experience (Xbox mode).
+
+One action does the whole job, in the order Windows needs it:
+1. one administrator prompt sets the device type that shows the home-app picker
+   (DeviceForm 46, original backed up) and turns on Developer Mode;
+2. Redux registers its home-app package for this user;
+3. Redux is chosen as the home app and Windows starts in the full screen experience.
+"""
 from __future__ import annotations
 
+from dataclasses import dataclass
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import uuid
 try:
@@ -47,7 +56,7 @@ def _script(application_dir,name,*arguments):
     return result
 
 
-def register_identity(application_dir,portable_root):
+def register_identity(application_dir,portable_root,*,force_shutdown=False):
     if not gaming_configuration().developer_mode:
         raise OSError("Turn on Developer Mode in Windows Settings before registering the Xbox home-app package.")
     from .windows_identity import prepare_identity_layout
@@ -57,7 +66,8 @@ def register_identity(application_dir,portable_root):
     # that Windows already registered.
     if not isinstance(layout,(str,os.PathLike)):
         layout=layout.path if hasattr(layout,"path") else layout["layout"]
-    return _script(application_dir,"Register-HomeApp.ps1","-Layout",layout)
+    # force_shutdown is for updates only: it closes an idle old copy Windows reopened as home.
+    return _script(application_dir,"Register-HomeApp.ps1","-Layout",layout,*(["-ForceShutdown"] if force_shutdown else []))
 
 
 def unregister_identity(application_dir):
@@ -88,6 +98,7 @@ def select_home_app(aumid=None):
 
 
 def change_device_form(enabled,application_dir):
+    """Elevated: DeviceForm 46 plus Developer Mode (enable), or the original DeviceForm (restore)."""
     backup=config_path().parent/"windows-integration"
     backup.mkdir(parents=True,exist_ok=True)
     result=backup/("device-form-result-"+uuid.uuid4().hex+".json")
@@ -95,11 +106,78 @@ def change_device_form(enabled,application_dir):
                    "-BackupDirectory",backup,"-ResultFile",result)
 
 
-def register_xbox_app(enabled,application_dir):
-    directory=Path(application_dir)
-    backup=config_path().parent/"windows-integration"
-    backup.mkdir(parents=True,exist_ok=True)
-    result=backup/("xbox-app-result-"+uuid.uuid4().hex+".json")
-    return _script(directory,"Invoke-XboxApp.ps1","-Action","Add" if enabled else "Remove",
-                   "-Executable",directory/"Redux.exe","-Icon",directory/"_internal/assets/redux.ico",
-                   "-BackupDirectory",backup,"-ResultFile",result)
+@dataclass(frozen=True)
+class FullscreenStatus:
+    handheld: bool=False
+    developer_mode: bool=False
+    registered: bool=False
+    home: bool=False
+    starts_in_fullscreen: bool=False
+
+    @property
+    def ready(self):
+        return self.handheld and self.developer_mode and self.registered and self.home and self.starts_in_fullscreen
+
+
+def fullscreen_status():
+    config=gaming_configuration()
+    package=identity_status()
+    return FullscreenStatus(config.handheld,config.developer_mode,bool(package),
+                            bool(package) and config.home_app==package["aumid"],config.startup_to_gaming_home)
+
+
+def set_up_fullscreen_experience(application_dir,portable_root):
+    """Make Redux the full screen experience home; the caller offers the restart that applies it."""
+    config=gaming_configuration()
+    if not(config.handheld and config.developer_mode):
+        change_device_form(True,application_dir)
+        config=gaming_configuration()
+        if not config.developer_mode:raise OSError("Windows did not turn on Developer Mode, so Redux could not register as a home app.")
+        if not config.handheld:raise OSError("Windows did not keep the gaming device type that shows the home-app picker.")
+    registered=register_identity(application_dir,portable_root)
+    aumid=registered.get("aumid") or (identity_status() or {}).get("aumid")
+    if not aumid:raise OSError("Windows did not report Redux's home-app registration.")
+    select_home_app(aumid)
+    remove_old_layouts(portable_root,registered.get("install_location"))
+    return fullscreen_status()
+
+
+def remove_old_layouts(portable_root,keep):
+    """Each registration stages a full copy of Redux; only the registered one is needed."""
+    folder=Path(portable_root)/"windows-home"
+    if not keep or not folder.is_dir():return 0
+    keep=Path(keep).resolve()
+    removed=0
+    for layout in folder.iterdir():
+        if layout.is_dir() and layout.resolve()!=keep and (layout/"redux-package.json").is_file():
+            shutil.rmtree(layout,ignore_errors=True)
+            removed+=not layout.exists()
+    return removed
+
+
+def registered_layout_is_current(package,application_dir):
+    """True when the registered home-app copy is this version of Redux."""
+    import hashlib
+    from .windows_identity import package_version
+    try:
+        metadata=json.loads((Path(package["install_location"])/"redux-package.json").read_text(encoding="utf-8"))
+        executable=hashlib.sha256((Path(application_dir)/"Redux.exe").read_bytes()).hexdigest()
+    except (OSError,ValueError,KeyError,TypeError):
+        return False
+    return metadata.get("version")==package_version(__version__) and metadata.get("executable_sha256")==executable
+
+
+def refresh_registration(application_dir,portable_root,*,force_shutdown=False):
+    """After an update, register the new Redux so Windows does not keep starting the old copy.
+
+    Runs from the ordinary (unpackaged) Redux.exe only, and only when Redux is already
+    registered and Developer Mode is still on. Returns True when it re-registered.
+    """
+    package=identity_status()
+    if not package or registered_layout_is_current(package,application_dir):return False
+    if not gaming_configuration().developer_mode:return False
+    was_home=gaming_configuration().home_app==package["aumid"]
+    registered=register_identity(application_dir,portable_root,force_shutdown=force_shutdown)
+    if was_home and registered.get("aumid") and registered["aumid"]!=package["aumid"]:select_home_app(registered["aumid"])
+    remove_old_layouts(portable_root,registered.get("install_location"))
+    return True

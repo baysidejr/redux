@@ -134,20 +134,93 @@ class ConsoleWindowsTests(unittest.TestCase):
         with patch("redux.console_windows.application_directory", return_value=Path("C:/Redux")), \
              patch("redux.console_windows.startup_status", return_value=StartupStatus()), \
              patch("redux.console_windows.set_start_with_windows", return_value=StartupStatus(enabled=True)) as setting, \
-             patch("redux.console_windows.gaming_configuration", side_effect=AssertionError("startup must not select home")):
+             patch("redux.windows_integration.select_home_app", side_effect=AssertionError("startup must not select home")):
             app.toggle_windows_startup()
         setting.assert_called_once_with(True, Path("C:/Redux/Redux.exe"))
         self.assertTrue(app.home_activation)
         self.assertEqual(app.preferences, before)
         app.schedule_draw.assert_called_once_with()
 
-    def test_alongside_xbox_requires_startup_enabled(self):
+    def test_settings_page_has_one_full_screen_experience_row_and_no_other_xbox_pages(self):
         app = self.bare()
+        rows = []
+        app._setting_row = lambda key, title, detail, y, callback, **kw: rows.append((key, title, kw.get("toggle")))
+        app.fullscreen_ready = False
+        with patch("redux.console_windows.startup_status", return_value=StartupStatus()):
+            app._windows_settings()
+        self.assertEqual([key for key, _, _ in rows], ["windows:startup", "windows:fullscreen", "windows:experience"])
+        self.assertEqual(rows[2][1], "Full screen experience")
+        self.assertFalse(rows[2][2])
+        for gone in ("xbox_home_menu", "windows_options_menu", "launch_xbox_mode", "change_xbox_app",
+                     "desktop_home_picker_menu", "toggle_xbox_startup", "remove_windows_integration"):
+            self.assertFalse(hasattr(ConsoleApp, gone), gone)
+
+    def test_full_screen_experience_row_reads_windows_once_in_the_background(self):
+        app = self.bare()
+        app._setting_row = lambda *a, **kw: None
         with patch("redux.console_windows.startup_status", return_value=StartupStatus()), \
-             patch("redux.console_windows.set_start_with_windows") as setting:
-            app.toggle_xbox_startup()
-        setting.assert_not_called()
+             patch("redux.windows_integration.fullscreen_status", return_value=SimpleNamespace(ready=True)) as status, \
+             patch("threading.Thread", side_effect=lambda target, daemon: SimpleNamespace(start=target)):
+            app._windows_settings()
+            app._windows_settings()  # still checking: no second read
+            self.assertFalse(hasattr(app, "fullscreen_ready"))  # nothing touches Tk from the worker
+            app.poll_windows_experience()  # the UI tick takes the answer
+            app._windows_settings()
+        status.assert_called_once_with()
+        self.assertTrue(app.fullscreen_ready)
+
+    def test_full_screen_experience_confirms_on_cancel_then_restarts_on_request(self):
+        app = self.bare()
+        app.fullscreen_ready = False
+        tasks = []
+        app.task = lambda work, done, label, cancellable=True: tasks.append((work, done))
+        app._close_now = Mock()
+        app.fullscreen_experience_menu()
+        labels = [label for label, _ in app.overlay["items"]]
+        self.assertEqual(labels, ["Cancel", "Set Redux as full screen experience"])
+        self.assertIn("administrator approval once", app.overlay["message"])
+        app.overlay["items"][1][1]()
+        work, done = tasks[0]
+        with patch("redux.windows_integration.set_up_fullscreen_experience", return_value=SimpleNamespace(ready=True)) as setup, \
+             patch("redux.console_windows.application_directory", return_value=Path("C:/Redux")), \
+             patch("redux.console_windows.project_root", return_value=Path("C:/Redux")):
+            done(work())
+        setup.assert_called_once_with(Path("C:/Redux"), Path("C:/Redux"))
+        self.assertTrue(app.fullscreen_ready)
+        self.assertEqual(app.overlay["title"], "Restart to finish")
+        dict(app.overlay["items"])["Restart now"]()
+        app._close_now.assert_called_once_with(power="restart")
+
+    def test_full_screen_experience_waits_for_a_running_game(self):
+        app = self.bare()
+        app.embedded = object()
+        app.fullscreen_experience_menu()
         app.notice.assert_called_once()
+        self.assertIsNone(app.overlay)
+
+    def test_only_the_installed_unpackaged_redux_refreshes_the_registration(self):
+        app = self.bare()
+        with patch("threading.Thread") as thread:
+            app._refresh_home_registration()  # a source checkout is never registered
+        thread.assert_not_called()
+        with patch("sys.frozen", True, create=True), \
+             patch("redux.windows_gaming.current_package_full_name", return_value="Redux.MediaLibrary_1.0_x64__abc"), \
+             patch("threading.Thread") as thread:
+            app._refresh_home_registration()  # the home copy cannot replace itself
+        thread.assert_not_called()
+        with patch("sys.frozen", True, create=True), \
+             patch("redux.windows_gaming.current_package_full_name", return_value=None), \
+             patch("threading.Thread") as thread:
+            app._refresh_home_registration()
+        thread.return_value.start.assert_called_once_with()
+
+    def test_refresh_failure_is_logged_not_raised(self):
+        from redux import console_windows
+        with tempfile.TemporaryDirectory() as directory, \
+             patch("redux.windows_integration.refresh_registration", side_effect=OSError("package in use")), \
+             patch("redux.windows_paths.redux_user_data", return_value=Path(directory)):
+            self.assertFalse(console_windows.refresh_home_registration())
+            self.assertIn("package in use", (Path(directory) / "logs/full-screen-experience.log").read_text(encoding="utf-8"))
 
 
 class ActivationEntryPointTests(unittest.TestCase):

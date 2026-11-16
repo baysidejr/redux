@@ -1,11 +1,20 @@
 [CmdletBinding()]
-param([switch]$Enable, [string]$BackupDirectory, [string]$ResultFile)
+param([switch]$Enable, [switch]$DeveloperMode, [string]$BackupDirectory, [string]$ResultFile)
 . (Join-Path $PSScriptRoot 'Common.ps1')
 $script:ReduxResultFile = $ResultFile
 try {
     if (-not $Enable) { throw 'Pass -Enable only after choosing to make Windows identify this PC as a gaming handheld. This advanced setting requires a reboot and can affect other Windows behavior.' }
     Assert-ReduxWindows
     Assert-ReduxAdministrator
+    if ($DeveloperMode) {
+        # Windows registers Redux's home-app package only with Developer Mode on (the same
+        # value Settings > System > For developers writes). It stays on so updates can
+        # register the new version.
+        $unlock = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock'
+        if (-not (Test-Path -LiteralPath $unlock)) { New-Item -Path $unlock | Out-Null }
+        New-ItemProperty -LiteralPath $unlock -Name 'AllowDevelopmentWithoutDevLicense' -Value 1 -PropertyType DWord -Force | Out-Null
+        if ((Get-Item -LiteralPath $unlock).GetValue('AllowDevelopmentWithoutDevLicense', 0) -ne 1) { throw 'Windows did not keep Developer Mode on.' }
+    }
     if (-not $BackupDirectory) { $BackupDirectory = Join-Path (Get-ReduxIntegrationDirectory) 'device-form-backup' }
     $backup = [IO.Path]::GetFullPath($BackupDirectory)
     $metadataPath = Join-Path $backup 'device-form.json'
@@ -26,7 +35,7 @@ try {
         if ($present -eq $existing.value_existed -and (-not $present -or
             ($current.GetValueKind('DeviceForm').ToString() -eq $existing.value_kind -and
              (($current.GetValue('DeviceForm') | ConvertTo-Json -Compress) -eq ($existing.value | ConvertTo-Json -Compress))))) {
-            New-Item -Path $keyPath -Force | Out-Null
+            if (-not (Test-Path -LiteralPath $keyPath)) { New-Item -Path $keyPath | Out-Null }
             New-ItemProperty -LiteralPath $keyPath -Name 'DeviceForm' -Value 46 -PropertyType DWord -Force | Out-Null
             if ((Get-ReduxDeviceForm) -ne 46) { throw 'Windows did not retain DeviceForm 46.' }
             Write-ReduxResult @{ok = $true; enabled = $true; restart_required = $true; backup_directory = $backup; reused_backup = $true}
@@ -59,11 +68,11 @@ try {
     if ($checkedBackup.schema -ne 1 -or $checkedBackup.oem_export_sha256 -ne (Get-FileHash -LiteralPath $exportPath -Algorithm SHA256).Hash) {
         throw 'The restore metadata could not be verified; no device setting was changed.'
     }
-    New-Item -Path $keyPath -Force | Out-Null
+    if (-not (Test-Path -LiteralPath $keyPath)) { New-Item -Path $keyPath | Out-Null }
     New-ItemProperty -LiteralPath $keyPath -Name 'DeviceForm' -Value 46 -PropertyType DWord -Force | Out-Null
     if ((Get-ReduxDeviceForm) -ne 46) { throw 'Windows did not retain DeviceForm 46. The original backup is available for restoration.' }
     Write-ReduxResult @{ok = $true; enabled = $true; restart_required = $true; backup_directory = $backup;
-        note = 'Windows now identifies this PC as a gaming handheld. Restart manually to reveal supported Xbox home-picker settings. Restore original device form from the same Redux settings menu.'}
+        note = 'Windows now identifies this PC as a gaming handheld. Restart to finish. The original device form is backed up next to this result.'}
 } catch {
     Write-ReduxResult @{ok = $false; error = $_.Exception.Message}
     exit 1

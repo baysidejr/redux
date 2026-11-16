@@ -137,6 +137,5 @@ def prepare_identity_layout(application_dir, portable_root, version):
                   unregister_script=str(scripts / "Unregister-HomeApp.ps1"),
                   enable_picker_script=str(scripts / "Enable-HomePicker.ps1"),
                   restore_device_form_script=str(scripts / "Restore-DeviceForm.ps1"),
-                  device_form_wrapper=str(scripts / "Invoke-DeviceForm.ps1"),
-                  xbox_app_wrapper=str(scripts / "Invoke-XboxApp.ps1"))
+                  device_form_wrapper=str(scripts / "Invoke-DeviceForm.ps1"))
     return result

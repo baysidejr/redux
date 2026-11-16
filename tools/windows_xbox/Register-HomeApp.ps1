@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param([Parameter(Mandatory = $true)][string]$Layout, [string]$ResultFile)
+param([Parameter(Mandatory = $true)][string]$Layout, [switch]$ForceShutdown, [string]$ResultFile)
 . (Join-Path $PSScriptRoot 'Common.ps1')
 $script:ReduxResultFile = $ResultFile
 try {
@@ -17,8 +17,11 @@ try {
             throw "The staged layout is missing $relative."
         }
     }
-    # Do not force-kill an active game or modify an installed layout in place.
-    Add-AppxPackage -Register $manifest -ForceUpdateFromAnyVersion -ErrorAction Stop
+    # Never modify an installed layout in place. -ForceShutdown is passed only by the
+    # updater, after Redux itself has closed: it closes an idle old copy that Windows
+    # reopened as home while the installer ran.
+    if ($ForceShutdown) { Add-AppxPackage -Register $manifest -ForceUpdateFromAnyVersion -ForceApplicationShutdown -ErrorAction Stop }
+    else { Add-AppxPackage -Register $manifest -ForceUpdateFromAnyVersion -ErrorAction Stop }
     $package = Get-ReduxRegisteredPackage
     if ($null -eq $package) { throw 'Windows did not report the registered Redux package.' }
     Write-ReduxResult @{ok = $true; registered = $true; package_name = $package.Name;

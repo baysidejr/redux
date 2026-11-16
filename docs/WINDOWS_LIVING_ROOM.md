@@ -1,91 +1,72 @@
-# Windows startup and Xbox mode
+# Windows startup and the full screen experience
 
-Redux opens fullscreen by default. **System → Windows & Xbox mode** contains the
-controller-operated settings for startup, fullscreen, Windows registration and
-removal. F11 remains a secondary keyboard shortcut.
+**System → Windows** has three rows: **Start with Windows**, **Open fullscreen** and
+**Full screen experience**. Redux installs as an ordinary app; the third row is the
+only Xbox setting.
 
 ## Start with Windows
 
 **Start with Windows** installs only this user's `ReduxMediaLibrary` entry under
 `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`. It launches the complete
 portable EXE with `--startup --fullscreen`, independent of the working directory.
-Turning it off removes the owned entry. Moving the application to another PC or
-folder requires enabling startup there again; games and saves remain portable.
+Turning it off removes the owned entry. It also writes Redux's
+`GamingConfiguration\Startup\Run` DWORD (`1`, start at sign-in in Xbox mode too);
+there is no separate switch for it any more.
 
-**Windows integration options → Start beside Xbox mode** controls the owned
-`GamingConfiguration\Startup\Run` DWORD: `1` starts at sign-in, including Xbox
-mode; `0` waits for the ordinary desktop. The meanings were checked against this
-machine's Microsoft Settings startup handler, with evidence in
-`analysis/windows_integration/startup-policy-binary-evidence.json`. This setting
-does not change the home-app selection. When started alongside active Xbox mode,
-Redux starts minimized so it does not replace the chosen home screen.
+## Full screen experience
 
-**Windows integration options → Show Redux in Xbox My Apps** adds Redux as an app
-you can open while keeping Xbox as home. This is independent of Developer Mode
-and the gaming-home package. The small helper asks Windows for administrator
-approval, uses only an empty OEM app slot, and saves a restore record. It does not
-replace another launcher or change the selected home app. Reopen Xbox if it was
-already running. **Remove Windows integration → Remove Xbox My Apps entry** undoes
-this separate registration. On this PC, Xbox's Apps page showed the Redux tile;
-opening it cold loaded the existing three-game library, and opening it again
-returned to the same running frontend. These checks used the real Windows profile,
-outside the development tool's private settings view.
+One action makes Redux the home screen of Windows' full screen experience (Xbox
+mode), so the PC starts straight into Redux like a console:
 
-## Redux as an Xbox home app
+1. **One administrator prompt** runs `Invoke-DeviceForm.ps1 -Action Enable`, which
+   backs up the original `HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\OEM`
+   `DeviceForm` and sets it to `46` (gaming handheld, which shows the home-app
+   picker on a desktop), and turns on Developer Mode
+   (`AppModelUnlock\AllowDevelopmentWithoutDevLicense = 1`). Skipped when both are
+   already set.
+2. Redux stages its home-app package in `windows-home` beneath the portable root
+   and registers it for this user (`Register-HomeApp.ps1`, no elevation, so it
+   lands in the signed-in user's profile even when UAC asked for another admin).
+3. Redux writes `GamingHomeApp` (its package AUMID) and `StartupToGamingHome = 1`
+   under `HKCU\Software\Microsoft\Windows\CurrentVersion\GamingConfiguration`,
+   after saving the previous choice in `windows-home-selection.json`.
+4. **Restart to finish** offers Restart now, which closes Redux and restarts
+   Windows as System → Exit → Restart PC does.
 
-This is an optional Windows development-package integration. It is separate from
-ordinary fullscreen startup and uses the existing Redux application and library.
+The row shows ON when all five parts are in place (device type, Developer Mode,
+package, home choice, start in full screen). Choosing it again repairs the setup.
+Redux refuses while a game or task runs.
 
-1. Open **Xbox home app → Register Redux with Windows**. If Developer Mode is off,
-   the app explains the prerequisite and offers the Windows settings page. The
-   setup scripts check it and do not enable it themselves.
-2. Registration stages an immutable loose package in `windows-home` beneath the
-   portable root, with `windows.gamingApp`, the gaming-home custom capability and
-   the developer SCCD. The packaged UI remains `asInvoker` with PerMonitorV2 DPI
-   awareness. Its `redux-launch.json` points to the original portable root, so
-   BIOS, cores, artwork, managed games and saves stay together.
-3. On a supported handheld, select Redux in **Windows Settings → Gaming → Xbox
-   mode → Choose home app**, or use **Use Redux as Xbox home** in the app.
-4. The supplied findings report that desktop form factors hide the selector on
-   this Windows build. **Windows integration options → Advanced desktop home
-   picker** offers a separate administrator setup that backs up the original OEM
-   registry state before setting DeviceForm to `46`. It explains the wider device
-   classification effect and required reboot. Restore is available in the same
-   menu. This is a Windows workaround, not a promise about future Windows builds.
-5. Developer Mode can be turned off after successful registration according to
-   the supplied machine-tested reference. Reboot persistence still needs to be
-   verified on each deployed machine.
+While Redux is home, Back/Exit offers Keep browsing, Restart PC and Shut down PC;
+closing the home app would leave an empty screen. Windows' own Xbox-button menu
+reaches the desktop. Windows owns the short Guide press in this mode; **Select +
+Start held for one second** opens Redux's game menu.
 
-The package uses the literal home URI `windows.gaming:///home`. Repeated
-activation forwards through a user-protected Windows named pipe to one running
-frontend and transfers foreground permission. It does not depend on a runtime
-descriptor file in an inherited launcher's private AppData view.
-While a game or disc operation is active, activation retains that work. A running
-game pauses into Redux's existing menu. The initial and forwarded activations
-are logged under `%LOCALAPPDATA%\ReduxMediaLibrary\logs\activations.jsonl` with
-package and FSE information.
+Developer Mode stays on: Windows registers the unsigned home-app package only with
+it, and every update registers again.
 
-The identity manifest disables AppData and HKCU write virtualization so its
-settings and Windows startup changes remain shared with ordinary desktop launches.
-When validating from packaged development tools, compare the actual profile view
-with the development tool's private view; identical textual paths can resolve to
-different files. Acceptance records explicitly identify the real profile context.
+## Updates
 
-Windows owns the short Guide/Xbox press in Xbox mode. **Select + Start held for
-one second** remains the consistent Redux game-menu control. Windows' own Xbox
-mode UI provides the desktop switch. The ordinary desktop startup path continues
-to offer Redux's exit action.
+The registered package is a copy of Redux (`windows-home/<version>-<hash>`), so an
+update has to register the new copy or Windows keeps starting the old one:
 
-## Updates and removal
+- The in-app updater relaunches the installed `Redux.exe` (never the home copy) and,
+  between the installer and that relaunch, runs `Redux.exe refresh-home`. That
+  registers the new copy with `-ForceApplicationShutdown`, closing an idle old copy
+  that Windows reopened as home while the installer ran.
+- Any start of the installed, unpackaged `Redux.exe` checks in the background and
+  registers again when the registered copy's version or executable differs.
+- Both run only when Redux is already registered and Developer Mode is on, keep
+  Redux as home if it was, and delete the copies that are no longer registered.
+  Failures are written to `%LOCALAPPDATA%\ReduxMediaLibrary\logs\full-screen-experience.log`.
 
-Close games before changing Windows registration. New builds stage a different
-version/hash directory; setup never rebuilds into an active registered layout.
-The portable root must remain available while an identity package points to it.
+## Undoing it
 
-**Remove Windows integration** removes owned startup entries and the identity
-package. If Redux was the selected home app, it returns the selection to Xbox.
-It leaves the app, games, saves, BIOS and staged files intact. Restore the original
-device type separately before deleting its backup.
+There is no undo row. In Windows, **Settings → Gaming → Full screen experience**
+picks another home app or turns startup in full screen off. The helpers in
+`tools/windows_xbox` remain for a manual undo: `Unregister-HomeApp.ps1` removes the
+package (and returns home to Xbox if Redux was home), and `Invoke-DeviceForm.ps1
+-Action Restore` puts the original DeviceForm back from its backup.
 
 ## Evidence and limits
 

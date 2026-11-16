@@ -1,13 +1,12 @@
 """Controller-operated startup and Xbox-mode settings for a living-room PC."""
 from __future__ import annotations
 
-import os
 from pathlib import Path
 import queue
 import sys
+import time
 
 from .ui_assets import project_root
-from .windows_gaming import gaming_configuration
 from .windows_startup import startup_status,set_start_with_windows
 
 
@@ -17,6 +16,20 @@ def application_directory():
     if (built/"Redux.exe").is_file():return built
     if (root/"Redux.exe").is_file():return root
     return Path(sys.executable).resolve().parent
+
+
+def refresh_home_registration(*,force_shutdown=False):
+    """Keep the registered home-app copy on this version of Redux; errors go to the log."""
+    from .windows_integration import refresh_registration
+    try:return refresh_registration(application_directory(),project_root(),force_shutdown=force_shutdown)
+    except Exception as error:
+        try:
+            from .windows_paths import redux_user_data
+            log=redux_user_data()/"logs"/"full-screen-experience.log"
+            log.parent.mkdir(parents=True,exist_ok=True)
+            with log.open("a",encoding="utf-8") as handle:handle.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} refresh failed: {error}\n")
+        except OSError:pass
+        return False
 
 
 class ConsoleWindows:
@@ -29,10 +42,10 @@ class ConsoleWindows:
         self._setting_row("windows:startup","Start with Windows",detail,218,self.toggle_windows_startup,icon="home",toggle=enabled)
         full=bool(self.preferences.get("fullscreen",True))
         self._setting_row("windows:fullscreen","Open fullscreen","Fill the TV when Redux opens",300,self.toggle_launch_fullscreen,icon="systems",toggle=full)
-        self._setting_row("windows:home","Xbox home app","Register Redux or choose your home experience",382,self.xbox_home_menu,icon="controller")
-        active=self.windows_experience.query().active
-        self._setting_row("windows:launch-xbox","Xbox mode","Active · open Windows Xbox mode settings" if active else "Enter the Windows gaming experience",464,self.launch_xbox_mode,icon="play")
-        self._setting_row("windows:advanced","Windows integration options","Startup beside Xbox, setup and removal",546,self.windows_options_menu,icon="settings")
+        ready=getattr(self,"fullscreen_ready",None)
+        detail="Redux is the home screen when Windows starts" if ready else "Start this PC straight into Redux, like a console"
+        self._setting_row("windows:experience","Full screen experience",detail,382,self.fullscreen_experience_menu,icon="controller",toggle=bool(ready))
+        if ready is None:self._check_fullscreen_experience()
 
     def toggle_windows_startup(self):
         exe=application_directory()/"Redux.exe"
@@ -45,17 +58,6 @@ class ConsoleWindows:
         enabled=not bool(self.preferences.get("fullscreen",True))
         self.root.attributes("-fullscreen",enabled)
         self._save_preferences();self.schedule_draw()
-
-    def open_xbox_settings(self):
-        os.startfile("ms-settings:gaming-fullscreen")
-
-    def open_developer_settings(self):
-        os.startfile("ms-settings:developers")
-
-    def launch_xbox_mode(self):
-        if self.windows_experience.query().active:self.open_xbox_settings();return
-        self.windows_experience.set_active(True)
-        self.status.set("Entering Xbox mode…")
 
     def is_gaming_home(self):
         experience=getattr(self,"windows_experience",None)
@@ -75,6 +77,11 @@ class ConsoleWindows:
         self.schedule_draw()
 
     def poll_windows_experience(self):
+        checked=getattr(self,"fullscreen_events",None)
+        while checked is not None:
+            try:ready=checked.get_nowait()
+            except queue.Empty:break
+            self.fullscreen_checking=False;self.fullscreen_ready=ready;self.schedule_draw()
         events=getattr(self,"windows_events",None)
         if events is None:return
         changed=None
@@ -86,83 +93,49 @@ class ConsoleWindows:
             else:self.home_activation=False
             self.schedule_draw()
 
-    def xbox_home_menu(self):
-        from .windows_integration import identity_status
-        def done(package):
-            config=gaming_configuration()
-            detail="Redux is registered with Windows." if package else "Register Redux to make it available to Windows Xbox mode."
-            if not config.handheld:detail+=" This desktop needs the advanced home-picker setup before Windows shows the home selector."
-            if not config.developer_mode and not package:detail+=" Developer Mode is required during package registration."
-            items=[]
-            if package:
-                items.extend([("Use Redux as Xbox home",lambda:self.select_xbox_home(package["aumid"])),
-                              ("Keep Xbox as home",self.select_xbox_home)])
-            else:items.append(("Register Redux with Windows",self.register_xbox_home))
-            items.extend([("Windows Xbox mode settings",self.open_xbox_settings),("Back",self.windows_options_menu)])
-            self.menu("Xbox home app",items,message=detail)
-        self.task(identity_status,done,"Checking Windows registration…",cancellable=False)
+    def _refresh_home_registration(self):
+        """A Redux started outside its home-app copy re-registers in the background after an update."""
+        if not getattr(sys,"frozen",False):return
+        from .windows_gaming import current_package_full_name
+        if current_package_full_name():return
+        import threading
+        threading.Thread(target=refresh_home_registration,daemon=True).start()
 
-    def register_xbox_home(self):
-        from .windows_integration import register_identity
-        config=gaming_configuration()
-        if not config.developer_mode:
-            self.menu("Windows developer setup",[("Open Developer Mode settings",self.open_developer_settings),("Check and register Redux",self.register_xbox_home),("Back",self.windows_options_menu)],
-                message="Windows requires Developer Mode to register this home-app package. Turn it on in Windows, then choose Check and register Redux. It can be turned off after registration.")
-            return
-        self.task(lambda:register_identity(application_directory(),project_root()),lambda _:self.xbox_home_menu(),"Registering Redux with Windows…",cancellable=False)
+    def _check_fullscreen_experience(self):
+        """Read Windows' state once in the background; the row shows ON when it is all in place.
 
-    def select_xbox_home(self,aumid=None):
-        from .windows_integration import select_home_app
-        select_home_app(aumid)
-        self.status.set("Redux selected as Xbox home" if aumid else "Xbox remains your home app")
-        self.xbox_home_menu()
-
-    def windows_options_menu(self):
-        status=startup_status(application_directory()/"Redux.exe")
-        self.menu("Windows integration",[
-            ("Start beside Xbox mode   ·   "+("ON" if status.with_xbox_mode else "OFF"),self.toggle_xbox_startup),
-            ("Show Redux in Xbox My Apps",lambda:self.change_xbox_app(True)),
-            ("Xbox home app setup",self.xbox_home_menu),
-            ("Advanced desktop home picker",self.desktop_home_picker_menu),
-            ("Remove Windows integration",self.confirm_remove_windows_integration),
-            ("Back to settings",lambda:self.navigate("settings",remember=False))],
-            message="Startup can keep Redux available while Xbox remains the Windows home app.")
-
-    def change_xbox_app(self,enabled):
-        from .windows_integration import register_xbox_app
-        self.task(lambda:register_xbox_app(enabled,application_directory()),
-            lambda _:self.notice("Xbox My Apps","Redux is available in Xbox My Apps. Reopen the Xbox app if it was already running." if enabled else "Redux's Xbox My Apps entry was removed."),
-            "Updating Xbox My Apps…",cancellable=False)
-
-    def toggle_xbox_startup(self):
-        exe=application_directory()/"Redux.exe"
-        status=startup_status(exe)
-        if not status.enabled:
-            self.notice("Start with Windows is off","Enable Start with Windows first. Then choose whether Redux should also start beside Xbox mode.")
-            return
-        set_start_with_windows(True,exe,with_xbox_mode=not status.with_xbox_mode)
-        self.windows_options_menu()
-
-    def desktop_home_picker_menu(self):
-        self.menu("Desktop home picker",[
-            ("Enable desktop home picker",lambda:self.change_desktop_home_picker(True)),
-            ("Restore original device type",lambda:self.change_desktop_home_picker(False)),
-            ("Back",self.windows_options_menu)],
-            message="Advanced Windows setup: reports this PC as a gaming handheld to expose the home-app selector. This can affect other Windows behavior, may change after updates, and needs an administrator and a reboot. The original device type is backed up before any change.")
-
-    def change_desktop_home_picker(self,enabled):
-        from .windows_integration import change_device_form
-        self.task(lambda:change_device_form(enabled,application_directory()),
-            lambda result:self.notice("Windows setup",result.get("message","Restart Windows to apply the device-type change.")),
-            "Preparing Windows home picker…",cancellable=False)
-
-    def confirm_remove_windows_integration(self):
-        self.menu("Remove Windows integration?",[("Keep integration",self.windows_options_menu),("Remove startup and home registration",self.remove_windows_integration),("Remove Xbox My Apps entry",lambda:self.change_xbox_app(False))],
-            message="Your games, saves and app folder stay in place. If Redux is the selected home app, Windows will return to Xbox. Restore the device type separately from Advanced desktop home picker.")
-
-    def remove_windows_integration(self):
-        from .windows_integration import unregister_identity
+        The answer goes through a queue that poll_windows_experience drains on the UI tick:
+        Tk must only be touched from the UI thread.
+        """
+        if getattr(self,"fullscreen_checking",False):return
+        self.fullscreen_checking=True
+        self.fullscreen_events=getattr(self,"fullscreen_events",None) or queue.Queue()
+        import threading
+        from .windows_integration import fullscreen_status
         def work():
-            set_start_with_windows(False,application_directory()/"Redux.exe")
-            return unregister_identity(application_directory())
-        self.task(work,lambda _:self.notice("Windows integration removed","Redux will no longer start with Windows. The application and library are still available."),"Removing Windows integration…",cancellable=False)
+            try:ready=fullscreen_status().ready
+            except (OSError,ValueError):ready=False
+            self.fullscreen_events.put(ready)
+        threading.Thread(target=work,daemon=True).start()
+
+    def fullscreen_experience_menu(self):
+        if self.busy or self.embedded or (self.playback and self.playback.active()):
+            self.notice("Finish first","Close the game or wait for the current task before changing how Windows starts.");return
+        ready=getattr(self,"fullscreen_ready",False)
+        message=("Redux is already the home screen of Windows' full screen experience. Set it up again to repair it."
+                 if ready else
+                 "Windows will start straight into Redux, the way a console does. Redux makes Windows treat this PC as a "
+                 "gaming handheld, turns on Developer Mode, adds Redux to the Xbox home-app list and picks it as home. "
+                 "Windows asks for administrator approval once. Restart afterwards to finish.")
+        self.menu("Full screen experience",[("Cancel",lambda:None),("Set Redux as full screen experience",self.set_up_fullscreen_experience)],message=message)
+
+    def set_up_fullscreen_experience(self):
+        def work():
+            from .windows_integration import set_up_fullscreen_experience
+            return set_up_fullscreen_experience(application_directory(),project_root())
+        def done(status):
+            self.fullscreen_ready=status.ready
+            self.menu("Restart to finish",[("Restart now",lambda:self._close_now(power="restart")),("Later",lambda:None)],
+                      message="Redux is now the full screen experience home. After the restart Windows opens Redux instead of the desktop.")
+        self.task(work,done,
+                  "Setting up the full screen experience…",cancellable=False)

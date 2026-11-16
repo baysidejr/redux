@@ -55,12 +55,13 @@ class ConsoleIntegrationTests(unittest.TestCase):
         app = self.bare()
         app.home_activation = True
         app.windows_experience = SimpleNamespace(query=lambda:SimpleNamespace(active=True))
-        app.open_xbox_settings = lambda:None
         app.close = lambda:self.fail("Back must not close the selected Xbox home")
         app.menu = lambda title,items,message="":setattr(app,"overlay",{"title":title,"items":items})
         app.exit_menu()
-        self.assertEqual(app.overlay["title"],"Xbox home")
-        self.assertNotIn("Exit app",[label for label,_ in app.overlay["items"]])
+        self.assertEqual(app.overlay["title"],"Redux is home")
+        labels=[label for label,_ in app.overlay["items"]]
+        self.assertNotIn("Exit app",labels)
+        self.assertEqual(labels,["Keep browsing","Restart PC","Shut down PC"])
 
     def test_corrupt_slot_does_not_hide_other_valid_embedded_states(self):
         app = self.bare()

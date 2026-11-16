@@ -30,8 +30,8 @@ configuration for packaged desktop applications.
 
 `Register-HomeApp.ps1 -Layout <layout>` registers the loose development package for
 the current Windows user. It checks Developer Mode and returns a structured error
-if it is off; it never changes that setting. Enable Developer Mode once in Windows
-Settings > System > For developers, then use Redux's register action again.
+if it is off; the elevated device-type helper turns it on beforehand. `-ForceShutdown`
+(updates only) closes an idle old copy Windows reopened as home.
 After successful registration it may be turned off again, as reported by the
 supplied proof of concept; reboot persistence must still be accepted on the
 target machine. No signing certificate is installed by these helpers.
@@ -64,8 +64,10 @@ on otherwise unsupported desktops after a reboot. This is an advanced,
 undocumented setting that makes Windows identify the machine as a gaming handheld
 and can change other Windows behavior or be reset by updates.
 
-The in-app advanced action invokes `Invoke-DeviceForm.ps1 -Action Enable` to
-request Windows administrator approval for the small helper. It exports the
+System → Windows → Full screen experience invokes `Invoke-DeviceForm.ps1 -Action
+Enable`, which requests administrator approval once and runs `Enable-HomePicker.ps1
+-Enable -DeveloperMode`: Developer Mode on, then DeviceForm 46. Keys are created only
+when missing; `New-Item -Force` on an existing registry key deletes all its values. It exports the
 original OEM key, records the exact original DeviceForm presence/type/value and
 checks the backup before writing. The Redux UI remains unelevated. A manual
 `Enable-HomePicker.ps1` call also requires explicit `-Enable`.
@@ -75,29 +77,6 @@ unrelated OEM changes made since setup are preserved. If it was originally
 absent, the value is removed. Both actions return `restart_required:true`; neither
 restarts Windows automatically. Backups default to
 `%LOCALAPPDATA%\ReduxMediaLibrary\windows-integration\device-form-backup`.
-
-## Redux alongside Xbox in My Apps
-
-`Invoke-XboxApp.ps1 -Action Add -Executable <Redux.exe> -Icon <redux.ico>
--ResultFile <json>` requests administrator approval to add Redux to an available
-Xbox OEM app slot. It needs no gaming-home custom capability or Developer Mode.
-`-Action Remove` removes only entries whose executable matches the supplied Redux
-path. The helpers preserve other app registrations, use only a missing or wholly
-empty slot, and retain pre-existing empty keys when undoing the action. If all
-three slots contain apps, setup returns an error instead of replacing one.
-
-This uses native 64-bit HKLM
-`Software\Microsoft\Windows\CurrentVersion\GamingConfiguration\OEMApps\OEMAppPathsAndName1`
-(or slot2/3) with `OemAppName`, `OemAppExePath`, and `OemAppIconPath` REG_SZ values.
-These exact registry details were observed in the installed Xbox PC app, with
-the general OEM-app route documented under
-[Windows gaming configuration](https://learn.microsoft.com/en-us/windows-hardware/customize/desktop/unattend/microsoft-windows-gaming-configuration).
-Reopen the Xbox app after changing its app list. On this PC, 0.8.1 acceptance
-observed the tile, launched Redux with its existing three-game library, and
-confirmed repeat activation returned to the same running process. These desktop
-Xbox-app checks do not establish actual Xbox-mode entry or home replacement;
-Developer Mode registration and reboot acceptance remain pending. Evidence is
-in `analysis/windows_integration/desktop-acceptance-0.8.1.json`.
 
 All helpers write one JSON result to stdout, exit nonzero on failure, and support
 `-ResultFile` for the controller UI. Elevated wrappers run only the small setup
