@@ -27,6 +27,14 @@ def ssl_context():
                 _context = truststore.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
             except Exception:
                 _context = ssl.create_default_context()
+            # Mozilla's root list, shipped with Redux. truststore asks Windows first and only
+            # then trusts these, so a PC that cannot fetch a missing root from Windows Update
+            # (offline set-up, blocked updates, a policy) still verifies the download servers.
+            try:
+                import certifi
+                _context.load_verify_locations(cafile=certifi.where())
+            except Exception:
+                pass
         return _context
 
 
