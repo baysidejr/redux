@@ -20,6 +20,7 @@ import os
 import tempfile
 from urllib.request import HTTPRedirectHandler, build_opener
 from .library import ImportCancelled
+from . import net
 
 CORES = {
     "neocd": "https://github.com/libretro/neocd_libretro",
@@ -77,7 +78,7 @@ def _check(cancelled):
 def fetch(url, limit, cancelled=None):
     _source(url)
     data=bytearray()
-    with build_opener(_OfficialRedirect()).open(url, timeout=20) as response:
+    with net.opener(_OfficialRedirect()).open(url, timeout=20) as response:
         _source(response.geturl())
         while True:
             _check(cancelled)

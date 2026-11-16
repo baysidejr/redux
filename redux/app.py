@@ -9,7 +9,7 @@ import threading
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 
-from . import __version__
+from . import __version__, net
 from .library import Library, SYSTEMS, MEDIA_EXTENSIONS, ImportCancelled, discover_media
 from .launch import build_command, launch_game
 from .optical import list_drives, inspect_disc
@@ -309,7 +309,7 @@ class App:
         self.root.after(100,self._poll)
 
     def _task_error(self,message):
-        messagebox.showerror("Task could not complete",message,parent=self.root)
+        messagebox.showerror("Task could not complete",net.friendly_error(message),parent=self.root)
 
     def verify(self):
         game=self.selected()

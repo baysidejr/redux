@@ -34,7 +34,7 @@ from .console_updates import ConsoleUpdates
 from .console_ingame import ConsoleIngame
 from .console_browser import ConsoleFileBrowser
 from .console_windows import ConsoleWindows
-from . import __version__
+from . import __version__, net
 from .ui_theme import Painter,ACCENT,BACKGROUND,SURFACE,RAISED,WHITE,SUBTLE,MUTED
 
 
@@ -1446,7 +1446,7 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleSta
             self.overlay["back_action"]=self._return_after_retained_disc
             return
         if not self.embedded and hasattr(self,"clear_stage"):self.clear_stage()  # a failed load leaves the loading screen
-        self.notice("Task could not complete",str(message))
+        self.notice("Task could not complete",net.friendly_error(message))
         if self.embedded:self.overlay["back_action"]=self.game_menu
 
     def _return_after_retained_disc(self):

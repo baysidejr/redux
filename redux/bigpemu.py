@@ -10,6 +10,7 @@ from urllib.parse import urlsplit
 from urllib.request import Request, HTTPRedirectHandler, build_opener
 
 from .library import ImportCancelled
+from . import net
 
 VERSION='1.221'
 URL='https://www.richwhitehouse.com/jaguar/builds/BigPEmu_v1221.zip'
@@ -40,7 +41,7 @@ def download(cancelled=None):
     request=Request(URL,headers={'User-Agent':'ReduxMediaLibrary (+https://github.com/baysidejr/redux)',
                     'Accept':'application/zip, application/octet-stream, */*'})
     data=bytearray()
-    with build_opener(_Redirect()).open(request,timeout=20) as response:
+    with net.opener(_Redirect()).open(request,timeout=20) as response:
         while True:
             _check(cancelled)
             block=response.read(min(65536,SIZE+1-len(data)))

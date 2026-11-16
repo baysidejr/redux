@@ -179,13 +179,13 @@ class GameDatabase:
     def _download_part(self, url, expected, offset, total, target_root, progress, cancelled, opener):
         import hashlib
         import tempfile
-        from urllib.request import Request, urlopen
+        from . import net
         digest = hashlib.sha256()
         done = 0
         with tempfile.NamedTemporaryFile(prefix="art-", suffix=".zip", dir=target_root, delete=False) as temp:
             temp_path = Path(temp.name)
             try:
-                opener = opener or (lambda u: urlopen(Request(u, headers={"User-Agent": "Redux"}), timeout=60))
+                opener = opener or (lambda u: net.urlopen(u, headers={"User-Agent": "Redux"}, timeout=60))
                 with opener(url) as response:
                     while True:
                         if cancelled is not None and cancelled.is_set():

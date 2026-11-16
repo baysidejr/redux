@@ -16,7 +16,7 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
-from urllib.request import Request, urlopen
+from . import net
 
 REPOSITORY = "baysidejr/redux"
 LATEST_URL = f"https://api.github.com/repos/{REPOSITORY}/releases/latest"
@@ -42,7 +42,7 @@ def is_newer(candidate, current):
 
 
 def _open(url, opener=None, timeout=30):
-    opener = opener or (lambda u: urlopen(Request(u, headers={"User-Agent": USER_AGENT, "Accept": "application/vnd.github+json"}), timeout=timeout))
+    opener = opener or (lambda u: net.urlopen(u, headers={"User-Agent": USER_AGENT, "Accept": "application/vnd.github+json"}, timeout=timeout))
     return opener(url)
 
 
