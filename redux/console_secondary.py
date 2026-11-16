@@ -74,13 +74,20 @@ class SecondaryScreens:
         # Only the row is reachable while the menu is open; the screen behind it is dimmed.
         self.targets=[];self.callbacks={}
         items=self.SYSTEM_ITEMS
-        if self.focus not in {f"system:{item[0]}" for item in items}:self.focus="system:home"
-        focused=next(item for item in items if f"system:{item[0]}"==self.focus)
+        keys={f"system:{item[0]}" for item in items}
+        # A menu opened from the bar (Exit, a notice, a card question) owns the focus while it is
+        # open. Resetting it here made the overlay reset it back on every frame: an endless
+        # redraw that swallowed Up and Down, so Exit looked dead to a controller.
+        current=self.overlay.get("previous_focus") if self.overlay else self.focus
+        if current not in keys:
+            current="system:home"
+            if not self.overlay:self.focus=current
+        focused=next(item for item in items if f"system:{item[0]}"==current)
         self.display(140,318,"REDUX" if focused[0]=="home" else focused[1].upper(),46,WHITE,"bold")
         self.display(140,384,focused[3],18,"#c9c9ce")
         left,spacing=274,122
         for index,(section,label,icon,_) in enumerate(items):
-            cx=left+index*spacing;key=f"system:{section}";active=key==self.focus
+            cx=left+index*spacing;key=f"system:{section}";active=key==current
             color=WHITE if active else "#8a8a90"
             self.icon(icon,cx-14,448,28,color)
             self.display(cx,499,label,15,color,anchor="n")

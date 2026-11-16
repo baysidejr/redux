@@ -501,6 +501,9 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleSta
             self.focus=f"game:{self.rows[0]['id']}" if self.rows else "facet:system"
             if self.rows:self.selected_id=self.rows[0]["id"]
         elif screen=="media":self.focus="shot:0"
+        elif screen=="saves":
+            # Start on the page's own button, not on the side menu's search icon.
+            self.focus="saves:create" if self.selected() else "saves:library"
         elif screen=="settings":self.settings_menu=True;self.focus="system:home"
         elif screen=="collections":
             entries=self.library.wishlist()
@@ -524,6 +527,8 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleSta
                 self._resume_embedded();return
             resume=self.overlay.get("resume_id")
             if resume:self._resume(resume)
+            # Back to the row that opened the menu, not the first row of the page.
+            self.focus=self.overlay.get("previous_focus",self.focus)
             self.overlay=None;self.schedule_draw();return
         if self.screen=="text":self._cancel_text();return
         if self.screen=="settings" and not getattr(self,"settings_menu",True):
