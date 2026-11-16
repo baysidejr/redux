@@ -332,6 +332,17 @@ class ArtDownloadTests(unittest.TestCase):
         self.db.remove_art("sega_cd")
         self.assertEqual(self.db.art_status("sega_cd"), "available");self.assertIsNone(self.db.art(sonic, "boxart"))
 
+    def test_a_failed_connection_reports_its_own_error_and_leaves_no_file(self):
+        from redux.gamedb import DownloadError
+        from urllib.error import URLError
+        def failing(url):
+            raise URLError("[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed")
+        with self.assertRaises(DownloadError) as caught:
+            self.db.download_art("sega_cd", opener=failing)
+        self.assertIn("CERTIFICATE_VERIFY_FAILED", str(caught.exception))
+        self.assertIn("date and time", str(caught.exception))
+        self.assertFalse(list(self.downloads.glob("sega_cd/*")), "the half-written zip is deleted")
+
     def test_a_tampered_or_unknown_download_is_refused(self):
         from redux.gamedb import DownloadError
         with self.assertRaises(DownloadError):

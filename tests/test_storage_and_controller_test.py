@@ -8,7 +8,7 @@ import unittest
 from redux.console_ui import ConsoleApp
 import redux.console_cards
 from redux.console_secondary import SecondaryScreens
-from redux.console_controller_test import pressed_names, axis_fraction, trigger_fraction, BUTTON_BITS
+from redux.console_controller_test import pressed_names, axis_fraction, trigger_fraction, stick_offset, BUTTON_BITS
 from redux.controllers import GamepadState
 from redux import game_cards
 from redux.buffer_install import copy_bundle_to_storage
@@ -161,6 +161,12 @@ class ControllerTestScreenTests(unittest.TestCase):
         self.assertEqual(pressed_names(BUTTON_BITS["a"]|BUTTON_BITS["up"]|BUTTON_BITS["lb"]),["up","lb","a"])
         self.assertEqual((axis_fraction(32767),axis_fraction(-32768),axis_fraction(0)),(1.0,-1.0,0.0))
         self.assertEqual((trigger_fraction(255),trigger_fraction(0),trigger_fraction(32767)),(1.0,0.0,1.0))
+
+    def test_a_stick_pushed_up_moves_the_dot_up_the_screen(self):
+        # Pads report up as positive Y; a quarter circle down-forward must draw down, then right.
+        self.assertEqual(stick_offset(0,32767,24),(0.0,-24.0))
+        self.assertEqual(stick_offset(0,-32768,24),(0.0,24.0))
+        self.assertEqual(stick_offset(32767,0,24),(24.0,0.0))
 
     def test_the_pad_that_moves_becomes_the_one_on_screen_and_holding_b_leaves(self):
         import redux.console_controller_test as module

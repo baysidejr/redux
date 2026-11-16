@@ -20,6 +20,11 @@ def axis_fraction(value):
     return max(-1.0, min(1.0, value / (32767 if value >= 0 else 32768)))
 
 
+def stick_offset(x, y, reach):
+    """Screen offset of a stick dot. Pads report up as positive Y (XInput convention), the screen's Y grows down."""
+    return axis_fraction(x) * reach, -axis_fraction(y) * reach
+
+
 def trigger_fraction(value):
     return max(0.0, min(1.0, value / 255 if value <= 255 else value / 32767))
 
@@ -103,7 +108,7 @@ class ConsoleControllerTest:
         # Left stick, d-pad, right stick.
         for name,cx,cy,ax,ay in (("l3",470,345,lx,ly),("r3",740,432,rx,ry)):
             self._oval(cx-40,cy-40,80,80,idle,hot if buttons&BUTTON_BITS[name] else line,2)
-            dx,dy=axis_fraction(ax)*24,axis_fraction(ay)*24
+            dx,dy=stick_offset(ax,ay,24)
             moving=abs(axis_fraction(ax))>0.08 or abs(axis_fraction(ay))>0.08
             self._oval(cx+dx-14,cy+dy-14,28,28,hot if moving or buttons&BUTTON_BITS[name] else "#8a8a90","")
         cx,cy=548,432

@@ -201,8 +201,11 @@ class GameDatabase:
                         if progress:
                             progress(offset + done, total)
             except OSError as error:
+                # Close before deleting: Windows refuses to delete an open file, and that
+                # "being used by another process" error used to hide the real failure.
+                temp.close()
                 temp_path.unlink(missing_ok=True)
-                raise DownloadError(f"The download failed: {error}") from error
+                raise DownloadError(f"The download failed: {net.friendly_error(error)}") from error
             except DownloadError:
                 temp.close()
                 temp_path.unlink(missing_ok=True)
