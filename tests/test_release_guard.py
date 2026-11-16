@@ -17,6 +17,21 @@ class ReleaseGuardTests(unittest.TestCase):
                 path.write_bytes(b'fixture')
             self.assertEqual(len(distribution_files(root)), 7)
 
+    def test_only_the_public_root_list_may_be_a_pem(self):
+        certificate = b'-----BEGIN CERTIFICATE-----\nMIIB\n-----END CERTIFICATE-----\n'
+        for name, content, allowed in (('_internal/certifi/cacert.pem', certificate, True),
+                                       ('_internal/certifi/cacert.pem', certificate + b'-----BEGIN PRIVATE KEY-----', False),
+                                       ('_internal/other/cacert.pem', certificate, False)):
+            with self.subTest(name=name, allowed=allowed), tempfile.TemporaryDirectory() as directory:
+                path = Path(directory) / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(content)
+                if allowed:
+                    self.assertEqual(len(distribution_files(directory)), 1)
+                else:
+                    with self.assertRaises(ValueError):
+                        distribution_files(directory)
+
     def test_user_data_and_arbitrary_files_block_packaging(self):
         for name in ('library/game.png', 'bios/firmware.bin', 'tools/cores/core.dll',
                      'accounts.dpapi', 'personal.txt', '_internal/.env', 'docs/private.key'):

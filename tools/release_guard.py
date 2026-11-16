@@ -6,6 +6,13 @@ FORBIDDEN_PARTS = frozenset({'library', 'bios', 'analysis', 'windows-home', 'emu
 FORBIDDEN_SUFFIXES = frozenset({'.dpapi', '.sqlite3', '.iso', '.bin', '.cue', '.chd', '.rom', '.nes',
                                 '.j64','.jag','.bigpimg','.cdi','.cof','.abs',
                                 '.sfc', '.smc', '.mdf', '.nrg', '.pfx', '.p12', '.pem', '.key'})
+# Public certificates only: Mozilla's root list (certifi) backs up the Windows certificate store.
+PUBLIC_CERTIFICATES = frozenset({'_internal/certifi/cacert.pem'})
+
+
+def _public_certificates_only(path):
+    text = path.read_bytes()
+    return b'PRIVATE KEY' not in text and b'-----BEGIN CERTIFICATE-----' in text
 
 
 def distribution_files(root):
@@ -18,7 +25,8 @@ def distribution_files(root):
             continue
         relative = path.relative_to(root)
         parts = relative.parts
-        if any(p.casefold() in FORBIDDEN_PARTS for p in parts) or path.suffix.lower() in FORBIDDEN_SUFFIXES:
+        public = relative.as_posix() in PUBLIC_CERTIFICATES and _public_certificates_only(path)
+        if any(p.casefold() in FORBIDDEN_PARTS for p in parts) or (path.suffix.lower() in FORBIDDEN_SUFFIXES and not public):
             raise ValueError('Release contains local data or a forbidden payload: ' + relative.as_posix())
         allowed = (len(parts) == 1 and path.name in ROOT_FILES or
                    parts[0] in {'_internal', 'docs', 'licenses'} or
