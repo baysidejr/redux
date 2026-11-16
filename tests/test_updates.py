@@ -79,10 +79,8 @@ class DownloadTests(unittest.TestCase):
         self.assertIn('"PID eq 4321"', script);self.assertIn("/VERYSILENT /SUPPRESSMSGBOXES /NORESTART", script)
         self.assertIn('start "" "C:\\p\\Redux.exe"', script);self.assertIn("Redux Controller Receiver", script)
         self.assertLess(script.index("/VERYSILENT"), script.index('start "" "C:\\p\\Redux.exe"'))
-        # The registered home copy is refreshed after the install and before Redux opens again.
-        refresh = script.index('start "" /wait "C:\\p\\Redux.exe" refresh-home')
-        self.assertLess(script.index("/VERYSILENT"), refresh)
-        self.assertLess(refresh, script.index('start "" "C:\\p\\Redux.exe"\r\n'))
+        # The installer re-registers the full screen experience copy itself (see Redux.iss).
+        self.assertNotIn("refresh-home", script)
 
 
 class UpdatesRowTests(unittest.TestCase):

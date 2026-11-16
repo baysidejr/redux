@@ -24,11 +24,14 @@ class FullscreenExperienceTests(unittest.TestCase):
         def select(aumid):
             self.calls.append(("select",aumid))
             self.config=GamingConfiguration(46,True,aumid,True)
+        self.real_layout_is_current=integration.registered_layout_is_current
         self.patches=[patch.object(integration,"gaming_configuration",side_effect=config),
                       patch.object(integration,"change_device_form",side_effect=device_form),
                       patch.object(integration,"register_identity",side_effect=register),
                       patch.object(integration,"select_home_app",side_effect=select),
-                      patch.object(integration,"identity_status",side_effect=lambda:{"aumid":"Redux.MediaLibrary_x!App"} if any(c[0]=="register" for c in self.calls) else None)]
+                      patch.object(integration,"identity_status",side_effect=lambda:{"aumid":"Redux.MediaLibrary_x!App"} if any(c[0]=="register" for c in self.calls) else None),
+                      patch.object(integration,"registered_layout_is_current",side_effect=lambda package,application_dir:self.current)]
+        self.current=True
         for item in self.patches:item.start()
         self.addCleanup(lambda:[item.stop() for item in self.patches])
 
@@ -53,20 +56,19 @@ class FullscreenExperienceTests(unittest.TestCase):
     def test_update_refresh_registers_the_new_copy_and_keeps_redux_home(self):
         self.config=GamingConfiguration(46,True,"Redux.MediaLibrary_x!App",True)
         self.calls.append(("register",None))  # already registered before the update
-        with patch.object(integration,"registered_layout_is_current",return_value=False), \
-             tempfile.TemporaryDirectory() as directory:
-            self.assertTrue(integration.refresh_registration(Path(directory),Path(directory),force_shutdown=True))
+        self.current=False
+        with tempfile.TemporaryDirectory() as directory:
+            self.assertEqual(integration.refresh_registration(Path(directory),Path(directory),force_shutdown=True),"refreshed")
         self.assertIn(("register",True),self.calls)
 
     def test_update_refresh_does_nothing_when_current_unregistered_or_developer_mode_is_off(self):
         self.config=GamingConfiguration(46,True)
-        with patch.object(integration,"registered_layout_is_current",return_value=True):
-            self.assertFalse(integration.refresh_registration(Path("C:/Redux"),Path("C:/Redux")))  # not registered
-            self.calls.append(("register",None))
-            self.assertFalse(integration.refresh_registration(Path("C:/Redux"),Path("C:/Redux")))  # current
-        self.config=GamingConfiguration(46,False)
-        with patch.object(integration,"registered_layout_is_current",return_value=False):
-            self.assertFalse(integration.refresh_registration(Path("C:/Redux"),Path("C:/Redux")))  # Developer Mode off
+        refresh=lambda:integration.refresh_registration(Path("C:/Redux"),Path("C:/Redux"))
+        self.assertEqual(refresh(),"not-registered")
+        self.calls.append(("register",None))
+        self.assertEqual(refresh(),"current")
+        self.config=GamingConfiguration(46,False);self.current=False
+        self.assertEqual(refresh(),"developer-mode-off")  # the Full screen experience row turns it back on
         self.assertEqual([call for call in self.calls if call[1] is not None],[])
 
     def test_registered_copy_is_current_only_for_this_version_and_executable(self):
@@ -81,12 +83,12 @@ class FullscreenExperienceTests(unittest.TestCase):
                 (layout/"redux-package.json").write_text(json.dumps({"version":version,"executable_sha256":hashlib.sha256(data).hexdigest()}))
             package={"install_location":str(layout)}
             record(package_version(__version__),b"new build")
-            self.assertTrue(integration.registered_layout_is_current(package,app))
+            self.assertTrue(self.real_layout_is_current(package,app))
             record("0.1.0.0",b"new build")
-            self.assertFalse(integration.registered_layout_is_current(package,app))
+            self.assertFalse(self.real_layout_is_current(package,app))
             record(package_version(__version__),b"old build")
-            self.assertFalse(integration.registered_layout_is_current(package,app))
-            self.assertFalse(integration.registered_layout_is_current({"install_location":str(Path(directory)/"missing")},app))
+            self.assertFalse(self.real_layout_is_current(package,app))
+            self.assertFalse(self.real_layout_is_current({"install_location":str(Path(directory)/"missing")},app))
 
     def test_only_the_registered_copy_is_kept(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -97,6 +99,25 @@ class FullscreenExperienceTests(unittest.TestCase):
             (root/"windows-home"/"not-a-layout").mkdir()
             self.assertEqual(integration.remove_old_layouts(root,root/"windows-home"/"0.31.0.0-new"),2)
             self.assertEqual(sorted(p.name for p in (root/"windows-home").iterdir()),["0.31.0.0-new","not-a-layout"])
+
+
+class OutdatedCopyTests(unittest.TestCase):
+    def test_an_outdated_registered_copy_is_not_ready_and_says_so(self):
+        aumid="Redux.MediaLibrary_x!App"
+        with patch.object(integration,"gaming_configuration",return_value=GamingConfiguration(46,True,aumid,True)), \
+             patch.object(integration,"identity_status",return_value={"aumid":aumid,"install_location":"C:/old"}), \
+             patch.object(integration,"registered_layout_is_current",return_value=False):
+            status=integration.fullscreen_status(Path("C:/Redux"))
+        self.assertFalse(status.ready)
+        self.assertTrue(status.outdated)
+
+    def test_installer_registers_the_new_copy_after_copying_files(self):
+        iss=(Path(__file__).resolve().parents[1]/"tools/installer/Redux.iss").read_text(encoding="utf-8")
+        run=iss[iss.index("[Run]"):iss.index("[Code]")]
+        line=next(entry for entry in run.splitlines() if "refresh-home" in entry)
+        self.assertIn("waituntilterminated",line)
+        self.assertIn("runhidden",line)
+        self.assertNotIn("postinstall",line)  # runs on silent updates too
 
 
 class RegistryHelperScriptTests(unittest.TestCase):

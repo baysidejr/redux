@@ -57,7 +57,10 @@ def main(argv=None):
     try:
         if args.command=="refresh-home":
             from .console_windows import refresh_home_registration
-            print(json.dumps({"refreshed":refresh_home_registration(force_shutdown=True)}));return
+            outcome=refresh_home_registration(force_shutdown=True)
+            print(json.dumps({"outcome":outcome}))
+            # The installer ignores the code; 0 means Windows starts this version in full screen.
+            raise SystemExit(0 if outcome in {"refreshed","current","not-registered"} else 2)
         if args.command=="drives":
             print(json.dumps([asdict(d) for d in list_drives()],indent=2))
             return

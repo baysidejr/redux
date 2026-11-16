@@ -113,17 +113,26 @@ class FullscreenStatus:
     registered: bool=False
     home: bool=False
     starts_in_fullscreen: bool=False
+    current: bool=True  # the registered copy is this version of Redux
 
     @property
     def ready(self):
-        return self.handheld and self.developer_mode and self.registered and self.home and self.starts_in_fullscreen
+        return (self.handheld and self.developer_mode and self.registered and self.home
+                and self.starts_in_fullscreen and self.current)
+
+    @property
+    def outdated(self):
+        """Windows starts an older copy of Redux in full screen than the one installed."""
+        return self.registered and not self.current
 
 
-def fullscreen_status():
+def fullscreen_status(application_dir=None):
     config=gaming_configuration()
     package=identity_status()
+    current=True
+    if package and application_dir is not None:current=registered_layout_is_current(package,application_dir)
     return FullscreenStatus(config.handheld,config.developer_mode,bool(package),
-                            bool(package) and config.home_app==package["aumid"],config.startup_to_gaming_home)
+                            bool(package) and config.home_app==package["aumid"],config.startup_to_gaming_home,current)
 
 
 def set_up_fullscreen_experience(application_dir,portable_root):
@@ -139,7 +148,7 @@ def set_up_fullscreen_experience(application_dir,portable_root):
     if not aumid:raise OSError("Windows did not report Redux's home-app registration.")
     select_home_app(aumid)
     remove_old_layouts(portable_root,registered.get("install_location"))
-    return fullscreen_status()
+    return fullscreen_status(application_dir)
 
 
 def remove_old_layouts(portable_root,keep):
@@ -170,14 +179,17 @@ def registered_layout_is_current(package,application_dir):
 def refresh_registration(application_dir,portable_root,*,force_shutdown=False):
     """After an update, register the new Redux so Windows does not keep starting the old copy.
 
-    Runs from the ordinary (unpackaged) Redux.exe only, and only when Redux is already
-    registered and Developer Mode is still on. Returns True when it re-registered.
+    Runs from the ordinary (unpackaged) Redux.exe: the installer runs `Redux.exe refresh-home`
+    after copying the files, and every desktop start checks again. Returns "not-registered",
+    "current", "developer-mode-off" (Windows refuses the registration; the Full screen
+    experience row turns it back on) or "refreshed"; a failed registration raises.
     """
     package=identity_status()
-    if not package or registered_layout_is_current(package,application_dir):return False
-    if not gaming_configuration().developer_mode:return False
+    if not package:return "not-registered"
+    if registered_layout_is_current(package,application_dir):return "current"
+    if not gaming_configuration().developer_mode:return "developer-mode-off"
     was_home=gaming_configuration().home_app==package["aumid"]
     registered=register_identity(application_dir,portable_root,force_shutdown=force_shutdown)
     if was_home and registered.get("aumid") and registered["aumid"]!=package["aumid"]:select_home_app(registered["aumid"])
     remove_old_layouts(portable_root,registered.get("install_location"))
-    return True
+    return "refreshed"

@@ -159,14 +159,14 @@ class ConsoleWindowsTests(unittest.TestCase):
         app = self.bare()
         app._setting_row = lambda *a, **kw: None
         with patch("redux.console_windows.startup_status", return_value=StartupStatus()), \
-             patch("redux.windows_integration.fullscreen_status", return_value=SimpleNamespace(ready=True)) as status, \
+             patch("redux.windows_integration.fullscreen_status", return_value=SimpleNamespace(ready=True, outdated=False)) as status, \
              patch("threading.Thread", side_effect=lambda target, daemon: SimpleNamespace(start=target)):
             app._windows_settings()
             app._windows_settings()  # still checking: no second read
             self.assertFalse(hasattr(app, "fullscreen_ready"))  # nothing touches Tk from the worker
             app.poll_windows_experience()  # the UI tick takes the answer
             app._windows_settings()
-        status.assert_called_once_with()
+        status.assert_called_once()
         self.assertTrue(app.fullscreen_ready)
 
     def test_full_screen_experience_confirms_on_cancel_then_restarts_on_request(self):
@@ -181,7 +181,7 @@ class ConsoleWindowsTests(unittest.TestCase):
         self.assertIn("administrator approval once", app.overlay["message"])
         app.overlay["items"][1][1]()
         work, done = tasks[0]
-        with patch("redux.windows_integration.set_up_fullscreen_experience", return_value=SimpleNamespace(ready=True)) as setup, \
+        with patch("redux.windows_integration.set_up_fullscreen_experience", return_value=SimpleNamespace(ready=True, outdated=False)) as setup, \
              patch("redux.console_windows.application_directory", return_value=Path("C:/Redux")), \
              patch("redux.console_windows.project_root", return_value=Path("C:/Redux")):
             done(work())
@@ -219,8 +219,56 @@ class ConsoleWindowsTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory, \
              patch("redux.windows_integration.refresh_registration", side_effect=OSError("package in use")), \
              patch("redux.windows_paths.redux_user_data", return_value=Path(directory)):
-            self.assertFalse(console_windows.refresh_home_registration())
+            self.assertEqual(console_windows.refresh_home_registration(), "failed: package in use")
             self.assertIn("package in use", (Path(directory) / "logs/full-screen-experience.log").read_text(encoding="utf-8"))
+
+
+class OutdatedHomeCopyTests(unittest.TestCase):
+    def bare(self):
+        app = object.__new__(ConsoleApp)
+        app.overlay = None; app.busy = False; app.schedule_draw = Mock(); app.notice = Mock()
+        return app
+
+    def test_desktop_start_reports_a_refresh_windows_refused(self):
+        app = self.bare()
+        with patch("sys.frozen", True, create=True), \
+             patch("redux.windows_gaming.current_package_full_name", return_value=None), \
+             patch("redux.console_windows.refresh_home_registration", return_value="developer-mode-off"), \
+             patch("threading.Thread", side_effect=lambda target, daemon: SimpleNamespace(start=target)) as thread:
+            app._refresh_home_registration()
+        self.assertFalse(thread.call_args.kwargs["daemon"], "closing Redux must not cut the registration short")
+        app.poll_windows_experience()
+        self.assertTrue(app.fullscreen_outdated)
+        self.assertEqual(app.notice.call_args.args[0], "Full screen mode is out of date")
+
+    def test_a_successful_refresh_stays_quiet(self):
+        app = self.bare()
+        with patch("sys.frozen", True, create=True), \
+             patch("redux.windows_gaming.current_package_full_name", return_value=None), \
+             patch("redux.console_windows.refresh_home_registration", return_value="refreshed"), \
+             patch("threading.Thread", side_effect=lambda target, daemon: SimpleNamespace(start=target)):
+            app._refresh_home_registration()
+        app.poll_windows_experience()
+        app.notice.assert_not_called()
+
+    def test_home_copy_older_than_the_install_says_how_to_update(self):
+        app = self.bare()
+        with patch("sys.frozen", True, create=True), \
+             patch("redux.windows_gaming.current_package_full_name", return_value="Redux.MediaLibrary_0.31.0.0_x64__abc"), \
+             patch("redux.console_windows.installed_version", return_value="9.9.9"), \
+             patch("redux.console_windows.refresh_home_registration", side_effect=AssertionError("a home copy cannot replace itself")):
+            app._refresh_home_registration()
+        app.poll_windows_experience()
+        self.assertIn("System → Windows → Full screen experience", app.notice.call_args.args[1])
+
+    def test_refresh_home_exit_code_tells_the_installer_what_happened(self):
+        for outcome, code in (("refreshed", 0), ("current", 0), ("not-registered", 0), ("developer-mode-off", 2), ("failed: boom", 2)):
+            with self.subTest(outcome=outcome), \
+                 patch("redux.console_windows.refresh_home_registration", return_value=outcome), \
+                 contextlib.redirect_stdout(io.StringIO()):
+                with self.assertRaises(SystemExit) as exit:
+                    main(["refresh-home"])
+                self.assertEqual(exit.exception.code, code)
 
 
 class ActivationEntryPointTests(unittest.TestCase):

@@ -50,15 +50,22 @@ it, and every update registers again.
 The registered package is a copy of Redux (`windows-home/<version>-<hash>`), so an
 update has to register the new copy or Windows keeps starting the old one:
 
-- The in-app updater relaunches the installed `Redux.exe` (never the home copy) and,
-  between the installer and that relaunch, runs `Redux.exe refresh-home`. That
+- The installer runs `Redux.exe refresh-home` after copying the files (hidden, and it
+  waits for it), whether it was started by the in-app updater or by hand. That
   registers the new copy with `-ForceApplicationShutdown`, closing an idle old copy
-  that Windows reopened as home while the installer ran.
-- Any start of the installed, unpackaged `Redux.exe` checks in the background and
-  registers again when the registered copy's version or executable differs.
+  that Windows started as home. Before 0.31.2 only the in-app updater did this, so a
+  release installed from the downloaded setup left Windows starting the old copy.
+- Any start of the installed, unpackaged `Redux.exe` checks again in the background
+  (a non-daemon thread, so closing Redux does not cut it short).
 - Both run only when Redux is already registered and Developer Mode is on, keep
   Redux as home if it was, and delete the copies that are no longer registered.
-  Failures are written to `%LOCALAPPDATA%\ReduxMediaLibrary\logs\full-screen-experience.log`.
+  Every outcome is written to `%LOCALAPPDATA%\ReduxMediaLibrary\logs\full-screen-experience.log`.
+- When the copy stays out of date (Developer Mode turned off, or the registration
+  failed), Redux says so instead of failing silently: the desktop Redux shows *Full
+  screen mode is out of date*, the Full screen experience row reads *Windows starts
+  an older copy of Redux · A updates it* (its setup turns Developer Mode back on and
+  registers the current version), and a home copy older than the installed version
+  shows the same message when Windows starts it.
 
 ## Undoing it
 

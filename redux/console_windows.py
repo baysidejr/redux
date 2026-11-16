@@ -18,18 +18,32 @@ def application_directory():
     return Path(sys.executable).resolve().parent
 
 
+def _log_refresh(message):
+    try:
+        from .windows_paths import redux_user_data
+        log=redux_user_data()/"logs"/"full-screen-experience.log"
+        log.parent.mkdir(parents=True,exist_ok=True)
+        with log.open("a",encoding="utf-8") as handle:handle.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} {message}\n")
+    except OSError:pass
+
+
 def refresh_home_registration(*,force_shutdown=False):
-    """Keep the registered home-app copy on this version of Redux; errors go to the log."""
+    """Keep the registered home-app copy on this version of Redux; every outcome goes to the log."""
     from .windows_integration import refresh_registration
-    try:return refresh_registration(application_directory(),project_root(),force_shutdown=force_shutdown)
-    except Exception as error:
-        try:
-            from .windows_paths import redux_user_data
-            log=redux_user_data()/"logs"/"full-screen-experience.log"
-            log.parent.mkdir(parents=True,exist_ok=True)
-            with log.open("a",encoding="utf-8") as handle:handle.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} refresh failed: {error}\n")
-        except OSError:pass
-        return False
+    try:outcome=refresh_registration(application_directory(),project_root(),force_shutdown=force_shutdown)
+    except Exception as error:outcome=f"failed: {error}"
+    if outcome!="not-registered":_log_refresh(f"refresh: {outcome}")
+    return outcome
+
+
+def installed_version():
+    """The version the installer last wrote, which a running home copy may lag behind."""
+    try:return (application_directory()/"RELEASE_VERSION.txt").read_text(encoding="utf-8").strip() or None
+    except OSError:return None
+
+
+OUTDATED_MESSAGE=("Full screen mode still starts an older copy of Redux than the one installed. "
+                  "Choose System → Windows → Full screen experience on the desktop to update it.")
 
 
 class ConsoleWindows:
@@ -44,6 +58,7 @@ class ConsoleWindows:
         self._setting_row("windows:fullscreen","Open fullscreen","Fill the TV when Redux opens",300,self.toggle_launch_fullscreen,icon="systems",toggle=full)
         ready=getattr(self,"fullscreen_ready",None)
         detail="Redux is the home screen when Windows starts" if ready else "Start this PC straight into Redux, like a console"
+        if getattr(self,"fullscreen_outdated",False):detail="Windows starts an older copy of Redux · A updates it"
         self._setting_row("windows:experience","Full screen experience",detail,382,self.fullscreen_experience_menu,icon="controller",toggle=bool(ready))
         if ready is None:self._check_fullscreen_experience()
 
@@ -79,9 +94,15 @@ class ConsoleWindows:
     def poll_windows_experience(self):
         checked=getattr(self,"fullscreen_events",None)
         while checked is not None:
-            try:ready=checked.get_nowait()
+            try:status=checked.get_nowait()
             except queue.Empty:break
-            self.fullscreen_checking=False;self.fullscreen_ready=ready;self.schedule_draw()
+            if status=="outdated":
+                # An update did not reach the copy Windows starts in full screen: say so once.
+                self.fullscreen_outdated=True;self.fullscreen_ready=False
+                if not self.overlay and not self.busy:self.notice("Full screen mode is out of date",OUTDATED_MESSAGE)
+            else:
+                self.fullscreen_checking=False;self.fullscreen_ready=status.ready;self.fullscreen_outdated=status.outdated
+            self.schedule_draw()
         events=getattr(self,"windows_events",None)
         if events is None:return
         changed=None
@@ -94,12 +115,25 @@ class ConsoleWindows:
             self.schedule_draw()
 
     def _refresh_home_registration(self):
-        """A Redux started outside its home-app copy re-registers in the background after an update."""
+        """Catch an update that missed the home copy Windows starts in full screen.
+
+        The installed (unpackaged) Redux re-registers in the background; the thread is not a
+        daemon, so closing Redux does not cut the registration short. A home copy started by
+        Windows cannot replace itself, so it says what to do when it is older than the install.
+        """
         if not getattr(sys,"frozen",False):return
         from .windows_gaming import current_package_full_name
-        if current_package_full_name():return
+        from . import __version__
+        self.fullscreen_events=getattr(self,"fullscreen_events",None) or queue.Queue()
         import threading
-        threading.Thread(target=refresh_home_registration,daemon=True).start()
+        if current_package_full_name():
+            installed=installed_version()
+            if installed and installed!=__version__:self.fullscreen_events.put("outdated")
+            return
+        def checked():
+            outcome=refresh_home_registration()
+            if outcome=="developer-mode-off" or outcome.startswith("failed"):self.fullscreen_events.put("outdated")
+        threading.Thread(target=checked,daemon=False).start()
 
     def _check_fullscreen_experience(self):
         """Read Windows' state once in the background; the row shows ON when it is all in place.
@@ -113,16 +147,20 @@ class ConsoleWindows:
         import threading
         from .windows_integration import fullscreen_status
         def work():
-            try:ready=fullscreen_status().ready
-            except (OSError,ValueError):ready=False
-            self.fullscreen_events.put(ready)
+            try:status=fullscreen_status(application_directory())
+            except (OSError,ValueError):
+                from .windows_integration import FullscreenStatus
+                status=FullscreenStatus()
+            self.fullscreen_events.put(status)
         threading.Thread(target=work,daemon=True).start()
 
     def fullscreen_experience_menu(self):
         if self.busy or self.embedded or (self.playback and self.playback.active()):
             self.notice("Finish first","Close the game or wait for the current task before changing how Windows starts.");return
         ready=getattr(self,"fullscreen_ready",False)
-        message=("Redux is already the home screen of Windows' full screen experience. Set it up again to repair it."
+        message=("Windows still starts an older copy of Redux in full screen. Set it up again to update it; Windows may ask for administrator approval."
+                 if getattr(self,"fullscreen_outdated",False) else
+                 "Redux is already the home screen of Windows' full screen experience. Set it up again to repair it."
                  if ready else
                  "Windows will start straight into Redux, the way a console does. Redux makes Windows treat this PC as a "
                  "gaming handheld, turns on Developer Mode, adds Redux to the Xbox home-app list and picks it as home. "
@@ -134,7 +172,7 @@ class ConsoleWindows:
             from .windows_integration import set_up_fullscreen_experience
             return set_up_fullscreen_experience(application_directory(),project_root())
         def done(status):
-            self.fullscreen_ready=status.ready
+            self.fullscreen_ready=status.ready;self.fullscreen_outdated=status.outdated
             self.menu("Restart to finish",[("Restart now",lambda:self._close_now(power="restart")),("Later",lambda:None)],
                       message="Redux is now the full screen experience home. After the restart Windows opens Redux instead of the desktop.")
         self.task(work,done,

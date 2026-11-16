@@ -59,6 +59,9 @@ Name: "{autodesktop}\Redux"; Filename: "{app}\Redux.exe"; WorkingDir: "{app}"; T
 Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "ReduxMediaLibrary"; ValueData: """{app}\Redux.exe"" --startup --fullscreen"; Tasks: startup
 
 [Run]
+; When Redux is Windows' full screen experience home, Windows starts a registered copy of it,
+; which the files copied above do not touch: register the new version now (no-op otherwise).
+Filename: "{app}\Redux.exe"; Parameters: "refresh-home"; WorkingDir: "{app}"; StatusMsg: "Updating the full screen experience copy..."; Flags: runhidden waituntilterminated
 Filename: "{app}\Redux.exe"; Description: "Open Redux"; WorkingDir: "{app}"; Flags: nowait postinstall skipifsilent
 
 [Code]

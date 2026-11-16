@@ -136,6 +136,7 @@ def helper_script(installer, redux_executable, pid):
     """A batch file that waits for this Redux to exit, installs silently, and opens Redux again.
 
     redux_executable is the installed Redux.exe, never the home-app copy Windows registered.
+    The installer itself re-registers the full screen experience copy (Redux.exe refresh-home).
 
     The bundled receiver holds a mutex that makes Setup refuse to run, so its
     scheduled task is stopped first and started again afterwards.
@@ -148,9 +149,6 @@ def helper_script(installer, redux_executable, pid):
         "taskkill /IM ReduxReceiver.exe /F >nul 2>&1",
         f'"{installer}" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART',
         'schtasks /Run /TN "Redux Controller Receiver" >nul 2>&1',
-        # When Redux is Windows' full screen experience home, register the new version
-        # so Windows stops starting the copy it registered before the update.
-        f'start "" /wait "{redux_executable}" refresh-home',
         f'start "" "{redux_executable}"',
         f'del "%~f0"',
         "",
