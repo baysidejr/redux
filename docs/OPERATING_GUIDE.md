@@ -39,6 +39,7 @@ Mouse clicks activate controls. Hovering a game selects it; the mouse wheel move
 | Open / close running-game menu | Embedded game: Escape or F10; external game: focus Redux and press F10 or select Play again | Home/Guide, or hold Select/Back + Start for one second |
 | Quit the running game | Choose Stop in the game menu | Select/Back + Start + LB + RB together |
 | Close Redux | Alt+F4 | System → Exit app |
+| Restart or shut down the PC | — | System → Exit → Restart PC / Shut down PC (confirm; Redux closes first) |
 
 In Search, type directly or use the rounded onscreen keyboard in the lower overlay. Backspace deletes a character; **Results** hides the keyboard and moves to the result cards. Text fields also accept direct typing and paste. Hold Select/Back and Start together for one second to request the same menu as Home/Guide. Guide availability depends on what Windows and the controller expose. The frontend ignores normal navigation presses while an external game is active so it does not also browse the library during gameplay. External emulator gameplay bindings remain separate.
 

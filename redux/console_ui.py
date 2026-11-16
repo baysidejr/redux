@@ -9,6 +9,7 @@ import json
 import queue
 from pathlib import Path
 import sqlite3
+import subprocess
 import time
 import tkinter as tk
 from tkinter import filedialog,messagebox,ttk
@@ -295,7 +296,7 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleSta
             previous=getattr(self,"controller_pointer",None)
             if previous and abs(point[0]-previous[0])+abs(point[1]-previous[1])<4:return
             self._navigation_pointer(False)
-        if not hasattr(self,"scale") or self.overlay:return
+        if not hasattr(self,"scale"):return
         key=hit_test(self.targets,*self._coordinates(event))
         if key and key!=self.focus:
             self.focus=key
@@ -1564,8 +1565,17 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleSta
         self.exit_app_menu()
 
     def exit_app_menu(self):
-        self.menu("Exit Redux?",[("Keep browsing",lambda:None),("Exit app",self.close)],
-                  message="Close Redux. Your library and artwork stay saved.")
+        self.menu("Exit Redux?",[("Keep browsing",lambda:None),("Exit app",self.close),
+                  ("Restart PC",lambda:self._power_menu("restart")),("Shut down PC",lambda:self._power_menu("shutdown"))],
+                  message="Close Redux, or close it and restart or shut down this PC. Your library and artwork stay saved.")
+
+    def _power_menu(self,action):
+        from .power import ACTIONS
+        if self.busy or self.embedded or (self.playback and self.playback.active()):
+            self.notice("Finish first","A game or task is still running. Finish it, then restart or shut down from Exit.");return
+        title,label,_=ACTIONS[action]
+        self.menu(title,[("Cancel",lambda:None),(label,lambda:self._close_now(power=action))],
+                  message="Redux closes first. Windows still asks about unsaved work in other apps.")
 
     def close(self):
         if self.busy:
@@ -1591,7 +1601,7 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleSta
     def _force_close(self,sessions):
         self.task(lambda:[self.playback.stop(sid,force=True) for sid in sessions],lambda _:self._close_now(),"Stopping owned games…",cancellable=False)
 
-    def _close_now(self):
+    def _close_now(self,power=None):
         registration=getattr(self,"windows_registration",None)
         if registration:registration.close();self.windows_registration=None
         self._stop_media_watch();self._stop_card_watch()
@@ -1600,4 +1610,9 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleSta
         self._harvest_sessions()
         if self.playback:self.playback.close()
         self._save_preferences()
+        if power:
+            from .power import power_off
+            try:power_off(power)
+            except (OSError,ValueError,subprocess.SubprocessError) as error:
+                messagebox.showerror("Windows did not "+("restart" if power=="restart" else "shut down"),str(error) or "No reason was given.",parent=self.root)
         super().close()
