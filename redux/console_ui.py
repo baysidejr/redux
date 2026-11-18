@@ -53,6 +53,24 @@ def display_title(game):
 from .console_cores import ConsoleCores
 from .console_redux_controller import ConsoleReduxController
 
+_last_ui_error=None
+
+
+def log_ui_error(where,error):
+    """Append an error the player cannot see to logs/ui-errors.log (repeats of the same one are skipped)."""
+    global _last_ui_error
+    text=f"{where}: {type(error).__name__}: {error}"
+    if text==_last_ui_error:return
+    _last_ui_error=text
+    try:
+        from .windows_paths import redux_user_data
+        log=redux_user_data()/"logs"/"ui-errors.log"
+        log.parent.mkdir(parents=True,exist_ok=True)
+        if log.is_file() and log.stat().st_size>1_000_000:log.unlink()
+        with log.open("a",encoding="utf-8") as handle:handle.write(f"{datetime.now():%Y-%m-%d %H:%M:%S} {text}\n")
+    except OSError:pass
+
+
 class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleStage,ConsoleAbout,ConsoleControllerTest,ConsoleGameDatabase,ConsoleUpdates,ConsolePCGames,ConsoleWindows,ConsoleFileBrowser,ConsoleIngame,ConsoleControllers,ConsoleMedia,ConsoleEditors,OverlayScreens,ReferenceLayout,SecondaryScreens,ToolsApp):
     def __init__(self,root,library_root=None,*,activation=None):
         from .windows_activation import parse_activation
@@ -1068,13 +1086,18 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleSta
         if self.embedded:
             self.held_keys.clear()
             self.input_release_gate=True
-            self.embedded.pause()
+            problem=""
+            try:self.embedded.pause()
+            except Exception as error:
+                # The menu must open whatever the core did: it is the way to stop the game.
+                problem=f"\nThe game did not pause cleanly: {error}"
+                log_ui_error("game menu: pause failed",error)
             items=[("Resume game",self._resume_embedded),("Save state",lambda:self.state_menu("save")),
                 ("Load state",lambda:self.state_menu("load")),("Delete a save state",lambda:self.state_menu("delete")),("Display",self.video_filter_menu),
                 ("Controls",self.game_controls_menu),("Screenshot",lambda:self.state_operation("capture")),
                 ("Reset game",self._reset_embedded)]
             items.append(("Stop game and return to library",self._stop_embedded))
-            self.menu("Game paused",items,message=f"{display_title(self.embedded_game)} • {duration(self.embedded.play_seconds)} played")
+            self.menu("Game paused",items,message=f"{display_title(self.embedded_game)} • {duration(self.embedded.play_seconds)} played{problem}")
             return
         active=self.playback.active()
         if not active:return
@@ -1387,6 +1410,8 @@ class ConsoleApp(ConsoleReduxController,ConsoleCores,ConsoleGameCards,ConsoleSta
             if minute!=self.last_clock_minute:self.last_clock_minute=minute;self.schedule_draw()
         except (OSError,ValueError,RuntimeError,sqlite3.Error) as error:
             self.status.set(str(error))
+            # The status line is hidden during play: keep a record of what interrupted the loop.
+            log_ui_error("tick",error)
         self.root.after(16 if self.embedded and not self.overlay else 40,self._tick)
 
     def _route_controller_events(self,events):

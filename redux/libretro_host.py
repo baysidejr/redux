@@ -909,11 +909,24 @@ class EmbeddedSession:
                          rotation=self._rotation)
 
     def _readback(self):
+        """Copy the GPU frame for menus, previews and screenshots.
+
+        Pausing reads it, so a driver that refuses the read must not fail the pause: the
+        game menu would never open over a frozen game (it did on a graphics card where the
+        read failed, for OpenGL cores such as Nintendo 64 only). The menu then shows without
+        the paused picture."""
         self._readback_requested = False
         if not self._gl or self._hw_frame is None:
             return
         sequence, width, height = self._hw_frame
-        rgb = self._gl.read_framebuffer(width, height, self._hw["bottom_left"])
+        try:
+            rgb = self._gl.read_framebuffer(width, height, self._hw["bottom_left"])
+        except Exception as exc:
+            message = f"The paused picture could not be read from the graphics card: {type(exc).__name__}: {exc}"
+            if not self.messages or self.messages[-1] != message:
+                self.messages.append(message)
+                del self.messages[:-100]
+            return
         if self._rotation:
             width, height, rgb = _rotate(rgb, width, height, self._rotation)
         with self._lock:
